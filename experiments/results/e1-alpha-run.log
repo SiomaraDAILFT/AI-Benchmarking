@@ -1,0 +1,35 @@
+gpt-5.6-sol effort=none prompt 1/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"server_error","param":null,"code":null}}
+gpt-5.6-sol effort=none prompt 2/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"server_error","param":null,"code":null}}
+gpt-5.6-sol effort=none prompt 3/5 ... out=1105 (reasoning=0) finish=stop 33936ms $0.0338 | running total $0.034
+gpt-5.6-sol effort=none prompt 4/5 ... out=1225 (reasoning=0) finish=stop 36708ms $0.0374 | running total $0.071
+gpt-5.6-sol effort=none prompt 5/5 ... out=1234 (reasoning=0) finish=stop 39351ms $0.0376 | running total $0.109
+gpt-5.6-sol effort=low prompt 1/5 ... out=1343 (reasoning=341) finish=stop 43034ms $0.0409 | running total $0.150
+gpt-5.6-sol effort=low prompt 2/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"server_error","param":null,"code":null}}
+gpt-5.6-sol effort=low prompt 3/5 ... out=1485 (reasoning=352) finish=stop 48311ms $0.0452 | running total $0.195
+gpt-5.6-sol effort=low prompt 4/5 ... out=1303 (reasoning=325) finish=stop 42782ms $0.0397 | running total $0.235
+gpt-5.6-sol effort=low prompt 5/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"server_error","param":null,"code":null}}
+gpt-5.6-sol effort=high prompt 1/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"server_error","param":null,"code":null}}
+gpt-5.6-sol effort=high prompt 2/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"server_error","param":null,"code":null}}
+gpt-5.6-sol effort=high prompt 3/5 ... out=2251 (reasoning=1024) finish=stop 73289ms $0.0682 | running total $0.303
+gpt-5.6-sol effort=high prompt 4/5 ... out=5203 (reasoning=4068) finish=stop 160081ms $0.1567 | running total $0.460
+gpt-5.6-sol effort=high prompt 5/5 ... out=4306 (reasoning=2920) finish=stop 130229ms $0.1298 | running total $0.589
+claude-opus-5 effort=low prompt 1/5 ... out=3370 (reasoning=n/a) finish=end_turn 53880ms $0.0852 | running total $0.675
+claude-opus-5 effort=low prompt 2/5 ... out=3543 (reasoning=n/a) finish=end_turn 57127ms $0.0896 | running total $0.764
+claude-opus-5 effort=low prompt 3/5 ... out=3358 (reasoning=n/a) finish=end_turn 54911ms $0.0849 | running total $0.849
+claude-opus-5 effort=low prompt 4/5 ... out=3413 (reasoning=n/a) finish=end_turn 53691ms $0.0862 | running total $0.935
+claude-opus-5 effort=low prompt 5/5 ... out=4262 (reasoning=n/a) finish=end_turn 68206ms $0.1075 | running total $1.043
+claude-opus-5 effort=high prompt 1/5 ... out=5704 (reasoning=n/a) finish=end_turn 88697ms $0.1436 | running total $1.186
+claude-opus-5 effort=high prompt 2/5 ... out=6641 (reasoning=n/a) finish=end_turn 106418ms $0.1670 | running total $1.353
+claude-opus-5 effort=high prompt 3/5 ... out=6702 (reasoning=n/a) finish=end_turn 101802ms $0.1685 | running total $1.522
+claude-opus-5 effort=high prompt 4/5 ... out=6071 (reasoning=n/a) finish=end_turn 90826ms $0.1527 | running total $1.674
+claude-opus-5 effort=high prompt 5/5 ... out=6298 (reasoning=n/a) finish=end_turn 96896ms $0.1583 | running total $1.833
+
+=== summary ===
+gpt-5.6-sol none  n=3 outTokens=3564 cost=$0.109 capped=0
+gpt-5.6-sol low   n=3 outTokens=4131 cost=$0.126 capped=0
+gpt-5.6-sol high  n=3 outTokens=11760 cost=$0.355 capped=0
+gpt-5.6-sol alpha(high/low) by output tokens = 2.85; by cost = 2.82
+claude-opus-5 low   n=5 outTokens=17946 cost=$0.453 capped=0
+claude-opus-5 high  n=5 outTokens=31416 cost=$0.790 capped=0
+claude-opus-5 alpha(high/low) by output tokens = 1.75; by cost = 1.74
+total spent: $1.833  -> C:\Users\Eigenaar\dailft\draco-paper\experiments\results\e1-alpha-2026-09-11T07-41-26.json

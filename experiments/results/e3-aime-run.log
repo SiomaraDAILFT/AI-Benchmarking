@@ -1,0 +1,38 @@
+problems: 0, 1, 2, 3, 4
+gpt-5.6-sol effort=low problem 1/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve 
+gpt-5.6-sol effort=low problem 2/5 ... out=899 (reasoning=512) finish=stop answer=588 (correct) 29518ms $0.0279 | total $0.028
+gpt-5.6-sol effort=low problem 3/5 ... out=338 (reasoning=178) finish=stop answer=16 (correct) 16812ms $0.0109 | total $0.039
+gpt-5.6-sol effort=low problem 4/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve 
+gpt-5.6-sol effort=low problem 5/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve 
+gpt-5.6-sol effort=high problem 1/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve 
+gpt-5.6-sol effort=high problem 2/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve 
+gpt-5.6-sol effort=high problem 3/5 ... out=400 (reasoning=229) finish=stop answer=16 (correct) 14542ms $0.0128 | total $0.052
+gpt-5.6-sol effort=high problem 4/5 ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve - retrying
+ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"serve 
+gpt-5.6-sol effort=high problem 5/5 ... out=1095 (reasoning=845) finish=stop answer=279 (correct) 29858ms $0.0334 | total $0.085
+claude-opus-5 effort=low problem 1/5 ... out=145 (reasoning=n/a) finish=end_turn answer=70 (correct) 3409ms $0.0041 | total $0.089
+claude-opus-5 effort=low problem 2/5 ... out=26 (reasoning=n/a) finish=end_turn answer=588 (correct) 2123ms $0.0020 | total $0.091
+claude-opus-5 effort=low problem 3/5 ... out=370 (reasoning=n/a) finish=end_turn answer=88 (wrong) 5930ms $0.0104 | total $0.102
+claude-opus-5 effort=low problem 4/5 ... out=366 (reasoning=n/a) finish=end_turn answer=117 (correct) 4760ms $0.0098 | total $0.111
+claude-opus-5 effort=low problem 5/5 ... out=950 (reasoning=n/a) finish=end_turn answer=279 (correct) 13699ms $0.0245 | total $0.136
+claude-opus-5 effort=high problem 1/5 ... out=255 (reasoning=n/a) finish=end_turn answer=70 (correct) 4245ms $0.0069 | total $0.143
+claude-opus-5 effort=high problem 2/5 ... out=1890 (reasoning=n/a) finish=end_turn answer=588 (correct) 20409ms $0.0486 | total $0.191
+claude-opus-5 effort=high problem 3/5 ... out=358 (reasoning=n/a) finish=end_turn answer=16 (correct) 5674ms $0.0101 | total $0.201
+claude-opus-5 effort=high problem 4/5 ... out=446 (reasoning=n/a) finish=end_turn answer=117 (correct) 5522ms $0.0118 | total $0.213
+claude-opus-5 effort=high problem 5/5 ... out=2011 (reasoning=n/a) finish=end_turn answer=279 (correct) 23335ms $0.0511 | total $0.264
+
+=== summary ===
+gpt-5.6-sol: paired=1 alpha high/low tokens=1.18 per-problem=[1.18] | out low=338 high=400 | correct low=1/1 high=1/1 | capped: low=0 high=0
+claude-opus-5: paired=5 alpha high/low tokens=2.67 per-problem=[1.76, 72.69, 0.97, 1.22, 2.12] | out low=1857 high=4960 | correct low=4/5 high=5/5 | capped: low=0 high=0
+total spent: $0.264 -> C:\Users\Eigenaar\dailft\draco-paper\experiments\results\e3-aime-2026-09-11T08-35-02.json

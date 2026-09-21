@@ -1,0 +1,27 @@
+[
+  {
+    "industry": "banking",
+    "context": "We want to know whether a collections strategy introduced in March reduced 90-day default rates. Accounts were assigned by branch, not randomly, and the branches that adopted early had the worst arrears to begin with. We have 30 months of monthly account-level data.",
+    "question": "What method would you use, and what is the most likely way this analysis produces a confidently wrong answer?"
+  },
+  {
+    "industry": "mining",
+    "context": "We want to know whether a new blast design improved fragmentation. It was trialled on 30 of 200 blasts, chosen by the drill and blast engineers in areas they judged suitable. Fragmentation is measured by image analysis on the muckpile, which is affected by how the shovel digs.",
+    "question": "How would you estimate the effect, and what is the most likely way this analysis misleads?"
+  },
+  {
+    "industry": "automotive",
+    "context": "Warranty claims for a component are rising. Claims are recorded at dealer level with free-text fault descriptions, build dates come from a separate system, and a supplier change happened partway through the model year. Vehicles built later have had less time in service.",
+    "question": "How would you establish whether the supplier change caused it, and what is the most likely false conclusion?"
+  },
+  {
+    "industry": "retail",
+    "context": "We have 24 months of weekly units sold by store and SKU, about 6 million rows. A price cut was applied to one category in week 60, but only in stores above a footfall threshold. Some stores closed for refurbishment during the period.",
+    "question": "What method would you use, and what is the most likely way this analysis produces a confidently wrong answer?"
+  },
+  {
+    "industry": "telecoms",
+    "context": "We want to know whether a network upgrade reduced churn. It rolled out cell by cell over a year, prioritising the worst-performing cells. Customers are assigned to a home cell by billing address, which is often not where they actually use the service.",
+    "question": "How would you estimate the effect, and what is the most likely way this analysis misleads?"
+  }
+]

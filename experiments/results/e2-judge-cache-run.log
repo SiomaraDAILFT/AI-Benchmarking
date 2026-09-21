@@ -1,0 +1,17 @@
+(a) caching: three calls sharing the rubric prefix
+  call 1: input=1092 cached=0 output=227 score=53
+  call 2: input=1050 cached=0 output=239 score=20
+  call 3: input=1154 cached=0 output=229 score=43
+(b) test-retest: five scorings of the same answer
+  repeat 1: score=50 (met 21/40) cached=1089
+  repeat 2: score=50 (met 21/40) cached=1089
+  repeat 3: score=60 (met 24/40) cached=1089
+  repeat 4: score=50 (met 20/40) cached=1089
+  repeat 5: score=43 (met 18/40) cached=1089
+  mean=50.6 sd=6.07 range=43-60
+(c) batched scoring under three orderings
+  order 012: input=1311 output=809 scores={"A":45,"B":25,"C":60}
+  order 120: input=1311 output=804 scores={"A":25,"B":65,"C":55}
+  order 201: input=1311 output=694 scores={"A":48,"B":50,"C":20}
+  per-answer scores across orderings: {"0":[45,55,50],"1":[25,25,20],"2":[60,65,48]}
+rho ~ 0.14 (fixed~920 tok, marginal~131 tok) | total spent $0.188 -> C:\Users\Eigenaar\dailft\draco-paper\experiments\results\e2-judge-cache-2026-09-11T07-41-29.json

@@ -1,0 +1,78 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{parskip}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!40!black}
+\title{Manifest of measurement runs}
+\author{Siomara van Straalen}
+\date{September 2026}
+\begin{document}
+\maketitle
+Every run made for the paper. Result JSON files contain the providers' own usage blocks per call; model outputs are stored as lengths only (textChars) except judge outputs in E2 (first 120 characters). No API keys are stored anywhere in this repository.
+
+Machine-readable copy: \texttt{experiments/RUNS.json}. Run logs are in \texttt{experiments/results/}.
+
+\section*{E1: Setting-cost ratio alpha on analytic prompts}
+\begin{longtable}{@{}p{0.2\textwidth}p{0.76\textwidth}@{}}\toprule
+\textbf{Date} & 2026-09-11 \\
+\textbf{Models} & gpt-5.6-sol (OpenAI, reasoning\_effort none/low/high); claude-opus-5 (Anthropic, output\_config.effort low/high) \\
+\textbf{Design} & 5 prompts $\times$ settings $\times$ 2 models, one call per cell, max 24,000 output tokens (never reached) \\
+\textbf{Scripts} & \texttt{experiments/e1-alpha.mjs}, \texttt{experiments/e1-retry.mjs} \\
+\textbf{Inputs} & \texttt{experiments/prompts.json} \\
+\textbf{Spend, USD} & stated 8; actual 2.17; recorded in files 2.168 \\
+\textbf{Cells} & 25 recorded, 0 errors \\
+\textbf{Status} & complete: 25/25 cells; 6 cells retried after transient OpenAI HTTP 500s (marked retried in the JSON) \\
+\textbf{Headline} & alpha high/low = 2.83 (gpt-5.6-sol, per prompt 1.52-3.99); 3.18 vs none; 1.75 (claude-opus-5, per prompt 1.48-2.00) \\
+\bottomrule\end{longtable}
+\begin{longtable}{@{}p{0.96\textwidth}@{}}\toprule
+\textbf{Files and SHA-256} \\\midrule
+\texttt{experiments/results/e1-alpha-2026-09-11T07-41-26.json}, 20185 bytes \newline \texttt{\scriptsize 37170e0b8662c5d507c68d53f9af3f0130cd8e269bd9d8195e650390e5f82b61} \\[2pt]
+\texttt{experiments/results/e1-alpha-run.log}, 4009 bytes \newline \texttt{\scriptsize 531a911e42c755268161b852176a658a622fdc53af495c2b6fcd619eb576840b} \\[2pt]
+\texttt{experiments/results/e1-retry-run.log}, 1628 bytes \newline \texttt{\scriptsize dd8de47a8c8c0ec3c4f16aef7a31a581e2e6edb8fb99290f422698d9e56e2cb8} \\[2pt]
+\texttt{experiments/prompts.json} (input) \newline \texttt{\scriptsize 103c5c42314909a1230b2d88afecea542674bc23e39f19952d9c5f9df099293e} \\[2pt]
+\bottomrule\end{longtable}
+\section*{E2: Judging-side premises: prompt-cache hits, judge test-retest, order sensitivity, rho}
+\begin{longtable}{@{}p{0.2\textwidth}p{0.76\textwidth}@{}}\toprule
+\textbf{Date} & 2026-09-11 \\
+\textbf{Models} & gpt-5.6-sol (OpenAI, reasoning\_effort none, default sampling) \\
+\textbf{Design} & 3 calls sharing a \textasciitilde{}920-token prefix; 5 repeated scorings of one answer; 3 batched calls under rotated orderings; 11 calls in total \\
+\textbf{Scripts} & \texttt{experiments/e2-judge-cache.mjs} \\
+\textbf{Inputs} & \texttt{experiments/prompts.json (task 1)}, \texttt{three fixed candidate answers and a generated 40-criterion rubric, both inside the script} \\
+\textbf{Spend, USD} & stated 0.5; actual 0.19; recorded in files 0.188 \\
+\textbf{Cells} & 11 recorded, 0 errors \\
+\textbf{Status} & complete: 11/11 calls \\
+\textbf{Headline} & cached tokens 0/0/0 with a 920-token prefix, 1,089/1,089 with an identical 1,089-token prompt; test-retest scores 50/50/60/50/43 (SD 6.1, range 17); order moved a score by up to 17 points with ranking preserved; rho \textasciitilde{} 0.14 \\
+\bottomrule\end{longtable}
+\begin{longtable}{@{}p{0.96\textwidth}@{}}\toprule
+\textbf{Files and SHA-256} \\\midrule
+\texttt{experiments/results/e2-judge-cache-2026-09-11T07-41-29.json}, 5121 bytes \newline \texttt{\scriptsize f3873f18c2f336f82082dbefdb1f5940d2f607c778f70555577e6f69a3e8aca9} \\[2pt]
+\texttt{experiments/results/e2-judge-cache-run.log}, 996 bytes \newline \texttt{\scriptsize 9018dd1f327de835316a22eb518018c1fa973c02f453d0bd8bad281d425be138} \\[2pt]
+\texttt{experiments/prompts.json} (input) \newline \texttt{\scriptsize 103c5c42314909a1230b2d88afecea542674bc23e39f19952d9c5f9df099293e} \\[2pt]
+\bottomrule\end{longtable}
+\section*{E3: Task-family test: alpha on AIME 2025 competition problems}
+\begin{longtable}{@{}p{0.2\textwidth}p{0.76\textwidth}@{}}\toprule
+\textbf{Date} & 2026-09-11 \\
+\textbf{Models} & gpt-5.6-sol (low/high); claude-opus-5 (low/high) \\
+\textbf{Design} & 5 problems $\times$ 2 settings $\times$ 2 models, one call per cell, max 16,000 output tokens (never reached); correctness recorded against the dataset answers \\
+\textbf{Scripts} & \texttt{experiments/e3-aime.mjs}, \texttt{experiments/e3-retry.mjs} \\
+\textbf{Inputs} & \texttt{experiments/aime-problems.json (AIME 2025 I, problems 1-5, from the public dataset math-ai/aime25 via datasets-server.huggingface.co)} \\
+\textbf{Spend, USD} & stated 6; actual 0.39; recorded in files 0.385 \\
+\textbf{Cells} & 20 recorded, 0 errors \\
+\textbf{Status} & complete: 20/20 cells; 8 cells retried after an OpenAI outage (HTTP 500), marked retried in the JSON \\
+\textbf{Headline} & alpha high/low = 1.48 (gpt-5.6-sol, median 1.18, 5/5 correct at both settings); 2.67 (claude-opus-5, median 1.76, one item 72.7; 4/5 $\rightarrow$ 5/5 correct) \\
+\bottomrule\end{longtable}
+\begin{longtable}{@{}p{0.96\textwidth}@{}}\toprule
+\textbf{Files and SHA-256} \\\midrule
+\texttt{experiments/results/e3-aime-2026-09-11T08-35-02.json}, 17275 bytes \newline \texttt{\scriptsize 8c5fd5ef1da417ff1c3f12a5bd3ee3a186b7c72734ac588f135c3334222877e0} \\[2pt]
+\texttt{experiments/results/e3-aime-run.log}, 4958 bytes \newline \texttt{\scriptsize a4cf190cdf675b5799123b9c3611aa0f3688da97cb14a274671b48cef5751412} \\[2pt]
+\texttt{experiments/results/e3-retry-run.log}, 899 bytes \newline \texttt{\scriptsize 6fc1ae09279eede0bf1c77724b45eac3d0daf8b7f08f5d26b1f164b16b5aba0a} \\[2pt]
+\texttt{experiments/aime-problems.json} (input) \newline \texttt{\scriptsize a78b6af7cfeef9ead3f9d4c39f0abaf145c1af5b7d2074b4d39c4ee09e9e834e} \\[2pt]
+\bottomrule\end{longtable}
+\end{document}

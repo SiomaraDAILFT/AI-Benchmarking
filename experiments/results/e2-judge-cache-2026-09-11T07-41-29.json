@@ -1,0 +1,212 @@
+{
+  "calls": [
+    {
+      "ms": 10576,
+      "inputTokens": 1092,
+      "cachedTokens": 0,
+      "outputTokens": 227,
+      "score": 53,
+      "met": 21,
+      "unmet": 19,
+      "costUsd": 0.01227,
+      "textHead": "C1. MET\nC2. MET\nC3. MET\nC4. MET\nC5. UNMET\nC6. MET\nC7. MET\nC8. MET\nC9. UNMET\nC10. MET\nC11. MET\nC12. UNMET\nC13. MET\nC14. M"
+    },
+    {
+      "ms": 10520,
+      "inputTokens": 1050,
+      "cachedTokens": 0,
+      "outputTokens": 239,
+      "score": 20,
+      "met": 9,
+      "unmet": 31,
+      "costUsd": 0.01242,
+      "textHead": "C1: MET\nC2: UNMET\nC3: UNMET\nC4: UNMET\nC5: UNMET\nC6: UNMET\nC7: MET\nC8: UNMET\nC9: UNMET\nC10: UNMET\nC11: UNMET\nC12: UNMET\nC"
+    },
+    {
+      "ms": 16880,
+      "inputTokens": 1154,
+      "cachedTokens": 0,
+      "outputTokens": 229,
+      "score": 43,
+      "met": 19,
+      "unmet": 21,
+      "costUsd": 0.01264,
+      "textHead": "C1. MET\nC2. UNMET\nC3. MET\nC4. MET\nC5. UNMET\nC6. MET\nC7. MET\nC8. UNMET\nC9. MET\nC10. MET\nC11. MET\nC12. UNMET\nC13. MET\nC14."
+    },
+    {
+      "ms": 10192,
+      "inputTokens": 1092,
+      "cachedTokens": 1089,
+      "outputTokens": 227,
+      "score": 50,
+      "met": 21,
+      "unmet": 19,
+      "costUsd": 0.01227,
+      "textHead": "C1. MET\nC2. MET\nC3. MET\nC4. MET\nC5. UNMET\nC6. MET\nC7. MET\nC8. MET\nC9. UNMET\nC10. MET\nC11. UNMET\nC12. UNMET\nC13. MET\nC14."
+    },
+    {
+      "ms": 11883,
+      "inputTokens": 1092,
+      "cachedTokens": 1089,
+      "outputTokens": 227,
+      "score": 50,
+      "met": 21,
+      "unmet": 19,
+      "costUsd": 0.01227,
+      "textHead": "C1. MET\nC2. MET\nC3. MET\nC4. MET\nC5. UNMET\nC6. MET\nC7. MET\nC8. MET\nC9. UNMET\nC10. MET\nC11. MET\nC12. UNMET\nC13. MET\nC14. M"
+    },
+    {
+      "ms": 10836,
+      "inputTokens": 1092,
+      "cachedTokens": 1089,
+      "outputTokens": 224,
+      "score": 60,
+      "met": 24,
+      "unmet": 16,
+      "costUsd": 0.01218,
+      "textHead": "C1. MET\nC2. MET\nC3. MET\nC4. MET\nC5. UNMET\nC6. MET\nC7. MET\nC8. MET\nC9. UNMET\nC10. MET\nC11. MET\nC12. UNMET\nC13. MET\nC14. M"
+    },
+    {
+      "ms": 11427,
+      "inputTokens": 1092,
+      "cachedTokens": 1089,
+      "outputTokens": 228,
+      "score": 50,
+      "met": 20,
+      "unmet": 20,
+      "costUsd": 0.0123,
+      "textHead": "C1. MET\nC2. MET\nC3. MET\nC4. MET\nC5. UNMET\nC6. MET\nC7. MET\nC8. MET\nC9. UNMET\nC10. MET\nC11. UNMET\nC12. UNMET\nC13. MET\nC14."
+    },
+    {
+      "ms": 14348,
+      "inputTokens": 1092,
+      "cachedTokens": 1089,
+      "outputTokens": 230,
+      "score": 43,
+      "met": 18,
+      "unmet": 22,
+      "costUsd": 0.01236,
+      "textHead": "C1. MET\nC2. MET\nC3. MET\nC4. MET\nC5. UNMET\nC6. MET\nC7. MET\nC8. MET\nC9. UNMET\nC10. MET\nC11. UNMET\nC12. UNMET\nC13. MET\nC14."
+    },
+    {
+      "ms": 12712,
+      "order": [
+        0,
+        1,
+        2
+      ],
+      "inputTokens": 1311,
+      "cachedTokens": 0,
+      "outputTokens": 809,
+      "scores": {
+        "A": 45,
+        "B": 25,
+        "C": 60
+      },
+      "costUsd": 0.030825
+    },
+    {
+      "ms": 15139,
+      "order": [
+        1,
+        2,
+        0
+      ],
+      "inputTokens": 1311,
+      "cachedTokens": 0,
+      "outputTokens": 804,
+      "scores": {
+        "A": 25,
+        "B": 65,
+        "C": 55
+      },
+      "costUsd": 0.030675
+    },
+    {
+      "ms": 15966,
+      "order": [
+        2,
+        0,
+        1
+      ],
+      "inputTokens": 1311,
+      "cachedTokens": 0,
+      "outputTokens": 694,
+      "scores": {
+        "A": 48,
+        "B": 50,
+        "C": 20
+      },
+      "costUsd": 0.027375
+    }
+  ],
+  "a_cache": [
+    {
+      "ms": 10576,
+      "inputTokens": 1092,
+      "cachedTokens": 0,
+      "outputTokens": 227,
+      "score": 53,
+      "met": 21,
+      "unmet": 19,
+      "costUsd": 0.01227,
+      "textHead": "C1. MET\nC2. MET\nC3. MET\nC4. MET\nC5. UNMET\nC6. MET\nC7. MET\nC8. MET\nC9. UNMET\nC10. MET\nC11. MET\nC12. UNMET\nC13. MET\nC14. M"
+    },
+    {
+      "ms": 10520,
+      "inputTokens": 1050,
+      "cachedTokens": 0,
+      "outputTokens": 239,
+      "score": 20,
+      "met": 9,
+      "unmet": 31,
+      "costUsd": 0.01242,
+      "textHead": "C1: MET\nC2: UNMET\nC3: UNMET\nC4: UNMET\nC5: UNMET\nC6: UNMET\nC7: MET\nC8: UNMET\nC9: UNMET\nC10: UNMET\nC11: UNMET\nC12: UNMET\nC"
+    },
+    {
+      "ms": 16880,
+      "inputTokens": 1154,
+      "cachedTokens": 0,
+      "outputTokens": 229,
+      "score": 43,
+      "met": 19,
+      "unmet": 21,
+      "costUsd": 0.01264,
+      "textHead": "C1. MET\nC2. UNMET\nC3. MET\nC4. MET\nC5. UNMET\nC6. MET\nC7. MET\nC8. UNMET\nC9. MET\nC10. MET\nC11. MET\nC12. UNMET\nC13. MET\nC14."
+    }
+  ],
+  "b_retest": {
+    "scores": [
+      50,
+      50,
+      60,
+      50,
+      43
+    ],
+    "mean": 50.6,
+    "sd": 6.06630035524124
+  },
+  "c_positions": {
+    "0": [
+      45,
+      55,
+      50
+    ],
+    "1": [
+      25,
+      25,
+      20
+    ],
+    "2": [
+      60,
+      65,
+      48
+    ]
+  },
+  "rho": {
+    "fixedTokensApprox": 919.5,
+    "marginalTokensApprox": 130.5,
+    "rho": 0.14192495921696574
+  },
+  "totalUsd": 0.18758500000000003
+}

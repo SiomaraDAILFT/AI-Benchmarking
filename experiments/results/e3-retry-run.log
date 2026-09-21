@@ -1,0 +1,8 @@
+retry gpt-5.6-sol effort=low problem 1 (attempt 1) ... out=255 (reasoning=114) answer=70 (correct) 10297ms $0.0080
+retry gpt-5.6-sol effort=low problem 4 (attempt 1) ... out=357 (reasoning=192) answer=117 (correct) 12260ms $0.0112
+retry gpt-5.6-sol effort=low problem 5 (attempt 1) ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about 
+retry gpt-5.6-sol effort=low problem 5 (attempt 2) ... out=826 (reasoning=526) answer=279 (correct) 25514ms $0.0254
+retry gpt-5.6-sol effort=high problem 1 (attempt 1) ... out=257 (reasoning=105) answer=70 (correct) 10097ms $0.0080
+retry gpt-5.6-sol effort=high problem 2 (attempt 1) ... out=1812 (reasoning=1435) answer=588 (correct) 91794ms $0.0553
+retry gpt-5.6-sol effort=high problem 4 (attempt 1) ... out=395 (reasoning=235) answer=117 (correct) 19199ms $0.0123
+retry spend: $0.120; still missing: 0

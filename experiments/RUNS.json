@@ -1,0 +1,166 @@
+{
+  "generatedAt": "2026-09-11T10:59:51.963Z",
+  "repositoryCommit": "41d8b54",
+  "note": "Every run made for the paper. Result JSON files contain the providers' own usage blocks per call; model outputs are stored as lengths only (textChars) except judge outputs in E2 (first 120 characters). No API keys are stored anywhere in this repository.",
+  "runs": {
+    "E1": {
+      "title": "Setting-cost ratio alpha on analytic prompts",
+      "supports": [
+        "Section 5, S1 (alpha depends on model, effort implementation and task family)",
+        "Appendix B (worked instance sensitivity)",
+        "Appendix C, E1"
+      ],
+      "date": "2026-09-11",
+      "scripts": [
+        "experiments/e1-alpha.mjs",
+        "experiments/e1-retry.mjs"
+      ],
+      "inputs": [
+        "experiments/prompts.json"
+      ],
+      "models": [
+        "gpt-5.6-sol (OpenAI, reasoning_effort none/low/high)",
+        "claude-opus-5 (Anthropic, output_config.effort low/high)"
+      ],
+      "design": "5 prompts x settings x 2 models, one call per cell, max 24,000 output tokens (never reached)",
+      "budgetStatedUsd": 8,
+      "spentUsd": 2.17,
+      "status": "complete: 25/25 cells; 6 cells retried after transient OpenAI HTTP 500s (marked retried in the JSON)",
+      "headline": "alpha high/low = 2.83 (gpt-5.6-sol, per prompt 1.52-3.99); 3.18 vs none; 1.75 (claude-opus-5, per prompt 1.48-2.00)",
+      "caveats": [
+        "Five prompts: a point estimate with a stated range, not a population estimate.",
+        "Different quantity from the published 23x (see Appendix C, comparability table)."
+      ],
+      "recordedCells": 25,
+      "recordedErrors": 0,
+      "recordedSpendUsd": 2.168,
+      "artefacts": [
+        {
+          "file": "experiments/results/e1-alpha-2026-09-11T07-41-26.json",
+          "bytes": 20185,
+          "sha256": "37170e0b8662c5d507c68d53f9af3f0130cd8e269bd9d8195e650390e5f82b61"
+        },
+        {
+          "file": "experiments/results/e1-alpha-run.log",
+          "bytes": 4009,
+          "sha256": "531a911e42c755268161b852176a658a622fdc53af495c2b6fcd619eb576840b"
+        },
+        {
+          "file": "experiments/results/e1-retry-run.log",
+          "bytes": 1628,
+          "sha256": "dd8de47a8c8c0ec3c4f16aef7a31a581e2e6edb8fb99290f422698d9e56e2cb8"
+        }
+      ],
+      "inputHashes": [
+        {
+          "file": "experiments/prompts.json",
+          "sha256": "103c5c42314909a1230b2d88afecea542674bc23e39f19952d9c5f9df099293e"
+        }
+      ],
+      "manifestCommit": "41d8b54"
+    },
+    "E2": {
+      "title": "Judging-side premises: prompt-cache hits, judge test-retest, order sensitivity, rho",
+      "supports": [
+        "Section 4 (caching premise: prefix must clear the provider minimum)",
+        "Section 5, S3 (test-retest spread)",
+        "Section 7.3 (order sensitivity)",
+        "Appendix C, E2"
+      ],
+      "date": "2026-09-11",
+      "scripts": [
+        "experiments/e2-judge-cache.mjs"
+      ],
+      "inputs": [
+        "experiments/prompts.json (task 1)",
+        "three fixed candidate answers and a generated 40-criterion rubric, both inside the script"
+      ],
+      "models": [
+        "gpt-5.6-sol (OpenAI, reasoning_effort none, default sampling)"
+      ],
+      "design": "3 calls sharing a ~920-token prefix; 5 repeated scorings of one answer; 3 batched calls under rotated orderings; 11 calls in total",
+      "budgetStatedUsd": 0.5,
+      "spentUsd": 0.19,
+      "status": "complete: 11/11 calls",
+      "headline": "cached tokens 0/0/0 with a 920-token prefix, 1,089/1,089 with an identical 1,089-token prompt; test-retest scores 50/50/60/50/43 (SD 6.1, range 17); order moved a score by up to 17 points with ranking preserved; rho ~ 0.14",
+      "caveats": [
+        "One judge, one task, short answers; rho would be larger for deep-research-length answers."
+      ],
+      "recordedCells": 11,
+      "recordedErrors": 0,
+      "recordedSpendUsd": 0.188,
+      "artefacts": [
+        {
+          "file": "experiments/results/e2-judge-cache-2026-09-11T07-41-29.json",
+          "bytes": 5121,
+          "sha256": "f3873f18c2f336f82082dbefdb1f5940d2f607c778f70555577e6f69a3e8aca9"
+        },
+        {
+          "file": "experiments/results/e2-judge-cache-run.log",
+          "bytes": 996,
+          "sha256": "9018dd1f327de835316a22eb518018c1fa973c02f453d0bd8bad281d425be138"
+        }
+      ],
+      "inputHashes": [
+        {
+          "file": "experiments/prompts.json",
+          "sha256": "103c5c42314909a1230b2d88afecea542674bc23e39f19952d9c5f9df099293e"
+        }
+      ],
+      "manifestCommit": "41d8b54"
+    },
+    "E3": {
+      "title": "Task-family test: alpha on AIME 2025 competition problems",
+      "supports": [
+        "Appendix C, 'Why the two measurements of alpha differ' and E3"
+      ],
+      "date": "2026-09-11",
+      "scripts": [
+        "experiments/e3-aime.mjs",
+        "experiments/e3-retry.mjs"
+      ],
+      "inputs": [
+        "experiments/aime-problems.json (AIME 2025 I, problems 1-5, from the public dataset math-ai/aime25 via datasets-server.huggingface.co)"
+      ],
+      "models": [
+        "gpt-5.6-sol (low/high)",
+        "claude-opus-5 (low/high)"
+      ],
+      "design": "5 problems x 2 settings x 2 models, one call per cell, max 16,000 output tokens (never reached); correctness recorded against the dataset answers",
+      "budgetStatedUsd": 6,
+      "spentUsd": 0.39,
+      "status": "complete: 20/20 cells; 8 cells retried after an OpenAI outage (HTTP 500), marked retried in the JSON",
+      "headline": "alpha high/low = 1.48 (gpt-5.6-sol, median 1.18, 5/5 correct at both settings); 2.67 (claude-opus-5, median 1.76, one item 72.7; 4/5 -> 5/5 correct)",
+      "caveats": [
+        "A correct AIME answer in 26 tokens indicates the public 2025 problems are easy, very likely memorised, for 2026 models; task family therefore remains untested on genuinely unseen hard items."
+      ],
+      "recordedCells": 20,
+      "recordedErrors": 0,
+      "recordedSpendUsd": 0.385,
+      "artefacts": [
+        {
+          "file": "experiments/results/e3-aime-2026-09-11T08-35-02.json",
+          "bytes": 17275,
+          "sha256": "8c5fd5ef1da417ff1c3f12a5bd3ee3a186b7c72734ac588f135c3334222877e0"
+        },
+        {
+          "file": "experiments/results/e3-aime-run.log",
+          "bytes": 4958,
+          "sha256": "a4cf190cdf675b5799123b9c3611aa0f3688da97cb14a274671b48cef5751412"
+        },
+        {
+          "file": "experiments/results/e3-retry-run.log",
+          "bytes": 899,
+          "sha256": "6fc1ae09279eede0bf1c77724b45eac3d0daf8b7f08f5d26b1f164b16b5aba0a"
+        }
+      ],
+      "inputHashes": [
+        {
+          "file": "experiments/aime-problems.json",
+          "sha256": "a78b6af7cfeef9ead3f9d4c39f0abaf145c1af5b7d2074b4d39c4ee09e9e834e"
+        }
+      ],
+      "manifestCommit": "41d8b54"
+    }
+  }
+}

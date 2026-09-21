@@ -1,0 +1,11 @@
+retry gpt-5.6-sol effort=none prompt 1 (attempt 1) ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"server_error","param":null,"code":null}}
+retry gpt-5.6-sol effort=none prompt 1 (attempt 2) ... out=1105 (reasoning=0) finish=stop 39226ms $0.0338
+retry gpt-5.6-sol effort=none prompt 2 (attempt 1) ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"server_error","param":null,"code":null}}
+retry gpt-5.6-sol effort=none prompt 2 (attempt 2) ... out=1080 (reasoning=0) finish=stop 38790ms $0.0331
+retry gpt-5.6-sol effort=low prompt 2 (attempt 1) ... out=1166 (reasoning=139) finish=stop 40711ms $0.0356
+retry gpt-5.6-sol effort=low prompt 5 (attempt 1) ... out=1164 (reasoning=100) finish=stop 40881ms $0.0355
+retry gpt-5.6-sol effort=high prompt 1 (attempt 1) ... out=2464 (reasoning=1536) finish=stop 138246ms $0.0746
+retry gpt-5.6-sol effort=high prompt 2 (attempt 1) ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"server_error","param":null,"code":null}}
+retry gpt-5.6-sol effort=high prompt 2 (attempt 2) ... ERROR openai 500: {"error":{"message":"The server had an error while processing your request. Sorry about that!","type":"server_error","param":null,"code":null}}
+retry gpt-5.6-sol effort=high prompt 2 (attempt 3) ... out=4062 (reasoning=3072) finish=stop 125749ms $0.1225
+retry spend: $0.335 -> C:\Users\Eigenaar\dailft\draco-paper\experiments\results\e1-alpha-2026-09-11T07-41-26.json
