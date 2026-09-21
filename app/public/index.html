@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DRACO-style benchmark runner</title>
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-text">DRACO-style benchmark runner</span></div>
+    <nav class="steps" aria-label="Steps">
+      <a href="#connect">1 Connection</a><a href="#systems">2 Systems</a><a href="#judges">3 Judges</a><a href="#tasks">4 Tasks</a><a href="#protocol">5 Protocol</a><a href="#run">6 Run</a><a href="#results">7 Results</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Run the reduced protocol on the systems you choose <span class="hint"><button type="button" class="hint-btn" aria-label="What this tool does">?</button><span class="tip" role="tooltip">Select the systems under test and the judge panel, edit the tasks and rubrics, set regenerations and repeat scorings, and run. Judging is blind and order-rotated; every raw score is kept; the paired permutation tests, Holm correction and effect sizes follow the paper.</span></span></h1>
+    <p>Keys stay in this local process and are never written to disk. Hover over a <span class="hint-inline">?</span> for an explanation.</p>  </section>
+
+  <section id="connect" class="card">
+    <h2>1. Connection</h2>
+    <div class="mode">
+      <label class="radio"><input type="radio" name="mode" value="dailft" checked> <span><strong>Via the DAILFT API</strong> <span class="muted">(standard)</span> <span class="hint"><button type="button" class="hint-btn" aria-label="About DAILFT mode">?</button><span class="tip" role="tooltip" id="note-dailft"></span></span></span></label>
+      <label class="radio"><input type="radio" name="mode" value="direct"> <span><strong>Direct to each provider</strong> <span class="hint"><button type="button" class="hint-btn" aria-label="About direct mode">?</button><span class="tip" role="tooltip" id="note-direct"></span></span></span></label>
+    </div>
+    <div id="dailft-keys" class="keys">
+      <label>DAILFT API key <input type="password" id="dailftKey" autocomplete="off" placeholder="from dailft.com/me/api-keys"></label>
+      <label>DAILFT base URL <input type="text" id="dailftBaseUrl" value="https://dailft.com"></label>
+      <div class="row">
+        <button class="btn" id="load-models" type="button">Load model list</button>
+        <span class="hint"><button type="button" class="hint-btn" aria-label="About the model list">?</button><span class="tip" role="tooltip">Fetches the models this key can call, with each model's documented effort settings, from the DAILFT API. Until it is loaded, the model-id suggestions are a fixed fallback and no effort settings are offered in DAILFT mode.</span></span>
+        <span class="muted" id="models-status">No model list loaded.</span>
+      </div>
+      <label class="check"><input type="checkbox" id="dailftBatch" checked> <span>Send calls as batches <span class="hint"><button type="button" class="hint-btn" aria-label="About batching">?</button><span class="tip" role="tooltip">Calls made together are grouped into batches of up to 200; each batch is one request against the DAILFT API's hourly limit, so a whole protocol is a handful of requests. Recommended. Switch it off only to send every call on its own.</span></span></span></label>
+    </div>
+    <div id="direct-keys" class="keys hidden">
+      <div id="provider-keys" class="grid2"></div>
+    </div>
+  </section>
+
+  <section id="systems" class="card">
+    <h2>2. Systems under test <span class="muted">(C)</span> <span class="hint"><button type="button" class="hint-btn" aria-label="About systems">?</button><span class="tip" role="tooltip">Each row is one system. Tick several effort settings for a system and each ticked setting is one condition (E); in DAILFT mode the settings appear once the model list is loaded. A DAILFT panel is one system: enter <code>quick-panel:modelA,modelB,modelC</code> (one challenge round, one synthesised answer) or <code>full-panel:modelA,modelB,modelC</code> (the full deliberation loop) as the model id.</span></span></h2>
+    <table class="tbl" id="systems-table"><thead><tr><th>Label</th><th>Provider</th><th>Model id</th><th>Settings</th><th></th></tr></thead><tbody></tbody></table>
+    <button class="btn secondary" id="add-system">Add system</button>
+  </section>
+
+  <section id="judges" class="card">
+    <h2>3. Judge panel <span class="muted">(J)</span> <span class="hint"><button type="button" class="hint-btn" aria-label="About judges">?</button><span class="tip" role="tooltip">Judges see the task, the rubric and anonymised answers; never system names. Choose judges from different model families; inter-judge agreement is reported with the results (S5).</span></span></h2>
+    <table class="tbl" id="judges-table"><thead><tr><th>Label</th><th>Provider</th><th>Model id</th><th></th></tr></thead><tbody></tbody></table>
+    <button class="btn secondary" id="add-judge">Add judge</button>
+  </section>
+
+  <section id="tasks" class="card">
+    <h2>4. Tasks and rubrics <span class="muted">(T)</span> <span class="hint"><button type="button" class="hint-btn" aria-label="About tasks">?</button><span class="tip" role="tooltip">Starter tasks are included so the mechanism runs out of the box; replace them with your own. One rubric criterion per line; each is scored MET or UNMET and the score is the percentage MET.</span></span></h2>
+    <div class="row">
+      <button class="btn secondary" id="load-draco">Load the DRACO task set</button>
+      <label class="inline">sample <input type="number" id="draco-sample" min="0" max="100" value="0" style="width:5em"> of 100</label>
+      <span class="hint"><button type="button" class="hint-btn" aria-label="About the DRACO task set">?</button><span class="tip" role="tooltip">The 100 published DRACO tasks with their expert rubrics (four dimensions, weighted criteria, penalties for errors), from the MIT-licensed dataset; a copy is in <code>app/data/</code>. A sample of 0 loads all 100; any other number draws a reproducible stratified sample across the ten domains, fixed before any system runs (S6). Replaces the tasks below.</span></span>
+      <span class="muted" id="draco-status"></span>
+    </div>
+    <div id="tasks-list"></div>
+    <div class="row">
+      <button class="btn secondary" id="add-task">Add task</button>
+      <button class="btn secondary" id="export-tasks">Export tasks (JSON)</button>
+      <label class="btn secondary file">Import tasks (JSON) <input type="file" id="import-tasks" accept="application/json" hidden></label>
+    </div>
+  </section>
+
+  <section id="protocol" class="card">
+    <h2>5. Protocol</h2>
+    <div class="row">
+      <label class="inline">Protocol <select id="protocol-preset"></select></label>
+      <span class="hint"><button type="button" class="hint-btn" aria-label="About the protocol choice">?</button><span class="tip" role="tooltip" id="protocol-tip"></span></span>
+    </div>
+    <div class="grid3">
+      <label>Regenerations per task, R <input type="number" id="R" min="1" max="10" value="1"></label>
+      <label>Repeat scorings per judge, K <input type="number" id="K" min="1" max="10" value="3"></label>
+      <label>Family-wise α <input type="number" id="alpha" min="0.001" max="0.2" step="0.005" value="0.05"></label>
+      <label>Concurrent calls <input type="number" id="concurrency" min="1" max="8" value="3"></label>
+      <label class="check"><input type="checkbox" id="batched" checked> <span>Batched judging (S4) <span class="hint"><button type="button" class="hint-btn" aria-label="About batched judging">?</button><span class="tip" role="tooltip">All systems' answers to a task go to the judge in one call, with the answer order rotated across repeats so the repeats double as position calibration.</span></span></span></label>
+      <label><span>Baseline system <span class="hint"><button type="button" class="hint-btn" aria-label="About the baseline">?</button><span class="tip" role="tooltip">Pre-registered comparisons are every other system against the baseline, one-sided (system &gt; baseline), Holm-corrected. All other pairs are reported separately as exploratory, two-sided.</span></span></span> <select id="baseline"></select></label>
+    </div>
+    <div class="estimate" id="estimate"></div>
+  </section>
+
+  <section id="run" class="card">
+    <h2>6. Run</h2>
+    <div class="row"><button class="btn primary" id="start">Start run</button><span id="run-status" class="muted"></span></div>
+    <div class="progress"><div class="bar"><span id="bar-gen"></span></div><div class="bar-label">Generation <span id="gen-count"></span></div></div>
+    <div class="progress"><div class="bar"><span id="bar-judge"></span></div><div class="bar-label">Judging <span id="judge-count"></span></div></div>
+    <pre id="log" class="log" aria-live="polite"></pre>
+  </section>
+
+  <section id="results" class="card">
+    <h2>7. Results</h2>
+    <div id="results-body"><p class="muted">No run yet.</p></div>
+  </section>
+
+  <footer class="foot">Reference implementation of “Benchmarking AI Models Efficiently”. Everything runs on your machine; the only network calls are to the model APIs you configured.</footer>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

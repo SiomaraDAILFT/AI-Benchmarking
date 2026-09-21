@@ -1,0 +1,56 @@
+[
+  {
+    "id": "t1",
+    "title": "Collections strategy and default rates (starter task - replace with your own)",
+    "context": "We want to know whether a collections strategy introduced in March reduced 90-day default rates. Accounts were assigned by branch, not randomly, and the branches that adopted early had the worst arrears to begin with. We have 30 months of monthly account-level data.",
+    "question": "What method would you use, and what is the most likely way this analysis produces a confidently wrong answer?",
+    "criteria": [
+      "Names a specific causal-inference method suited to staggered, non-random adoption (e.g. difference-in-differences with staggered adoption, synthetic control, or event study).",
+      "States the identifying assumption explicitly (e.g. parallel trends) and says how it would be checked.",
+      "Identifies selection on pre-period arrears as the principal threat to validity.",
+      "Proposes a concrete pre-trend or placebo test.",
+      "Distinguishes the effect on the treated branches from a population-wide effect.",
+      "Addresses the 90-day outcome window and its interaction with the adoption date (right-censoring).",
+      "Quantifies uncertainty (confidence interval or equivalent) rather than a point estimate alone.",
+      "States what evidence would change the conclusion.",
+      "Avoids unsupported numerical claims.",
+      "Gives a concrete next step for the analyst."
+    ]
+  },
+  {
+    "id": "t2",
+    "title": "Supplier change and defect rate (starter task - replace with your own)",
+    "context": "A car-parts plant switched one component supplier in May. Line defect rates rose in June and July. The plant also changed shift patterns in June, and summer temperatures in the hall were unusually high.",
+    "question": "How would you establish whether the supplier change caused the rise, and what is the most likely way this analysis misleads?",
+    "criteria": [
+      "Separates the three candidate causes (supplier, shift pattern, temperature) explicitly.",
+      "Proposes a design that can attribute the change (e.g. comparison across lines using old versus new components, or a controlled swap).",
+      "Names confounding by the concurrent shift change as the principal threat.",
+      "Uses the temporal ordering of events correctly.",
+      "Proposes a measurement of the component itself (incoming inspection) rather than only the line outcome.",
+      "Considers that defect reporting may have changed with the shift pattern.",
+      "Quantifies uncertainty or states what sample size would be needed.",
+      "States what evidence would change the conclusion.",
+      "Avoids unsupported numerical claims.",
+      "Gives a concrete next step."
+    ]
+  },
+  {
+    "id": "t3",
+    "title": "Promotion uplift in retail (starter task - replace with your own)",
+    "context": "A retailer ran a 20 percent promotion on one category in six of its forty stores for four weeks. Category sales in those six stores rose 35 percent against the same weeks last year. The six stores were chosen by regional managers.",
+    "question": "What method would you use to estimate the uplift, and what is the most likely way this analysis overstates it?",
+    "criteria": [
+      "Identifies manager selection of stores as the principal source of bias.",
+      "Proposes a comparison against contemporaneous control stores rather than only year-on-year.",
+      "Addresses cannibalisation of adjacent categories or pull-forward of demand.",
+      "Distinguishes revenue uplift from unit uplift under a 20 percent discount.",
+      "Proposes a method suited to few treated units (e.g. synthetic control or matched controls).",
+      "Quantifies uncertainty appropriately for six treated stores.",
+      "Mentions the post-promotion period as part of the measurement.",
+      "States what evidence would change the conclusion.",
+      "Avoids unsupported numerical claims.",
+      "Gives a concrete next step."
+    ]
+  }
+]
