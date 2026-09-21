@@ -1,0 +1,15 @@
+{
+  "name": "draco-cost-reduction-framework",
+  "version": "1.0.0",
+  "description": "A formal cost-reduction framework for making DRACO-style multi-system LLM benchmarks practical to run repeatedly. Reference implementation of the equations in paper/main.tex.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "app": "node app/server.mjs"
+  },
+  "files": [
+    "src",
+    "tests",
+    "paper"
+  ]
+}
