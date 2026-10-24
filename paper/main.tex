@@ -826,7 +826,7 @@ zero, and \texttt{low} added only $12\%$ over \texttt{none}. For the second mode
 \texttt{high} consumed $1.75\times$ the tokens of \texttt{low} (per prompt $1.5$--$2.0$),
 with mean answers of $3{,}600$ and $6{,}300$ tokens. Cost ratios equal token ratios to
 two decimals, as they must when input is fixed and output is billed at one rate. Mean
-latency rose from 38 to 126 seconds and from 58 to 97 seconds respectively.
+latency rose from 38 seconds at \texttt{none} to 125 at \texttt{high} for the first model and from 58 to 97 seconds between \texttt{low} and \texttt{high} for the second.
 
 \begin{table}[h]
 \centering
@@ -856,7 +856,7 @@ is material: replacing its illustrative $\alpha = 20$ with the measured values g
 generation-side factor $F_G$ of $25$ to $38$ instead of $189$, and a combined reduction
 (Equation~\ref{eq:cumulative}) of roughly $27$--$66\times$ across the same range of $s$
 and caching assumptions instead of $137$--$222\times$, about one and a half orders of magnitude instead of two. If the expensive setting is the one retained
-(Section~\ref{sec:simplifications}, S1), the same configuration yields $13$--$15\times$.
+(Section~\ref{sec:simplifications}, S1), the same configuration yields $13$--$27\times$.
 The framework's conclusion that the saving is dominated by the generation side and that
 judge count is the wrong place to cut is unchanged; the size of the overall saving is set by $\alpha$, and $\alpha$ must be measured.
 
@@ -1050,8 +1050,8 @@ $1.18$; reasoning tokens $105$--$1{,}435$ at \texttt{high} against $114$--$526$ 
 \texttt{low}), \emph{lower} than its $2.83$ on prose; all ten answers were correct. For
 the second model the pooled ratio is $2.67$ but heavy-tailed: the per-problem ratios are
 $0.97$, $1.22$, $1.76$, $2.12$ and $72.7$, the last from a problem answered correctly in
-$26$ tokens at \texttt{low} and in $1{,}890$ at \texttt{high}; the median is $1.76$, the
-same as its prose value; accuracy was four of five at \texttt{low} and five of five at
+$26$ tokens at \texttt{low} and in $1{,}890$ at \texttt{high}; the median is $1.76$,
+close to its pooled prose value of $1.75$; accuracy was four of five at \texttt{low} and five of five at
 \texttt{high}.
 
 \begin{table}[h]
