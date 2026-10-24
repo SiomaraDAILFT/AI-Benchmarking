@@ -346,7 +346,7 @@ would have achieved, and the best single model matched or exceeded the whole pan
 Nor is diversity of provider a sufficient remedy. Across more than 350 models,
 \citet{kim2025correlated} find that ``larger and more accurate models have highly
 correlated errors, even with distinct architectures and providers''; on one leaderboard dataset ``models agree 60\% of the time when both models err''; and they trace the consequence into LLM-as-judge evaluation directly. Judge independence has to be measured: inter-judge agreement, or an effective-sample-size estimate of the
-kind \citet{kohli2026ninejudges} use, should be reported so that a reader can see how much independent evidence the panel contains, a reporting standard
+kind \citet{kohli2026ninejudges} uses, should be reported so that a reader can see how much independent evidence the panel contains, a reporting standard
 \citet{yang2026judgechanges} also call for after showing that ``an LLM-as-judge score can
 move even when the candidate responses stay fixed, simply because the evaluator has
 changed''. On the aggregation side, methods that model the judges' shared confounder
@@ -430,6 +430,7 @@ Appendix~\ref{app:worked} evaluates Equation~\ref{eq:cumulative} for an illustra
 \label{sec:stats}
 
 \subsection{Test, Aggregation, and Multiple Comparisons}
+\label{sec:test}
 
 The quantity of interest for each pre-registered comparison between two systems is the
 task-level paired difference in score. A paired design is used throughout because every
@@ -442,7 +443,7 @@ system B''), and \emph{pre-specified before any data are collected}: a paired pe
 the null hypothesis of exchangeable signs \citep{ernst2004permutation}, and which does not
 rely on the central-limit approximation that \citet{bowyer2025clt} show to understate
 uncertainty for evaluations with ``fewer than a few hundred datapoints'', which is the regime every task count in this paper falls into. We recommend \emph{against} testing the differences for normality and then choosing between a $t$-test and a non-parametric alternative. The simulation evidence on whether that two-stage procedure inflates the Type~I error rate is mixed \citep{schucany2006, rasch2011pretesting, rochon2012}, and the recommendation does not depend on it: a branch chosen after seeing the data is a researcher degree of freedom of the kind that ``dramatically increases actual false-positive rates'' \citep{simmons2011falsepositive}, and a power calculation derived for one test (Section~\ref{sec:power}) is not valid for whichever test the branch selects.
-A Holm correction \citep{holm1979}, which controls the family-wise error rate at $\alpha$
+A Holm correction \citep{holm1979}, which controls the family-wise error rate at a chosen level $a$
 and is uniformly more powerful than Bonferroni, is applied across the specific, named
 comparisons of interest and not across every pairing the full $C \times C$ comparison matrix could generate, since that would over-correct for hypotheses that were never posed.
 Cohen's
@@ -458,13 +459,13 @@ significant but small effect is a different finding from a significant, large on
 The task-count floor referenced in Section~\ref{sec:simplifications} is computed from the
 standard paired-sample size formula,
 \begin{equation}
-n^* = \frac{(z_{\alpha'} + z_\beta)^2 \sigma^2}{\delta^2},
+n^* = \frac{(z_{a'} + z_{\pi})^2 \sigma^2}{\delta^2},
 \label{eq:power}
 \end{equation}
-one-sided, with $\alpha'$ the Holm-corrected per-comparison significance level (the smallest threshold the correction procedure can demand across the pre-registered comparisons; using the uncorrected family-wise $\alpha$ here systematically understates the requirement), $\sigma$
+one-sided, with $a'$ the Holm-corrected per-comparison significance level (the smallest threshold the correction procedure can demand across the pre-registered comparisons; using the uncorrected family-wise $a$ here systematically understates the requirement), $z_{\pi}$ the standard normal quantile at the intended power $\pi$, $\sigma$
 the observed standard deviation of task-level paired differences from a pilot run, and
-$\delta$ the minimum effect size worth detecting, a decision made before the pilot runs. Equation~\ref{eq:power} is the one-sided form of the standard
-normal-approximation sample-size formula; \citet{miller2024errorbars} derive the
+$\delta$ the minimum effect size worth detecting, a decision made before the pilot runs. Statistics texts usually write the significance level as $\alpha$ and the power as $1-\beta$; we use $a$ and $\pi$ because $\alpha$ is already the setting-cost ratio of S1 and $\beta$ the batching factor of S4. Equation~\ref{eq:power} is the one-sided form of the standard
+normal-approximation sample-size formula; \citet{miller2024errorbars} derives the
 two-sided version for language-model evaluations and decompose the variance, a result this paper relies on. Writing $\omega^2$ for the variance of the \emph{true} task-level paired
 difference across tasks and $\sigma_A^2$, $\sigma_B^2$ for the within-task variance of each
 system's score across regenerations, the variance of an observed paired difference
@@ -476,11 +477,11 @@ averaged over $R$ regenerations is
 which makes explicit an interaction the simplifications of
 Section~\ref{sec:simplifications} would otherwise hide: S2 (fewer regenerations) raises the
 second term and therefore raises $n^*$, so that some of what S2 saves on generation is
-returned as additional tasks under S6. \citet{miller2024errorbars} also give the stopping
+returned as additional tasks under S6. \citet{miller2024errorbars} also gives the stopping
 rule for regenerations: once $(\sigma_A^2 + \sigma_B^2)/R \ll \omega^2$, further
 regenerations ``will have little effect on the standard error'', and the pilot's estimates
-of $\omega^2$ and $\sigma^2_{A,B}$ are what determine where that point lies. The normal approximation is only a first approximation: the actual test in
-Section~\ref{sec:stats} is a permutation test on a finite sample, $\sigma$ itself is
+of $\omega^2$ and $\sigma^2_{A,B}$ are what determine where that point lies. Equation~\ref{eq:power} is a starting point and no more: the test actually used
+(Section~\ref{sec:test}) is a permutation test on a finite sample, $\sigma$ itself is
 estimated, and \citet{bowyer2025clt} show that central-limit-based intervals are
 unreliable below a few hundred tasks. A simulation-based re-check of $n^*$ against the
 permutation test, using pilot data, is therefore part of the protocol.
@@ -747,17 +748,18 @@ Reduction, cached-read pricing ($F_J = 108$) & $176\times$ & $154\times$ & $137\
 \end{tabular}
 \caption{Combined reduction from S1--S4 and S6 (Equation~\ref{eq:cumulative}) for the
 worked instance, with $F_G = 189$. Multiplying every factor against the total cost
-would give $2{,}625\times$ for the same inputs, the overstatement Section~\ref{sec:cumulative}
-describes. The reference implementation reproduces every entry of this table
+would give $(1+\alpha) \cdot E \cdot R \cdot K \cdot \beta \cdot T_{\text{full}}/n^* = 5{,}670\times$
+for the same inputs without caching and $2{,}268\times$ with it, the overstatement
+Section~\ref{sec:cumulative} describes. The reference implementation reproduces every entry of this table
 (\texttt{tests/simplifications.test.mjs}).}
 \label{tab:cumulative}
 \end{table}
 
 \subsection{The task floor $n^*$}
 
-For three pre-registered comparisons at family-wise $\alpha = 0.05$, Holm's smallest
-per-comparison threshold is $\alpha' = 0.05/3$; one-sided, $z_{\alpha'} \approx 2.13$.
-At $80\%$ power, $z_\beta \approx 0.84$. With a pilot standard deviation of task-level
+For three pre-registered comparisons at family-wise $a = 0.05$, Holm's smallest
+per-comparison threshold is $a' = 0.05/3$; one-sided, $z_{a'} \approx 2.13$.
+At power $\pi = 0.8$, $z_{\pi} \approx 0.84$. With a pilot standard deviation of task-level
 paired differences $\sigma = 19$ points on a $100$-point scale and a minimum effect
 worth detecting of $\delta = 5$ points, Equation~\ref{eq:power} gives $n^* = 128$ tasks.
 By Equation~\ref{eq:variance-decomposition}, if that $\sigma$ was measured at $R = 3$
