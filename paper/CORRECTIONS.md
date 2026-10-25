@@ -94,3 +94,11 @@ Every figure in Appendix C was recomputed from the E1 call table and the E3 tabl
 - Appendix C.4: "Four explanations ... survive scrutiny", followed by E3, which tests the first of them (task family) and does not support it. Now "four candidate explanations", with a sentence pointing to E3's result.
 - Appendix C.3, procedure: the first run was stamped UTC but the retry window (08:55 to 09:10) had no time zone. UTC added.
 - Appendix C.5, interpretation: the ratio was said to stay "within a factor of two to three on both task families". The pooled ratios are 1.48, 1.75, 2.67 and 2.83, so the lowest is below two. Now "between about one and a half and three (1.48 to 2.83)".
+
+## 25 October 2026, 20:14 pass
+
+Checked this time: the cost-model algebra of Section 4 (the batching saving and the reduction of the cached formula at c = w = 1 both hold), every figure of Appendix B's call counts, batching factors and Table 4 (all recompute), and the S4 quotations from BatchEval and Batch Prompting against their abstracts (both exact).
+
+- Section 4 and S4, the symbol w: it was called "the cache-write premium on the first call" and "cache-write premium", but the formulas use it as the price of that call as a multiple of the standard input price (they reduce to the uncached case at w = 1, and Appendix B gives w = 1 for OpenAI and Google, 1.25 for Anthropic). A premium in that sense would be 0.25. Now "the price of the first, cache-writing call as a multiple of the standard input price (w = 1 where no write premium is charged)" and "cache-write multiple".
+- Section 4, after the total: "cost is the product of six design choices". The total is E R T (C g + J K j'): three choices multiply the whole cost and the other three each multiply one of its two terms. The sentence now says that; the call counts that follow were right.
+- Section 6: generation dominating the budget was called "the usual case by the argument of S5". Since the 05:15 pass, S5 makes it conditional (a generation call has to cost several times a judging call, because J K is often larger than C). The sentence now states the condition instead of calling it usual.

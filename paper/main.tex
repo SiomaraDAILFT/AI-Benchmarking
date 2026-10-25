@@ -179,7 +179,7 @@ force at the time of writing. A task description together with a rubric of sever
 of criteria will usually exceed the published minimum prefix lengths, although not always: a forty-criterion rubric on its own measured below one provider's minimum and drew no cached tokens (Appendix~\ref{app:measurements}), so the prefix length should be checked. The $C$ calls that score one task's answers naturally fall within a single
 cache lifetime. Writing $c$
 for the cached-read price as a fraction of the standard input price and $w$ for the
-cache-write premium on the first call, the unbatched judging cost with caching is
+price of the first, cache-writing call as a multiple of the standard input price ($w = 1$ where no write premium is charged), the unbatched judging cost with caching is
 \begin{equation}
 J_u^{\text{cached}} = E \cdot R \cdot T \cdot J \cdot K \cdot \big[\,(w + (C-1)\,c)\,
 j_{\text{fixed}} + C \cdot j_{\text{marginal}}\,\big],
@@ -199,7 +199,7 @@ Section~\ref{sec:simplifications} (S4) shows that caching weakens the case for b
 \label{eq:total}
 \end{equation}
 
-Equation~\ref{eq:total} shows the problem: cost is the \emph{product} of six design choices. The number of generation
+Equation~\ref{eq:total} shows the problem: three of the six design choices ($E$, $R$ and $T$) multiply the whole cost, and each of the other three multiplies one of its two terms. The number of generation
 calls is $C \cdot E \cdot R \cdot T$ and the number of unbatched judging calls is that
 quantity multiplied again by $J \cdot K$, so a configuration that looks modest on every
 individual dimension implies call counts in the thousands and tens of thousands
@@ -280,7 +280,7 @@ Showing a judge all $C$ systems' answers to the same task in one call, instead o
 \qquad \rho \equiv \frac{j_{\text{marginal}}}{j_{\text{fixed}}},
 \label{eq:s4}
 \end{equation}
-with $c$ and $w$ the cached-read fraction and cache-write premium of
+with $c$ and $w$ the cached-read fraction and cache-write multiple of
 Equation~\ref{eq:judging-cached}. Without caching ($c = w = 1$) this is
 $C(1+\rho)/(1+C\rho)$: it approaches $C$ as $\rho \to 0$ (the fixed overhead dominates the
 per-call cost, so batching amortises it across all $C$ answers) and approaches $1$ as
@@ -413,7 +413,7 @@ J_{\text{full}}/F_J$, so
 J_{\text{full}}/F_J} = \left( \frac{1-s}{F_G} + \frac{s}{F_J} \right)^{-1},
 \label{eq:cumulative}
 \end{equation}
-a weighted harmonic mean of $F_G$ and $F_J$, which always lies between them. As $s \to 0$ the reduction tends to $F_G$, so when generation dominates the budget, the usual case by the argument of S5, the judging-side
+a weighted harmonic mean of $F_G$ and $F_J$, which always lies between them. As $s \to 0$ the reduction tends to $F_G$, so when generation dominates the budget, which by S5 needs a generation call to cost several times a judging call, the judging-side
 simplifications S3 and S4 contribute almost nothing to the combined figure, however large
 their own factors. The naive product $F_G \cdot E \cdot K \cdot \beta$ (equivalently, all
 factors applied to the whole budget) exceeds the exact reduction by a factor that grows
