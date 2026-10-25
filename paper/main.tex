@@ -327,7 +327,7 @@ equal to
 \frac{(J-1) \cdot K \cdot j'}{C \cdot g + J \cdot K \cdot j'}.
 \label{eq:s5frac}
 \end{equation}
-Whenever generation cost dominates judging cost, that is, whenever $C \cdot g \gg J \cdot K \cdot j'$, which holds when the judge is a cheaper model than the systems it scores, this fraction is small. Reducing $J$ saves little in absolute terms and removes the one thing judge count provides, evidence about whether the result depends on which judge was used. A single judge still yields a confidence interval
+Whenever generation cost dominates judging cost, that is, whenever $C \cdot g \gg J \cdot K \cdot j'$, this fraction is small. A cheaper judge is not enough on its own for that: $J \cdot K$ is often larger than $C$ ($15$ against $5$ in the worked instance of Appendix~\ref{app:worked}), so a generation call has to cost several times a judging call. Reducing $J$ saves little in absolute terms and removes the one thing judge count provides, evidence about whether the result depends on which judge was used. A single judge still yields a confidence interval
 across \emph{tasks}; what it cannot yield is any estimate of judge-to-judge variation, so
 the resulting interval is conditional on that one judge and treats its idiosyncrasies as
 ground truth (Section~\ref{sec:limitations} returns to this in the language of
@@ -892,7 +892,7 @@ the question. The five prompts, verbatim:
 \end{description}
 
 \textbf{Procedure.} Calls were made sequentially in the order model $\times$ effort
-$\times$ prompt, one call per cell, on 11 September 2026 between 07:41 and 08:20 local time
+$\times$ prompt, one call per cell, on 11 September 2026 between 07:41 and 08:20 UTC
 (the first run) and 08:55 to 09:10 (retries). Six calls failed with the provider's HTTP 500
 ``server error'' and were retried, up to three times with a delay, until they succeeded;
 the retried cells are marked in Table~\ref{tab:e1-calls}. No call was excluded. No call
