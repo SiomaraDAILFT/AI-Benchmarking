@@ -98,7 +98,7 @@ panel. \emph{Consumer parallel-chat products} \citep{allchat2026}, which send on
 to several assistants and return a consensus answer, are structurally closer to a panel
 but do not, to our knowledge, publish a benchmark score of any kind.
 
-Because judge choice alone moves published DRACO scores by a wide margin (Appendix~\ref{app:published}), comparisons across those numbers should be read as directional at best. Section~\ref{sec:stats} treats the judge as a source of variance for that reason.
+Because judge choice alone moves published DRACO scores by a wide margin (Appendix~\ref{app:published}), comparisons across those numbers should be read as directional at best. For that reason S5 (Section~\ref{sec:simplifications}) argues against reducing the number of judges, and Section~\ref{sec:limitations} explains that the interval of Section~\ref{sec:stats} is conditional on the judges used.
 
 Combining several models' outputs has its own evidence base: sampling several answers from one model and keeping the most consistent one \citep{wang2023selfconsistency}, ranking and fusing the candidates of several open models \citep{jiang2023llmblender}, and layered mixture-of-agents designs, one of which, built only from open models, reached $65.1\%$ on a judge-scored instruction-following benchmark against $57.5\%$ for GPT-4 Omni \citep{wang2024moa}. That benchmark scores length-controlled win rates because its judge favours longer answers \citep{dubois2024lengthcontrolled}, which is one reason Section~\ref{sec:stats} treats the judge as a source of error. Multi-agent debate over several rounds improves factual accuracy and reasoning relative to a single instance \citep{du2023multiagent, liang2024encouraging}. The same literature supplies a caution. \citet{zhang2025stopovervaluing} argue that reported debate gains are often confounded with extra compute or more diverse models, and \citet{cemri2025mast}, who annotated more than 1,600 multi-agent traces, sort the failures into three groups: system design, misalignment between agents, and task verification. Both are reasons to take the statistics of the scoring (Section~\ref{sec:stats}) as seriously as the comparison itself.
 
@@ -240,7 +240,7 @@ difference) before the sweep is dropped.
 
 \subsection{S2: Reducing answer regenerations}
 
-Reducing $R$ regenerations to $1$ saves a factor of $R$ on both generation cost (Equation~\ref{eq:generation}) and judging cost (Equations~\ref{eq:judging-unbatched}--\ref{eq:judging-cached}), since both scale linearly with $R$. \textbf{What is lost}: any way of telling whether a single answer was a representative draw from the system's output distribution or an unusually good or bad one. That distribution is not degenerate even at temperature zero. A production endpoint returned 80 distinct completions in 1{,}000 identical requests, a consequence of server-side batching acting through floating-point non-associativity \citep{thinkingmachines2025}, and the mechanism reproduces in open-weight models, moving greedy-decoding accuracy by up to 9 points with batch size and hardware \citep{yuan2025nondeterminism}. At the level of evaluations, accuracy varied by up to 15 points across ten ``deterministic'' runs of five models on eight tasks \citep{atil2024nondeterminism}; between 48\% and 76\% of code-generation tasks produced no two identical outputs across repeated requests, with temperature zero reducing but not removing the effect \citep{ouyang2023nondeterminism}; the choice between greedy decoding and sampling shifts measured performance \citep{song2024greedy}; and \citet{madaan2024variance}, measuring the variance across seeds and checkpoints, ``encourage practitioners to carefully factor in variance when comparing models''. At $R = 1$ this within-system variance is not removed; it goes unmeasured and is absorbed into whatever difference the benchmark reports. Where S2 is applied, the decoding configuration should be fixed and stated, and the pilot of Section~\ref{sec:validation} should include a small multi-regeneration subset so that the size of the ignored variance is at least estimated.
+Reducing $R$ regenerations to $1$ saves a factor of $R$ on both generation cost (Equation~\ref{eq:generation}) and judging cost (Equations~\ref{eq:judging-unbatched}--\ref{eq:judging-cached}), since both scale linearly with $R$. \textbf{What is lost}: any way of telling whether a single answer was a representative draw from the system's output distribution or an unusually good or bad one. That distribution is not degenerate even at temperature zero. An open-weight model (Qwen3-235B), sampled 1{,}000 times at temperature zero on the same prompt, returned 80 distinct completions, a consequence of server-side batching acting through floating-point non-associativity \citep{thinkingmachines2025}, and in an open-weight reasoning model the same numerical cause moves greedy-decoding accuracy by up to 9 points with batch size and hardware \citep{yuan2025nondeterminism}. At the level of evaluations, accuracy varied by up to 15 points across ten ``deterministic'' runs of five models on eight tasks \citep{atil2024nondeterminism}; between 48\% and 76\% of code-generation tasks produced no two identical outputs across repeated requests, with temperature zero reducing but not removing the effect \citep{ouyang2023nondeterminism}; the choice between greedy decoding and sampling shifts measured performance \citep{song2024greedy}; and \citet{madaan2024variance}, measuring the variance across seeds and checkpoints, ``encourage practitioners to carefully factor in variance when comparing models''. At $R = 1$ this within-system variance is not removed; it goes unmeasured and is absorbed into whatever difference the benchmark reports. Where S2 is applied, the decoding configuration should be fixed and stated, and the pilot of Section~\ref{sec:validation} should include a small multi-regeneration subset so that the size of the ignored variance is at least estimated.
 
 \subsection{S3: Reducing judge repeat-scorings}
 
@@ -505,8 +505,8 @@ simply altering their order of appearance'', to the point that a weaker open-wei
 was preferred over a stronger proprietary assistant on 66 of 80 queries under one
 ordering, and \citet{zheng2023judging} report
 the same effect; in a small measurement made for this paper, three answers graded
-together under an absolute rubric kept their ranking across three orderings while an
-individual score moved by up to 17 points (Appendix~\ref{app:measurements}). The remedy those authors propose, balanced position calibration (scoring under several orderings and aggregating), multiplies the number of judge calls and so consumes part of what S4 saved. Batched, anonymised, order-randomised presentation
+together under an absolute rubric kept their ranking in two of three orderings, with the
+top two swapping places in the third, and an individual score moved by up to 17 points (Appendix~\ref{app:measurements}). The remedy those authors propose, balanced position calibration (scoring under several orderings and aggregating), multiplies the number of judge calls and so consumes part of what S4 saved. Batched, anonymised, order-randomised presentation
 under explicit absolute-scoring instructions, with the order varied across the $K$ repeats
 of S3 so that the repeats double as position calibration, is our recommended way to obtain
 calibration context without fully sacrificing independence; the S4 discussion in
@@ -804,9 +804,9 @@ deviation $6.1$, range $17$ points. A single scoring of this answer could have f
 \textbf{Order sensitivity (S4, Section~\ref{sec:calibration}).} The three answers were
 scored together in one call, under explicit instructions to grade each independently
 against the absolute rubric, in three rotations of their order. The ranking of the three
-answers was the same in all three orderings; their absolute scores were not. The
+answers was the same in the first two orderings; in the third, the strongest answer scored two points below the middle one, and the weakest stayed last. The
 strongest answer scored 60, 65 and 48 depending on position, the middle one 45, 55 and 50,
-the weakest 25, 25 and 20. Order alone moved an absolute score by up to 17 points while leaving the ranking intact. Section~\ref{sec:related} notes that the choice of judge moves published DRACO scores; here the order of presentation moved them within one judge, and that is the reason Section~\ref{sec:calibration} asks for the order to be varied across the $K$ repeats.
+the weakest 25, 25 and 20. Order alone moved an absolute score by up to 17 points and, in one ordering, swapped the top two answers. Section~\ref{sec:related} notes that the choice of judge moves published DRACO scores; here the order of presentation moved them within one judge, and that is the reason Section~\ref{sec:calibration} asks for the order to be varied across the $K$ repeats.
 
 \subsection{The setting-cost ratio $\alpha$ (experiment E1)}
 
@@ -824,8 +824,8 @@ $1.5$--$4.0$) and $3.2\times$ those of \texttt{none}; at \texttt{high} the provi
 reported between $1{,}024$ and $4{,}068$ reasoning tokens per answer, at \texttt{none}
 zero, and \texttt{low} added only $12\%$ over \texttt{none}. For the second model
 \texttt{high} consumed $1.75\times$ the tokens of \texttt{low} (per prompt $1.5$--$2.0$),
-with mean answers of $3{,}600$ and $6{,}300$ tokens. Cost ratios equal token ratios to
-two decimals, as they must when input is fixed and output is billed at one rate. Mean
+with mean answers of $3{,}600$ and $6{,}300$ tokens. Cost ratios are slightly
+lower than the token ratios ($2.80$, $3.14$ and $1.74$ against $2.83$, $3.18$ and $1.75$; both are $1.12$ for \texttt{low} against \texttt{none}), because the same input cost is added at both settings. Mean
 latency rose from 38 seconds at \texttt{none} to 125 at \texttt{high} for the first model and from 58 to 97 seconds between \texttt{low} and \texttt{high} for the second.
 
 \begin{table}[h]
@@ -909,8 +909,8 @@ below the caching minimum). Latency is wall-clock time of the HTTP request.
 
 \textbf{Analysis.} For each model and pair of settings, $\alpha$ is the ratio of the
 \emph{sums} of output tokens over the five prompts (pooled ratio); the per-prompt ratios
-are reported alongside as the range. The cost ratio is computed the same way and equals the
-token ratio to two decimals because input is identical across settings. No statistical test
+are reported alongside as the range. The cost ratio is computed the same way; it is slightly lower than the
+token ratio, by at most $0.04$, because the identical input cost is added to both sums. No statistical test
 is applied: with five prompts the result is a point estimate with a stated range, offered
 as evidence that $\alpha$ is task-dependent and not as an estimate of $\alpha$ for any task population.
 
@@ -933,7 +933,7 @@ Prompts & thousands (suite total) & five \\
 Repeats & per suite & one call per cell \\
 Token accounting & suite-total output tokens & provider usage fields per call \\
 Instruction & benchmark harness prompts & ``answer thoroughly, use headings'' \\
-Result & $23\times$ (3.5M $\to$ 82M) & $1.75\times$; $2.83\times$ ($3.18\times$ vs \texttt{none}) \\
+Result & $23\times$ (3.5M $\to$ 82M) & $2.83\times$ ($3.18\times$ vs \texttt{none}); $1.75\times$ \\
 \bottomrule
 \end{tabular}
 \end{center}
