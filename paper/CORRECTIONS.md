@@ -97,7 +97,7 @@ Every figure in Appendix C was recomputed from the E1 call table and the E3 tabl
 
 ## 25 October 2026, 20:14 pass
 
-Checked this time: the cost-model algebra of Section 4 (the batching saving and the reduction of the cached formula at c = w = 1 both hold), every figure of Appendix B's call counts, batching factors and Table 4 (all recompute), and the S4 quotations from BatchEval and Batch Prompting against their abstracts (both exact).
+Checked this time: the cost-model algebra of Section 4 (the batching saving and the reduction of the cached formula at c = w = 1 both hold), every figure of Appendix B's call counts, batching factors and the combined-reduction table (all recompute), and the S4 quotations from BatchEval and Batch Prompting against their abstracts (both exact).
 
 - Section 4 and S4, the symbol w: it was called "the cache-write premium on the first call" and "cache-write premium", but the formulas use it as the price of that call as a multiple of the standard input price (they reduce to the uncached case at w = 1, and Appendix B gives w = 1 for OpenAI and Google, 1.25 for Anthropic). A premium in that sense would be 0.25. Now "the price of the first, cache-writing call as a multiple of the standard input price (w = 1 where no write premium is charged)" and "cache-write multiple".
 - Section 4, after the total: "cost is the product of six design choices". The total is E R T (C g + J K j'): three choices multiply the whole cost and the other three each multiply one of its two terms. The sentence now says that; the call counts that follow were right.
