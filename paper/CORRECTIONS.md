@@ -105,7 +105,7 @@ Checked this time: the cost-model algebra of Section 4 (the batching saving and 
 
 ## 25 October 2026, 22:27 pass
 
-Checked this time, each claim by two independent readers and then by hand: the E1 call table against its prices and the stated total (\$2.17 recomputes), the E2 run log (experiments/results/e2-judge-cache-run.log) against the order-sensitivity paragraph, and the Thinking Machines post against S2.
+Checked this time, each claim by two independent readers and then by hand: the E1 call table against its prices and the stated total ($2.17 recomputes), the E2 run log (experiments/results/e2-judge-cache-run.log) against the order-sensitivity paragraph, and the Thinking Machines post against S2.
 
 - Appendix C, E2 order sensitivity, and Section 7.3: the ranking of the three answers was said to be the same in all three orderings and "intact". The run log gives the strongest answer 60, 65 and 48 and the middle one 45, 55 and 50 by rotation, so in the third rotation the top two swap (48 against 50). All three places now say the ranking held in two of three orderings and the top two swapped in the third. The 17-point spread (65 to 48) was right.
 - Appendix C, E1 result and C.3 analysis: cost ratios were said to equal token ratios "to two decimals, as they must". A fixed input cost added at both settings pulls the cost ratio towards one. From the E1 call table at the stated prices the cost ratios are 2.80, 3.14 and 1.74 against token ratios of 2.83, 3.18 and 1.75 (both 1.12 for low against none), which the run log also prints (1.75 by tokens, 1.74 by cost). Both sentences now say the cost ratio is slightly lower, by at most 0.04.
