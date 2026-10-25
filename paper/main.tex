@@ -338,8 +338,8 @@ DRACO's own authors found that one of their three judges ``consistently assigned
 scores than the other two'' \citep{draco2026}.
 
 Judge count buys independent evidence only if the judges' errors are independent.
-\citet{kohli2026ninejudges} shows that a panel of nine frontier models drawn from
-different families delivered only about two effective votes' worth of information, because
+\citet{kohli2026ninejudges} shows that a panel of nine frontier models from seven
+families, tested on three natural-language-inference datasets, delivered only about two effective votes' worth of information, because
 roughly three quarters of the panel's nominal independence was lost to shared errors on
 the same items; the panel's accuracy fell 8--22 points short of what independent voting
 would have achieved, and the best single model matched or exceeded the whole panel.
@@ -375,15 +375,15 @@ leader may change by merely removing a low-ranked model from the benchmark''; an
 \citet{vivek2024anchor} find that ``1--30 anchor points outperforms uniform sampling and
 other baselines at accurately ranking models''. Those figures do not transfer directly. The compressed benchmarks in that literature start from thousands of
 multiple-choice items with a large pool of previously evaluated models from which item
-informativeness can be estimated; a DRACO-style benchmark starts from tens of open-ended
-tasks and no such pool, so the curated-subset methods are available only once several
+informativeness can be estimated; a DRACO-style benchmark starts from about a hundred open-ended
+tasks (DRACO has 100) and no such pool, so the curated-subset methods are available only once several
 rounds of retained raw data (Section~\ref{sec:stats}) exist. And any informed selection
 of tasks must itself be fixed before the systems are run, or task selection becomes one
 more researcher degree of freedom \citep{simmons2011falsepositive}. Until then, S6 reduces
 $T$ by pre-registered stratified sampling from the task domains, and Equation~\ref{eq:power}
 sets the floor. The endpoint towards which S6 develops, once several rounds of retained raw data exist, is already described in that literature: adaptive item selection driven by an item
 response model, which \citet{hofmann2025fluid} show attains higher validity and lower
-variance on a large benchmark ``with fifty times fewer items'', and subset evaluation with
+variance on MMLU ``with fifty times fewer items'', and subset evaluation with
 confidence intervals of valid frequentist coverage, for which \citet{wu2026faq} report
 effective-sample-size gains of up to five times over uniform sampling.
 

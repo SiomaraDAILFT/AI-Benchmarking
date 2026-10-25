@@ -79,3 +79,9 @@ Checked against the cited papers' own abstracts on arXiv.
 - Section 5, S1, Guedes de Souza et al.: their "generation budget" is the maximum number of output tokens (64 to 4,096), not a reasoning-effort setting, and S1 is about effort settings. The sentence now says what was varied, so the reader can judge how far it carries over.
 - Section 5, S1, Frohn et al.: cited only for "varied by model family" and a low-effort configuration being most accurate. Their abstract also reports that higher effort had a significant positive trend overall. The sentence now gives both.
 - Section 5, S3: "judge repeats are inexpensive relative to generation (Section 4)". Section 4 defines the costs but does not compare them; the comparison is made in S5. The pointer now goes there and the claim says "usually".
+
+## 25 October 2026, 16:14 pass
+
+- Section 5, S5, Kohli: the nine judges were said to be "drawn from different families". The abstract says nine frontier models from seven families, tested on three natural-language-inference datasets. Both facts are now in the sentence; the second matters because the paper applies the result to open-ended judging.
+- Section 5, S6: a DRACO-style benchmark was said to start "from tens of open-ended tasks". DRACO itself has 100 (Section 2.1, Appendix A). Now "about a hundred (DRACO has 100)".
+- Section 5, S6, Hofmann et al.: the result was placed on "a large benchmark"; their abstract gives it for MMLU. Named.
