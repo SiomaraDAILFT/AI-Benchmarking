@@ -60,3 +60,10 @@ Checked against the cited papers' own abstracts on arXiv.
 - Appendix A: DRACO's tasks were said to come from "users in 40 countries". The DRACO abstract says the tasks "draw on information sources from 40 countries"; that is what it now says.
 - Section 2.1: the tasks were said to be "curated" and the questions "asked by real users". The DRACO abstract says the sampled requests were "filtered and augmented". The text now says so, gives the task count as 100 (Appendix A's figure) rather than "on the order of a hundred", and says the authors edited and augmented each question.
 - Section 5, S1: Snell et al. were cited for a smaller model beating one 14 times larger. Their abstract limits this to a FLOPs-matched comparison on problems where the smaller model already has non-trivial success; the condition is now in the sentence.
+
+## 25 October 2026, 11:15 pass
+
+- Section 7.2: "Miller derives the two-sided version ... and decompose the variance". The second verb was missed in the 24 October agreement fix; now "decomposes".
+- Section 8, Phase 0: Philipp et al.'s best evaluator was said to reach agreement "at the physicians' own ceiling" (kappa 0.694 against 0.709). Their v2 abstract says "consistent with the physician ceiling ... though wide confidence intervals limit interpretation". The sentence now says consistent with, and keeps their caveat.
+- Bibliography, Philipp et al.: the address pointed to the latest version. Version 3 (6 October 2026) has a new title and an abstract without the two passages Section 8 quotes; those are in v2, which the entry already named. The address now pins v2 and the note says what changed in v3.
+- Conclusion: the combined reduction was called "a harmonic mean" of the two factors. Section 6 and Equation 11 make it a weighted harmonic mean (weights 1-s and s); the conclusion now says weighted.
