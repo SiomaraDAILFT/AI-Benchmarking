@@ -85,3 +85,12 @@ Checked against the cited papers' own abstracts on arXiv.
 - Section 5, S5, Kohli: the nine judges were said to be "drawn from different families". The abstract says nine frontier models from seven families, tested on three natural-language-inference datasets. Both facts are now in the sentence; the second matters because the paper applies the result to open-ended judging.
 - Section 5, S6: a DRACO-style benchmark was said to start "from tens of open-ended tasks". DRACO itself has 100 (Section 2.1, Appendix A). Now "about a hundred (DRACO has 100)".
 - Section 5, S6, Hofmann et al.: the result was placed on "a large benchmark"; their abstract gives it for MMLU. Named.
+
+## 25 October 2026, 18:14 pass
+
+Every figure in Appendix C was recomputed from Table 8 (E1 calls) and Table 7 (E3): totals, means, pooled and per-prompt ratios, latencies and the \$2.17 spend all hold. Four text faults:
+
+- Appendix A, opening: "All access dates are September 2026." The Microsoft post was re-checked at its new address on 25 October (the 07:15 pass). The sentence and the bibliography note now say so.
+- Appendix C.4: "Four explanations ... survive scrutiny", followed by E3, which tests the first of them (task family) and does not support it. Now "four candidate explanations", with a sentence pointing to E3's result.
+- Appendix C.3, procedure: the first run was stamped UTC but the retry window (08:55 to 09:10) had no time zone. UTC added.
+- Appendix C.5, interpretation: the ratio was said to stay "within a factor of two to three on both task families". The pooled ratios are 1.48, 1.75, 2.67 and 2.83, so the lowest is below two. Now "between about one and a half and three (1.48 to 2.83)".

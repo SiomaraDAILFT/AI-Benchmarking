@@ -606,7 +606,7 @@ Rigour in a DRACO-style benchmark is expensive by construction, because its cost
 \label{app:published}
 
 This appendix records the named, dated figures behind Sections~\ref{sec:draco}
-and~\ref{sec:strengths}. Each was checked against the primary page cited; where a primary page no longer resolves, the entry records this. All access dates are September 2026.
+and~\ref{sec:strengths}. Each was checked against the primary page cited; where a primary page no longer resolves, the entry records this. All access dates are September 2026, except that the Microsoft post was re-checked at its new address on 25 October 2026.
 
 \subsection{The benchmark}
 
@@ -893,7 +893,7 @@ the question. The five prompts, verbatim:
 
 \textbf{Procedure.} Calls were made sequentially in the order model $\times$ effort
 $\times$ prompt, one call per cell, on 11 September 2026 between 07:41 and 08:20 UTC
-(the first run) and 08:55 to 09:10 (retries). Six calls failed with the provider's HTTP 500
+(the first run) and 08:55 to 09:10 UTC (retries). Six calls failed with the provider's HTTP 500
 ``server error'' and were retried, up to three times with a delay, until they succeeded;
 the retried cells are marked in Table~\ref{tab:e1-calls}. No call was excluded. No call
 reached the output cap (all finish reasons \texttt{stop} or \texttt{end\_turn}).
@@ -979,9 +979,9 @@ gpt-5.6-sol & none & 5 telecoms & 125 & 1234 & 0 & 39 & stop \\
 \subsection{Why the two measurements of $\alpha$ differ}
 \label{app:alpha-why}
 
-Four explanations for the distance between the published $23\times$ and the measured
-$1.75$--$3.2\times$ survive scrutiny; none of them is a contradiction, and
-together they make $\alpha$ a quantity that must be measured on the tasks of interest.
+Four candidate explanations for the distance between the published $23\times$ and the measured
+$1.75$--$3.2\times$ are set out below; none of them is a contradiction, and
+together they make $\alpha$ a quantity that must be measured on the tasks of interest. Experiment E3 (Section~\ref{app:e3}) tests the first of them and does not support it.
 
 \textbf{Task family.} The published figure was measured on an evaluation suite composed of
 ``MMLU-Pro, GPQA Diamond, Humanity's Last Exam, LiveCodeBench, SciCode, AIME, IFBench
@@ -1080,8 +1080,8 @@ model, a hard problem, and a public 2025 problem set is likely to have been seen
 training of models released in 2026. What E3 does show is consistent with the
 effort-semantics and model-generation explanations of Section~\ref{app:alpha-why}: for
 these models the \texttt{low} setting already spends reasoning where the model judges it
-necessary and the \texttt{high} setting adds little where it does not, so the ratio stays
-within a factor of two to three on both task families, with a heavy tail on individual
+necessary and the \texttt{high} setting adds little where it does not, so the pooled ratio stays
+between about one and a half and three on both task families ($1.48$ to $2.83$), with a heavy tail on individual
 items. The published $23\times$ is therefore best read as a property of a particular 2025
 model, whose effort levels behaved as coarse switches, on a suite that was hard for it at
 the time, and not a constant of the effort setting. A test of task family that survives
