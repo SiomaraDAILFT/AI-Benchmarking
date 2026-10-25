@@ -73,3 +73,9 @@ Checked against the cited papers' own abstracts on arXiv.
 - Section 1: Arena-Hard and length-controlled AlpacaEval were both called benchmarks "derived from" the crowdsourced leaderboards. Arena-Hard is built from Chatbot Arena prompts; AlpacaEval is not built from Arena but is checked against it (its abstract reports the Spearman correlation with Chatbot Arena rising from 0.94 to 0.98). The sentence now says "built from them or checked against them".
 - Section 2.2, mixture of agents: the 57.5% was given for "the strongest single proprietary model at the time". The abstract names GPT-4 Omni and says nothing about it being the strongest; it also says the 65.1% mixture used only open-source models. The sentence now names GPT-4 Omni and says the mixture was built only from open models.
 - Section 2.2, Cemri et al.: they were said to trace "a substantial share of failures to evaluation and verification design rather than to the agents' reasoning". Their abstract sorts failures into three categories (system design, inter-agent misalignment, task verification) and makes no comparison with the agents' reasoning. The sentence now gives the three categories.
+
+## 25 October 2026, 14:14 pass
+
+- Section 5, S1, Guedes de Souza et al.: their "generation budget" is the maximum number of output tokens (64 to 4,096), not a reasoning-effort setting, and S1 is about effort settings. The sentence now says what was varied, so the reader can judge how far it carries over.
+- Section 5, S1, Frohn et al.: cited only for "varied by model family" and a low-effort configuration being most accurate. Their abstract also reports that higher effort had a significant positive trend overall. The sentence now gives both.
+- Section 5, S3: "judge repeats are inexpensive relative to generation (Section 4)". Section 4 defines the costs but does not compare them; the comparison is made in S5. The pointer now goes there and the claim says "usually".
