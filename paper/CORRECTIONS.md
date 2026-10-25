@@ -52,3 +52,11 @@ Checked against the sources themselves this time (arXiv's abstract page and the 
 - Bibliography, van der Maden et al.: the 05:15 pass changed its month to April because of the arXiv number 2604.16304. arXiv's own page says "Submitted on 25 Jan 2026", so January was right. Changed back; the 05:15 entry above is wrong on this point. The abstract's "nineteen practitioners" and the quotation are confirmed on that page.
 - Table 1, Microsoft row: it gave "+7.0 over single-model baseline, SEM 1.90". The post states the +7.0 points (SEM 1.90) is over Perplexity Deep Research, the best system in the DRACO paper, under the same judge; the comparison with its own single-model version is the separate one with p < 0.0001 on every dimension and significance in 8 of 10 domains. The row now keeps the two apart.
 - Bibliography, Microsoft post: the address now redirects (the blog moved from microsoft365copilotblog to microsoft-copilot-blog). Updated to the current address; same post, same date and author (Gaurav Anand, 30 March 2026).
+
+## 25 October 2026, 09:15 pass
+
+Checked against the cited papers' own abstracts on arXiv.
+
+- Appendix A: DRACO's tasks were said to come from "users in 40 countries". The DRACO abstract says the tasks "draw on information sources from 40 countries"; that is what it now says.
+- Section 2.1: the tasks were said to be "curated" and the questions "asked by real users". The DRACO abstract says the sampled requests were "filtered and augmented". The text now says so, gives the task count as 100 (Appendix A's figure) rather than "on the order of a hundred", and says the authors edited and augmented each question.
+- Section 5, S1: Snell et al. were cited for a smaller model beating one 14 times larger. Their abstract limits this to a FLOPs-matched comparison on problems where the smaller model already has non-trivial success; the condition is now in the sentence.
