@@ -224,7 +224,7 @@ setting against a minimal one), reducing to the single cheapest setting saves a 
 on generation cost, and a separate factor of $E$ on judging cost (fewer conditions to
 judge). Equation~\ref{eq:s1} assumes the \emph{cheap} setting is the one retained. If
 instead the expensive setting is retained, which for reasons given below is often the appropriate choice, the generation-side factor is $(1+\alpha)/\alpha$, which tends to $1$ as $\alpha$ grows; S1 then saves almost nothing on generation and only the factor $E$ on judging. If the two settings cost the same ($\alpha = 1$), either choice saves the
-trivial factor of $2$. The generation-side case for S1 rests on $\alpha$ being large and on the cheap setting being the operating point of interest. Two pieces of evidence bear on $\alpha$. The largest providers bill a reasoning model's internal ``thinking'' tokens as output tokens and expose the amount as a per-request setting, so a call at a high setting pays the same rate on a much larger token count \citep{openai2026reasoning, anthropic2026thinking}. An independent measurement service that runs a fixed suite at each setting reports, for one frontier model, more than an order of magnitude more output tokens at the highest setting than at the lowest, with a substantial difference in measured quality \citep{aagpt5benchmarks2025}; Appendix~\ref{app:worked} gives the figures, and the same service publishes per-task token usage for every model it evaluates \citep{aaintelligence}, so $\alpha$ can be looked up. It should also be measured. On open-ended analytic prompts we found $\alpha$ between $1.7$ and $3.2$ for two frontier models (Appendix~\ref{app:measurements}), an order of magnitude below that published figure; $\alpha$ depends on the model, on how its effort setting is implemented and on the task family.
+trivial factor of $2$. The generation-side case for S1 rests on $\alpha$ being large and on the cheap setting being the operating point of interest. Two pieces of evidence bear on $\alpha$. The largest providers bill a reasoning model's internal ``thinking'' tokens as output tokens and expose the amount as a per-request setting, so a call at a high setting pays the same rate on a much larger token count \citep{openai2026reasoning, anthropic2026thinking}. An independent measurement service that runs a fixed suite at each setting reports, for one frontier model, more than an order of magnitude more output tokens at the highest setting than at the lowest, with a substantial difference in measured quality \citep{aagpt5benchmarks2025}; Appendix~\ref{app:worked} gives the figures, and the same service publishes per-task token usage for every model it evaluates \citep{aaintelligence}, so $\alpha$ can be looked up. It should also be measured. On open-ended analytic prompts we found $\alpha$ between $1.75$ and $3.2$ for two frontier models (Appendix~\ref{app:measurements}), an order of magnitude below that published figure; $\alpha$ depends on the model, on how its effort setting is implemented and on the task family.
 
 \textbf{What is lost.} Questions about the contrast between settings can no longer be answered, since only one setting is measured. A less obvious loss matters more. Measuring every system at its cheapest setting and reporting a ranking of the \emph{systems} assumes that the order at the cheap setting predicts the order at the expensive one, and the evidence runs the other way. \citet{guedesdesouza2026budget} vary the generation budget over seven levels for four models on three reasoning benchmarks and find that ``model rankings reverse across budgets on all benchmarks'' ($p < 0.01$), with $3$--$19\%$ of items losing accuracy as the budget grows. The effect of extra compute is itself uneven. It can let a smaller model beat one $14\times$ larger \citep{snell2024scaling} or five times larger \citep{wu2025inference}, lift an open code model from $15.9\%$ to $56\%$ of tasks solved with 250 samples \citep{brown2024monkeys}, and at the same time lower accuracy on hard queries while raising it on easy ones \citep{chen2024morecalls}; its benefit ``varied by model family'' in one automated-scoring task, where a low-effort configuration was the most accurate \citep{frohn2026effort}; and on knowledge-intensive tasks of DRACO's kind it ``does not consistently improve accuracy and often leads to more hallucinations'' across 14 reasoning models \citep{zhao2026testtime}. \citet{kim2026kjr} accordingly ask that the effort setting, its rationale and whether it was left at the vendor default be reported whenever several models are benchmarked.
 
@@ -710,7 +710,7 @@ same rate regardless of setting \citep{openai2026reasoning, anthropic2026thinkin
 is a measured $\alpha \approx 23$ for that model on that suite. The same service publishes
 per-task token usage for each model it evaluates \citep{aaintelligence}; $\alpha$ should
 be looked up or measured for the systems under comparison. Appendix~\ref{app:measurements}
-reports such a measurement on analytic prompts, with $\alpha$ between $1.7$ and $3.2$, and its consequence for the worked instance below.
+reports such a measurement on analytic prompts, with $\alpha$ between $1.75$ and $3.2$, and its consequence for the worked instance below.
 
 \subsection{Call counts for a modest configuration}
 
@@ -789,7 +789,7 @@ Total spend: \$0.19 across eleven calls.
 only in the answer. The provider reported no cached tokens on any of the three: the
 shared prefix was roughly 920 tokens, below the provider's documented 1{,}024-token
 minimum (Appendix~\ref{app:worked}). Five later calls with an identical full prompt of
-1{,}089 tokens each reported 1{,}089 cached tokens. Equation~\ref{eq:judging-cached}
+1{,}092 tokens each reported 1{,}089 of them as cached. Equation~\ref{eq:judging-cached}
 therefore holds only once the fixed prefix clears the provider's minimum; a rubric of
 forty short criteria does not do so on its own, and a protocol relying on the cached rate
 should measure its prefix length. The same eleven calls give the
@@ -1038,8 +1038,8 @@ Examination (paper I), taken from the public dataset \texttt{math-ai/aime25} thr
 Hugging Face datasets API; system instruction: ``Solve the competition mathematics
 problem. Show your reasoning briefly, then give the final answer as an integer on the
 last line in the form `ANSWER: <integer>'.'' Output cap 16{,}000 tokens, never reached.
-One call per cell; eight calls failed with the first provider's transient HTTP 500 during
-an outage and were retried until they succeeded. Total spend: \$0.39 across 20 calls. The
+One call per cell; six calls, all to the first provider, failed with transient HTTP 500 errors during
+an outage (three attempts each) and were retried until they succeeded. Total spend: \$0.39 across 20 calls. The
 scripts (\texttt{e3-aime.mjs}, \texttt{e3-retry.mjs}), the problems and the raw usage
 records are committed alongside E1's.
 
