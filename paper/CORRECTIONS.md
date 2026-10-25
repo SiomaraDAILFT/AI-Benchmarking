@@ -88,7 +88,7 @@ Checked against the cited papers' own abstracts on arXiv.
 
 ## 25 October 2026, 18:14 pass
 
-Every figure in Appendix C was recomputed from Table 8 (E1 calls) and Table 7 (E3): totals, means, pooled and per-prompt ratios, latencies and the \$2.17 spend all hold. Four text faults:
+Every figure in Appendix C was recomputed from the E1 call table and the E3 table: totals, means, pooled and per-prompt ratios, latencies and the \$2.17 spend all hold. Four text faults:
 
 - Appendix A, opening: "All access dates are September 2026." The Microsoft post was re-checked at its new address on 25 October (the 07:15 pass). The sentence and the bibliography note now say so.
 - Appendix C.4: "Four explanations ... survive scrutiny", followed by E3, which tests the first of them (task family) and does not support it. Now "four candidate explanations", with a sentence pointing to E3's result.
