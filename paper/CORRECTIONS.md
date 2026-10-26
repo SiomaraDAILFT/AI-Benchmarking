@@ -263,3 +263,27 @@ Read this time from three angles: Section 4 and Appendix B equation by equation,
 - Appendix C.4: "none of them is a contradiction" now says each explanation would let both figures stand.
 - Appendix C.5, E3: "six calls ... (three attempts each)" now counts the calls for six cells; the table caption names the low and high settings (E3 did not run none) and defines Out as summed over the five problems.
 - Bibliography, llmstatsdraco: the note gave three entries on 10 September, against Appendix A.3's one on 10 and three on 11 September; it now matches.
+
+## 26 October 2026, 16:22 pass
+
+Read this time from three angles not used before: the statistics of Section 7 and Appendix B's task floor, with every power figure recomputed (normal approximation, python); Section 6's combination of the savings against Section 5's factors; and Sections 8 to 10 against the body, with their bibliography entries checked against the sources. Each finding was checked by a second reader trying to refute it; 19 of 21 survived (one repeated another, one was already said in four places).
+
+- Section 6, opening paragraph: S1's factor (1+alpha) is now named as the E = 2 case of Equation 7, which is where the general form is given.
+- Section 6, same paragraph: a single product of all factors was said to credit the whole budget with a saving "only its judging share" can deliver; it also credits the judging share with S1's (1+alpha), which only the generation share can deliver. Both directions are now stated.
+- Section 6, the weighted-harmonic-mean sentence: the form given holds when S1 keeps the cheap setting; when it keeps the expensive one the second term is s(1+alpha)/alpha, as lines 402-403 already allow. Now stated.
+- Section 7.1: the sign-flip test's null hypothesis was "exchangeable signs"; the test needs each task's difference to be symmetric about zero, which is what exchangeable labels within a task give. Corrected.
+- Section 7.1: n in d_z = t/sqrt(n) was used before it was defined (the paper counts tasks as T, and n* comes later); now "over n tasks".
+- Section 7.1: d_z was said to be "often confused with" d_av; the cited source (Lakens 2013) says d_av ignores the correlation but not that the two are confused. The unsupported clause is gone.
+- Section 7.2: delta was "the minimum effect size worth detecting", but Section 7.1 had just used effect size for the standardised d_z, while Equation 13 and Appendix B (delta = 5 points) need a raw score difference, as in Miller (2024). Now a difference in mean score, in score points, with delta/sigma as the matching d_z.
+- Section 7.2: Miller's stopping rule for regenerations is stated in the source for one model's score (Section 3.1); the paper applied it to the paired difference without saying so. Now said.
+- Section 8, Phase 2: the stratified sample of n* tasks did not say at which R n* is computed, or what happens when n* exceeds the task set (184 against 180 for the combined variant on Appendix B's inputs). Both are now stated.
+- Section 8, Phase 2: "the same statistic, Kendall's tau" was attributed to both cited works; SubLIME reports Spearman's rank correlation (the word Kendall does not appear in it). Each work is now matched to its statistic.
+- Section 8, Phase 3: the table of cost against fidelity was said to let a user select any combination; Phase 2 measures each simplification alone and all together, not the combinations between, so a different combination must itself be run against the Phase 1 reference. Now stated.
+- Section 9, nested measurement: averaging was said to "remove real variance" at each step, while the same paragraph (and Equation 14) keeps the regeneration and repeat variance inside sigma^2, divided by R. Averaging shrinks that variance and leaves out only the variance due to the choice of judges. Corrected.
+- Section 9, generalisability: "a fully crossed pilot" cannot hold, because a regeneration belongs to one system's answer to one task and a repeat to one judge's scoring of one answer; now a pilot in which every facet varies.
+- Section 9, mixed model: regenerations and repeats were both "nested within" task and judge; regenerations are nested within task and system and crossed with judge, repeats within judge and answer. Corrected.
+- Section 9: the interval is conditional on any presentation orders that were not randomised; Section 7.3 recommends randomising them, and randomised orders are generalised over. Corrected.
+- Conclusion, first sentence: "three of its six design choices multiply the whole cost" holds for batched judging; DRACO judges each answer in its own call, where four do (Section 3, as corrected at 14:21). Both are now given.
+- Conclusion, second sentence: the sweep carries the saving only when the cheap setting is kept (S1), and fewer regenerations raise n* (S2, S6); both qualifications now appear.
+- Appendix B.6, after the worked factors: "T_full/n* is at most 1" hid that the floor of 184 exceeds the 180 tasks available, so at R = 1 even the full task set reaches a power of only 0.79 (recomputed: Phi(5 x sqrt(180)/sqrt(521) - 2.128) = 0.791). Now stated.
+- Appendix C.3, the consequence for the worked instance: "the measured values" pointed to the cost ratios (1.74 to 3.14) while the factors that follow (F_G of 25 to 38) use the token ratios of Table "alpha" (1.75 to 3.18); it now names the token ratios and the table.

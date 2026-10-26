@@ -385,9 +385,9 @@ effective-sample-size gains of up to five times over uniform sampling.
 \section{Cumulative Effect}
 \label{sec:cumulative}
 
-The simplifications do not act on the same quantity. S1's factor $(1+\alpha)$ acts on
+The simplifications do not act on the same quantity. S1's factor $(1+\alpha)$, the $E = 2$ case of $\sum_{e} g_e / g_{\min}$ (Equation~\ref{eq:s1}), acts on
 generation cost; S1's factor $E$, S3's factor $K$ and S4's factor $\beta$ act on judging
-cost only; S2's factor $R$ and S6's factor $T_{\text{full}}/n^*$, the full protocol's task count over the floor, act on both. A single product of all of them applied to the total would credit the whole budget with a saving that only its judging share can deliver. The exact combined reduction is a ratio of totals. Take the full protocol to judge
+cost only; S2's factor $R$ and S6's factor $T_{\text{full}}/n^*$, the full protocol's task count over the floor, act on both. A single product of all of them applied to the total would credit the generation share with $E$, $K$ and $\beta$, which only the judging share can deliver, and the judging share with $(1+\alpha)$, which only the generation share can deliver. The exact combined reduction is a ratio of totals. Take the full protocol to judge
 each answer in its own call, as DRACO does, so that its judging cost is
 $J_{\text{full}} = J_u^{\text{cached}}$ (Equation~\ref{eq:judging-cached}; $J_u$ where
 caching is unavailable), let its generation cost be $G_{\text{full}} = G$ (Equation~\ref{eq:generation}), and let $s$ be the share of the full protocol's cost that is
@@ -411,7 +411,7 @@ a weighted harmonic mean of $F_G$ and $F_J$, which always lies between them. As 
 simplifications S3 and S4 contribute almost nothing to the combined figure, however large
 their own factors. The naive product $F_G \cdot E \cdot K \cdot \beta$ (equivalently, all
 factors applied to the whole budget) exceeds the exact reduction by a factor that grows
-with $E \cdot K \cdot \beta$ and with $\alpha$, since it equals $(1-s)\,E \cdot K \cdot \beta + s\,(1+\alpha)$: $13$ to $29$ in the worked instance (Appendix~\ref{app:worked} gives the
+with $E \cdot K \cdot \beta$ and with $\alpha$, since it equals $(1-s)\,E \cdot K \cdot \beta + s\,(1+\alpha)$ when S1 keeps the cheap setting (when it keeps the expensive one the second term is $s\,(1+\alpha)/\alpha$, which falls as $\alpha$ grows): $13$ to $29$ in the worked instance (Appendix~\ref{app:worked} gives the
 figures), but $7$ to $11$ at the setting-cost ratios we measured (Appendix~\ref{app:measurements}) under cached-read pricing with no write premium ($w = 1$), falling below ten once $s$ reaches $0.3$, and $8$ to $12$ at a write multiple of $w = 1.25$, falling below ten once $s$ reaches $0.4$. And because $F_G$ and $F_J$ share the factors $R$ and
 $T_{\text{full}}/n^*$, S2 and S6 are the only simplifications whose benefit is
 independent of $s$; they are also the two whose cost to validity the power calculation expresses directly, S2 through the regeneration term of Equation~\ref{eq:variance-decomposition} and S6 through the floor $n^*$ (Sections~\ref{sec:simplifications} and~\ref{sec:power}).
@@ -433,7 +433,7 @@ positively correlated, even across unrelated models, paired differences represen
 reduction in estimator variance when comparing two models''. The test is \emph{one-sided} when the research question is directional (``does system A outperform
 system B''), and \emph{pre-specified before any data are collected}: a paired permutation
 (sign-flip) test on the task-level differences, which is exact and distribution-free under
-the null hypothesis of exchangeable signs \citep{ernst2004permutation}, and which does not
+the null hypothesis that each task's difference is symmetric about zero, as it is when the two systems' labels are exchangeable within each task \citep{ernst2004permutation}, and which does not
 rely on the central-limit approximation that \citet{bowyer2025clt} show to understate
 uncertainty for evaluations with ``fewer than a few hundred datapoints'', which is the regime every task count in this paper falls into. We recommend \emph{against} testing the differences for normality and then choosing between a $t$-test and a non-parametric alternative. The simulation evidence on whether that two-stage procedure inflates the Type~I error rate is mixed \citep{schucany2006, rasch2011pretesting, rochon2012}, and the recommendation does not depend on it: a branch chosen after seeing the data is a researcher degree of freedom of the kind that ``dramatically increases actual false-positive rates'' \citep{simmons2011falsepositive}, and a power calculation derived for one test (Section~\ref{sec:power}) is not valid for whichever test the branch selects.
 A Holm correction \citep{holm1979}, which controls the family-wise error rate at a chosen level $a$
@@ -441,8 +441,8 @@ and is uniformly more powerful than Bonferroni, is applied across the specific, 
 comparisons of interest and not across every pairing the full $C \times C$ comparison matrix could generate, since that would over-correct for hypotheses that were never posed.
 Cohen's
 $d_z$, the paired-samples effect size standardised by the standard deviation of the
-differences themselves and equal to $t/\sqrt{n}$ for the paired $t$-statistic, is reported
-alongside every $p$-value; it is distinct from, and often confused with, $d_{av}$, which
+differences themselves and equal to $t/\sqrt{n}$ for the paired $t$-statistic over $n$ tasks, is reported
+alongside every $p$-value; it is distinct from $d_{av}$, which
 ignores the correlation between the paired measurements \citep{lakens2013}. A statistically
 significant but small effect is a different finding from a significant, large one.
 
@@ -457,7 +457,7 @@ n^* = \frac{(z_{a'} + z_{\pi})^2 \sigma^2}{\delta^2},
 \end{equation}
 one-sided, with $a'$ the Holm-corrected per-comparison significance level (the smallest threshold the correction procedure can demand across the pre-registered comparisons; using the uncorrected family-wise $a$ here systematically understates the requirement), $z_{a'}$ and $z_{\pi}$ the standard normal quantiles at $1-a'$ and at the intended power $\pi$, $\sigma$
 the observed standard deviation of task-level paired differences from a pilot run, and
-$\delta$ the minimum effect size worth detecting, a decision made before the pilot runs. Statistics texts usually write the significance level as $\alpha$ and the power as $1-\beta$; we use $a$ and $\pi$ because $\alpha$ is already the setting-cost ratio of S1 and $\beta$ the batching factor of S4. Equation~\ref{eq:power} is the one-sided form of the standard
+$\delta$ the minimum difference in mean score worth detecting, in score points (so $\delta/\sigma$ is the corresponding $d_z$), a decision made before the pilot runs. Statistics texts usually write the significance level as $\alpha$ and the power as $1-\beta$; we use $a$ and $\pi$ because $\alpha$ is already the setting-cost ratio of S1 and $\beta$ the batching factor of S4. Equation~\ref{eq:power} is the one-sided form of the standard
 normal-approximation sample-size formula; \citet{miller2024errorbars} derives the
 two-sided version for language-model evaluations and decomposes the variance, a result this paper relies on. Writing $\omega^2$ for the variance of the \emph{true} task-level paired
 difference across tasks and $\sigma_A^2$, $\sigma_B^2$ for the within-task variance of each
@@ -471,7 +471,7 @@ which makes explicit an interaction the simplifications of
 Section~\ref{sec:simplifications} would otherwise hide: S2 (fewer regenerations) raises the
 second term and therefore raises $n^*$, so that some of what S2 saves on generation is
 returned as additional tasks under S6. \citet{miller2024errorbars} also gives the stopping
-rule for regenerations: once $(\sigma_A^2 + \sigma_B^2)/R \ll \omega^2$, further
+rule for regenerations, stated there for one model's score and carried over here to the paired difference: once $(\sigma_A^2 + \sigma_B^2)/R \ll \omega^2$, further
 regenerations ``will have little effect on the standard error'', and the pilot's estimates
 of $\omega^2$ and $\sigma^2_{A,B}$ are what determine where that point lies. Equation~\ref{eq:power} is a starting point and no more: the test actually used
 (Section~\ref{sec:test}) is a permutation test on a finite sample, $\sigma$ itself is
@@ -541,19 +541,19 @@ on the systems under comparison. This run is performed once and serves as the re
 
 \textbf{Phase 2: each intermediate simplification, on the same systems and tasks.} Run
 S1 alone, S2 alone, and so on, and the fully combined simplification from
-Section~\ref{sec:cumulative}, each on the task set used in Phase 1, or, for S6 and the combined variant, on a pre-registered stratified sample of $n^*$ of those tasks, drawn as S6 prescribes, with $n^*$ computed at the variant's own $R$. For
+Section~\ref{sec:cumulative}, each on the task set used in Phase 1, or, for S6 and the combined variant, on a pre-registered stratified sample of $n^*$ of those tasks, drawn as S6 prescribes, with $n^*$ computed at the variant's own $R$; where that $n^*$ is above $T_{\text{full}}$, as for the combined variant on the inputs of Appendix~\ref{app:worked} ($184$ against $180$), the variant runs on all of them and is reported as below the stated power. For
 each variant, record: whether the same system(s) rank highest; how far the point estimate
 and confidence interval shift relative to the Phase 1 reference; and whether the corrected
 $p$-value for the pre-registered comparisons crosses the significance threshold in the
 reference run but not in the simplified one, or vice versa. Rank agreement between a
 reduced and a full protocol is the criterion the benchmark-compression literature uses to
-certify a subset: \citet{saranathan2025sublime} select subsets of 1--20\% of a benchmark that preserve full-benchmark rankings, reporting evaluation-cost reductions of 80--99\%, and \citet{perlitz2024efficient} score each design choice by its effect on ranking reliability. Phase 2 should report the same statistic, Kendall's $\tau$ over the
+certify a subset: \citet{saranathan2025sublime} select subsets of 1--20\% of a benchmark that preserve full-benchmark rankings, reporting evaluation-cost reductions of 80--99\%, and \citet{perlitz2024efficient} score each design choice by its effect on ranking reliability. Kendall's $\tau$ is the statistic \citet{perlitz2024efficient} use, and \citet{saranathan2025sublime} use Spearman's rank correlation. Phase 2 should report rank agreement as Kendall's $\tau$ over the
 systems under comparison, alongside the per-comparison outcomes. Comparing two protocols
 on the same systems is formally a benchmark-agreement test, for which
 \citet{perlitz2024benchbench} show that ``overlooked methodological choices can
 significantly influence'' the result, in particular which systems are included and which protocol is treated as the reference, and propose standard practices. The full Phase 1 run is the reference here by construction, and the systems compared should be the full set under study and not a convenient subset.
 
-\textbf{Phase 3: fidelity cost per simplification, reported alongside cost saved.} The useful output of this protocol is a table of cost saved against fidelity lost, per simplification, from which a future user of this framework can select the combination that matches their tolerance for each. That combination may reasonably differ from the one in Section~\ref{sec:cumulative}; which trade-offs are acceptable is a decision the paper's formulas inform without making.
+\textbf{Phase 3: fidelity cost per simplification, reported alongside cost saved.} The useful output of this protocol is a table of cost saved against fidelity lost, per simplification, from which a future user of this framework can choose which simplifications to accept, and that choice may reasonably differ from the combination of Section~\ref{sec:cumulative}; which trade-offs are acceptable is a decision the paper's formulas inform without making. Phase 2 measures each simplification alone and all of them together, not the combinations in between, so a different combination should itself be run against the Phase 1 reference before it is adopted.
 
 \sectionbreak
 \section{Limitations and Open Questions}
@@ -571,26 +571,26 @@ models they test maintaining satisfactory performance at 32K tokens, and
 \citet{liu2024lostmiddle} document the position-dependent degradation to which a
 multi-answer prompt is exposed.
 The nested measurement structure ($R$ regenerations $\times$ $J$ judges $\times$ $K$
-repeats, aggregated to one score per system per task) removes real variance at each
+repeats, aggregated to one score per system per task) shrinks the regeneration and repeat variance by averaging, and leaves out the variance due to the choice of judges, at the
 aggregation step before the final variance calculation in Equation~\ref{eq:power}. In the
 language of generalisability theory \citep{brennan2001}, tasks, judges, judge repeats and
 regenerations are \emph{facets} of the measurement, each contributing a variance component
-that a generalisability study estimates from a fully crossed pilot; the paired-difference
+that a generalisability study estimates from a pilot in which every facet varies; the paired-difference
 interval of Section~\ref{sec:stats} generalises over tasks and over the regenerations and repeat scorings nested within each task, whose variation enters $\sigma^2$ through the within-task term of Equation~\ref{eq:variance-decomposition}, and is
-conditional on the particular judges, presentation orders and decoding configuration
+conditional on the particular judges, the decoding configuration and any unrandomised presentation orders
 used. That is the sense of the argument in S5: at $J = 1$ the judge facet's
 variance component is not zero but unidentifiable, and the same holds for the
 regeneration facet at $R = 1$ and the repeat facet at $K = 1$, which is why
 Section~\ref{sec:simplifications} argues for keeping several judges (S5) and asks for each of the other two to be estimated on a pilot subset before
 it is dropped. A mixed-effects model with crossed random effects for task and judge
-\citep{baayen2008}, with regeneration and repeat nested within them, would propagate all
+\citep{baayen2008}, with regenerations nested within task and system but crossed with judge, and repeats nested within judge and answer, would propagate all
 components into a single interval, at the price of simplicity; without it, the interval of Section~\ref{sec:stats} stays conditional on the judge
 panel and aggregation rule. The raw table retained under Section~\ref{sec:stats} is what
 makes fitting such a model later possible without re-running anything. The minimum effect size $\delta$ worth detecting for a given comparison remains a domain-specific judgement, which the formulas in Section~\ref{sec:power} take as an input.
 
 \section{Conclusion}
 
-Rigour in a DRACO-style benchmark is expensive by construction, because three of its six design choices multiply the whole cost and the other three each multiply one of its two terms (Equation~\ref{eq:total}), and most of that cost can be given back. The sweep over settings and the regenerations carry most of the saving; the task count adds to it only as far as the power floor of Section~\ref{sec:power} allows. Batched judging carries far less than its unbatched arithmetic suggests once prompt caching is priced in. The judge count, the dimension intuition reaches for first, is the one to keep. The combined reduction is a weighted harmonic mean of a generation-side and a judging-side factor, roughly two orders of magnitude in the worked instance of Appendix~\ref{app:worked} at its assumed task floor, a third of that at the floor its own power inputs give, and less at the setting-cost ratios we measured. What that buys is a benchmark cheap enough to re-run whenever the set of systems changes, provided the reduced protocol is checked against the full one at least once (Section~\ref{sec:validation}).
+Rigour in a DRACO-style benchmark is expensive by construction, because four of its six design choices multiply the whole cost when each answer is judged in its own call, as DRACO does, and three still do when judging is batched (Section~\ref{sec:strengths}), and most of that cost can be given back. The sweep over settings and the regenerations carry most of the saving, the sweep only when the cheap setting is the one kept (S1), and the regenerations at some cost in power, since fewer of them raise $n^*$ (S2, S6); the task count adds to it only as far as the power floor of Section~\ref{sec:power} allows. Batched judging carries far less than its unbatched arithmetic suggests once prompt caching is priced in. The judge count, the dimension intuition reaches for first, is the one to keep. The combined reduction is a weighted harmonic mean of a generation-side and a judging-side factor, roughly two orders of magnitude in the worked instance of Appendix~\ref{app:worked} at its assumed task floor, a third of that at the floor its own power inputs give, and less at the setting-cost ratios we measured. What that buys is a benchmark cheap enough to re-run whenever the set of systems changes, provided the reduced protocol is checked against the full one at least once (Section~\ref{sec:validation}).
 
 \appendix
 
@@ -728,7 +728,7 @@ count $T_{\text{full}} = 180$ reduced to an assumed floor $n^* = 60$. Then
 Equation~\ref{eq:component-factors} gives $F_G = 21 \cdot 3 \cdot 3 = 189$ and $F_J = 2
 \cdot 3 \cdot 5 \cdot 3 \cdot \beta = 90\beta$, that is $270$ with uncached batching and
 $108$ under cached-read pricing with no write premium ($w = 1$, Google's terms); at OpenAI's and Anthropic's $w = 1.25$ it is about $119$, and the cached row of Table~\ref{tab:cumulative} becomes about $179$, $161$ and $146\times$. Table~\ref{tab:cumulative} evaluates
-Equation~\ref{eq:cumulative} across plausible values of the judging share $s$. The floor of $60$ is assumed for illustration and does not follow from the power calculation below, whose inputs give $n^* = 128$ at $R = 3$ and $n^* = 184$ once S2 reduces $R$ to $1$, as it does here. On those inputs the floor exceeds $T_{\text{full}} = 180$, S6 saves nothing ($T_{\text{full}}/n^*$ is at most $1$, not $3$), and because $F_G$ and $F_J$ both carry that factor, every reduction in the table falls to a third, $46$--$74\times$.
+Equation~\ref{eq:cumulative} across plausible values of the judging share $s$. The floor of $60$ is assumed for illustration and does not follow from the power calculation below, whose inputs give $n^* = 128$ at $R = 3$ and $n^* = 184$ once S2 reduces $R$ to $1$, as it does here. On those inputs the floor exceeds $T_{\text{full}} = 180$, S6 saves nothing (the reduced protocol keeps all $180$ tasks, a factor of $1$, not $3$, and even so reaches a power of only $0.79$ at $R = 1$), and because $F_G$ and $F_J$ both carry that factor, every reduction in the table falls to a third, $46$--$74\times$.
 
 \begin{table}[h]
 \centering
@@ -846,7 +846,7 @@ models measured here costs $1.74$ to $3.14$ times a lower one. $\alpha$ is there
 property of a model but of a model on a task family (the same two models gave $1.48$ and $2.67$ on the competition problems of E3, Section~\ref{app:e3}, against $2.83$ and $1.75$ here), and the pilot of
 Section~\ref{sec:validation} should measure it on the benchmark's own tasks before S1's
 saving is counted. The consequence for the worked instance of Appendix~\ref{app:worked}
-is material: replacing its illustrative $\alpha = 20$ with the measured values gives a
+is material: replacing its illustrative $\alpha = 20$ with the measured token ratios ($1.75$ to $3.18$, Table~\ref{tab:alpha}) gives a
 generation-side factor $F_G$ of $25$ to $38$ instead of $189$, and a combined reduction
 (Equation~\ref{eq:cumulative}) of roughly $27$--$66\times$ across the same range of $s$
 and caching assumptions instead of $137$--$222\times$, about one and a half orders of magnitude instead of two. If the expensive setting is the one retained
