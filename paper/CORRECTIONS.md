@@ -348,3 +348,26 @@ Read this time from three angles not used before: every equation and worked numb
 - Section 5, S3 heading: "repeat-scorings" now "repeat scorings"; the hyphen belongs only in the adjective form.
 
 The build has the same one float-placement note as before; no warnings otherwise, no undefined references.
+
+## 27 October 2026, 00:14 pass
+
+Read this time from three angles not used before: every quotation checked word for word against its source, and against the run logs where the paper quotes a provider; every bibliography entry cited from Section 7 onwards and in the appendices checked against the publisher's or arXiv's own record; and every statistical method and every attribution in Sections 7 and 8 checked against what the cited authors actually say and what the published runner actually computes. Each finding was checked by a second reader trying to refute it; 17 of 21 survived and all 17 went in. The 4 set aside were right as written or the author's choice of phrasing (among them "conclude" for Schroeder and Wood-Doughty, which their abstract and conclusions do support).
+
+- Appendix C.3, procedure: ``server error'' was in quotation marks, but no run log holds those words; the provider returned the error type server_error, now written as that field value.
+- Section 5, S6: Perlitz et al. say evaluation compute is "often" reduced by x100 or more; the qualifier is restored around the unchanged quotation.
+- Appendix C.4, task family: Ballon et al. offer "new generations of reasoning models use test-time compute more effectively" as an inference from a smaller accuracy drop in stronger models, not as a finding; the sentence now separates the two.
+- Bibliography, wang2023unfair: the arXiv preprint was published at ACL 2024 (with an eleventh author, Lingpeng Kong); the published version is now named with its pages and link.
+- Bibliography, lee2025critical: the paper appeared in the IJCNLP-AACL 2025 proceedings; the entry is now that publication, not an arXiv preprint.
+- Bibliography, ballon2026thinksharder: volume, article number and DOI added from the journal's record.
+- Bibliography, du2025ockbench: "revised 3 June 2026" is now "v3, 3 June 2026", as arXiv lists it.
+- Appendix B.1 and bibliography openai2026caching: OpenAI's cached-input rate of 0.05 times applies to GPT-6.1 Terra as well as GPT-6.1 Sol; both are now named.
+- Section 7.1: the paired difference now says what a system's score on a task is (median of each judge's K scorings, median over the J judges, mean over the R regenerations), as the published runner computes it.
+- Section 7.1, sign-flip test: at the paper's task counts the 2^n sign patterns cannot all be enumerated; the text now says the p-value is estimated from a random sample (100,000 in the runner) and stays exact only when the observed pattern is counted with the sample.
+- Section 7.1, effect size: the confidence interval for the mean paired difference is now said to come from inverting the same sign-flip test, so it rests on the same symmetry assumption.
+- Section 7.2, after Equation 14: S3 also raises n*, because fewer repeat scorings raise the within-task variances; the sentence named only S2.
+- Section 7.3: Zheng et al. report verbosity bias but say their data cannot settle whether their judges show self-enhancement bias; the sentence now says so and cites a study that does find it (Philipp et al., evaluators that "preferentially scored architectural siblings").
+- Section 7.3: balanced position calibration is one of three remedies Wang et al. propose, not "the remedy".
+- Section 8, Phase 2: a variant's n* is computed at its own K as well as its own R, and the combined variant's 184 against 180 comes from its R = 1 alone, rising once its K = 1 is counted.
+- Section 8, Phase 2, below-power rule: any variant whose n* exceeds the tasks it runs on is reported as below the stated power, S2 alone among them (184 on the same inputs), not only the combined variant.
+
+The build has the same one float-placement note as before; no warnings otherwise, no undefined references.

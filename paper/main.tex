@@ -363,7 +363,7 @@ is representative of the full one. That proviso is where the evidence from the
 benchmark-compression literature is relevant. \citet{polo2024tinybenchmarks} show that
 ``to accurately estimate the performance of an LLM on MMLU \ldots\ consisting of 14K
 examples, it is sufficient to evaluate this LLM on 100 curated examples'';
-\citet{perlitz2024efficient} report reductions in evaluation compute ``by x100 or more''
+\citet{perlitz2024efficient} report that evaluation compute can often be reduced ``by x100 or more''
 on HELM with ``minimal loss of benchmark reliability'', while warning that ``a benchmark
 leader may change by merely removing a low-ranked model from the benchmark''; and
 \citet{vivek2024anchor} find that ``1--30 anchor points outperforms uniform sampling and
@@ -426,7 +426,7 @@ Appendix~\ref{app:worked} evaluates Equation~\ref{eq:cumulative} for an illustra
 \label{sec:test}
 
 The quantity of interest for each pre-registered comparison between two systems is the
-task-level paired difference in score. A paired design is used throughout because every
+task-level paired difference in score, where a system's score on a task is the median of each judge's $K$ repeat scorings, then the median over the $J$ judges, then the mean over the $R$ regenerations, as the published runner computes it. A paired design is used throughout because every
 system answers the identical task set, and task difficulty is shared across systems: as
 \citet{miller2024errorbars} put it, ``because eval question scores are likely to be
 positively correlated, even across unrelated models, paired differences represent a `free'
@@ -435,7 +435,7 @@ system B''), and \emph{pre-specified before any data are collected}: a paired pe
 (sign-flip) test on the task-level differences, which is exact and distribution-free under
 the null hypothesis that each task's difference is symmetric about zero, as it is when the two systems' labels are exchangeable within each task \citep{ernst2004permutation}, and which does not
 rely on the central-limit approximation that \citet{bowyer2025clt} show to understate
-uncertainty for evaluations with ``fewer than a few hundred datapoints'', which is the regime every task count in this paper falls into. We recommend \emph{against} testing the differences for normality and then choosing between a $t$-test and a non-parametric alternative. The simulation evidence on whether that two-stage procedure inflates the Type~I error rate is mixed \citep{schucany2006, rasch2011pretesting, rochon2012}, and the recommendation does not depend on it: a branch chosen after seeing the data is a researcher degree of freedom of the kind that ``dramatically increases actual false-positive rates'' \citep{simmons2011falsepositive}, and a power calculation derived for one test (Section~\ref{sec:power}) is not valid for whichever test the branch selects.
+uncertainty for evaluations with ``fewer than a few hundred datapoints'', which is the regime every task count in this paper falls into. At those counts the $2^n$ sign patterns of $n$ tasks are too many to enumerate, so the $p$-value is estimated from a random sample of them (the published runner draws $100{,}000$), and the test stays exact only if the observed pattern is counted with the sample, adding one to both the number of patterns at least as extreme and the number drawn. We recommend \emph{against} testing the differences for normality and then choosing between a $t$-test and a non-parametric alternative. The simulation evidence on whether that two-stage procedure inflates the Type~I error rate is mixed \citep{schucany2006, rasch2011pretesting, rochon2012}, and the recommendation does not depend on it: a branch chosen after seeing the data is a researcher degree of freedom of the kind that ``dramatically increases actual false-positive rates'' \citep{simmons2011falsepositive}, and a power calculation derived for one test (Section~\ref{sec:power}) is not valid for whichever test the branch selects.
 A Holm correction \citep{holm1979}, which controls the family-wise error rate at a chosen level $a$
 and is uniformly more powerful than Bonferroni, is applied across the specific, named
 comparisons of interest and not across every pairing the full $C \times C$ comparison matrix could generate, since that would over-correct for hypotheses that were never posed.
@@ -444,7 +444,7 @@ $d_z$, the paired-samples effect size standardised by the standard deviation of 
 differences themselves and equal to $t/\sqrt{n}$ for the paired $t$-statistic over $n$ tasks, is reported
 alongside every $p$-value; it is distinct from $d_{\text{av}}$, which
 ignores the correlation between the paired measurements \citep{lakens2013}. A statistically
-significant but small effect is a different finding from a significant, large one.
+significant but small effect is a different finding from a significant, large one. The confidence interval for the mean paired difference is obtained by inverting the same test: it holds every value that, subtracted from each task's difference, leaves the two-sided sign-flip test unable to reject at the chosen level, so it rests on the same symmetry assumption and not on the central-limit approximation.
 
 \subsection{Power and the S6 floor}
 \label{sec:power}
@@ -469,7 +469,7 @@ averaged over $R$ regenerations is
 \end{equation}
 which makes explicit an interaction the simplifications of
 Section~\ref{sec:simplifications} would otherwise hide: S2 (fewer regenerations) raises the
-second term and therefore raises $n^*$, so that some of what S2 saves on generation is
+second term and therefore raises $n^*$, and S3 (fewer repeat scorings) raises $\sigma_A^2$ and $\sigma_B^2$ themselves, since each regeneration's score then rests on fewer scorings, so that some of what S2 and S3 save is
 returned as additional tasks under S6. \citet{miller2024errorbars} also gives the stopping
 rule for regenerations, stated there for one model's score and carried over here to the paired difference: once $(\sigma_A^2 + \sigma_B^2)/R \ll \omega^2$, further
 regenerations ``will have little effect on the standard error'', and the pilot's estimates
@@ -483,8 +483,7 @@ permutation test, using pilot data, is therefore part of the protocol.
 \label{sec:calibration}
 
 S4 (Section~\ref{sec:simplifications}) bears on two properties of the judging protocol: blinding, which it leaves intact, and calibration context, which it trades against scoring each answer independently. \textbf{Blind scoring}, in which the judge is never told which system, setting or configuration produced the answer it is scoring, guards against a judge favouring a system it recognises or has been told is the ``interesting'' one. The concern is documented:
-\citet{zheng2023judging} report self-enhancement bias, a judge's preference for answers
-produced by a model like itself, alongside verbosity bias, and
+\citet{zheng2023judging} report verbosity bias and describe self-enhancement bias, a judge's preference for its own answers, though they say their data cannot determine whether the judges they tested have it; \citet{philipp2026clinical} find evaluators that ``preferentially scored architectural siblings''; and
 \citet{stureborg2024inconsistent} report a preference for lower-perplexity, more familiar
 text. Blinding is compatible with either isolated or batched presentation.
 \textbf{Calibration context}, showing a judge several systems' answers to the same task together as in S4, addresses a different problem: a judge scoring one answer in
@@ -499,7 +498,7 @@ was preferred over a stronger proprietary assistant on 66 of 80 queries under on
 ordering, and \citet{zheng2023judging} report
 the same effect; in a small measurement made for this paper, three answers graded
 together under an absolute rubric kept their ranking in two of three orderings, with the
-top two swapping places in the third, and an individual score moved by up to 17 points (Appendix~\ref{app:measurements}). The remedy \citet{wang2023unfair} propose, balanced position calibration (scoring under several orderings and aggregating), multiplies the number of judge calls and so consumes part of what S4 saved. Batched, anonymised, order-randomised presentation
+top two swapping places in the third, and an individual score moved by up to 17 points (Appendix~\ref{app:measurements}). One of the three remedies \citet{wang2023unfair} propose, balanced position calibration (scoring under several orderings and aggregating), multiplies the number of judge calls and so consumes part of what S4 saved. Batched, anonymised, order-randomised presentation
 under explicit absolute-scoring instructions, with the order varied across the $K$ repeats
 of S3 so that the repeats double as position calibration, is our recommended way to obtain
 calibration context without fully sacrificing independence; the S4 discussion in
@@ -541,7 +540,7 @@ on the systems under comparison. This run is performed once and serves as the re
 
 \textbf{Phase 2: each intermediate simplification, on the same systems and tasks.} Run
 S1 alone, S2 alone, and so on, and the fully combined simplification from
-Section~\ref{sec:cumulative}, each on the task set used in Phase 1, or, for S6 and the combined variant, on a pre-registered stratified sample of $n^*$ of those tasks, drawn as S6 prescribes, with $n^*$ computed at the variant's own $R$; where that $n^*$ is above $T_{\text{full}}$, as for the combined variant on the inputs of Appendix~\ref{app:worked} ($184$ against $180$), the variant runs on all of them and is reported as below the stated power. For
+Section~\ref{sec:cumulative}, each on the task set used in Phase 1, or, for S6 and the combined variant, on a pre-registered stratified sample of $n^*$ of those tasks, drawn as S6 prescribes, with $n^*$ computed at the variant's own $R$ and $K$, since fewer repeat scorings also raise the within-task variances of Equation~\ref{eq:variance-decomposition}; where that $n^*$ is above $T_{\text{full}}$, as for the combined variant on the inputs of Appendix~\ref{app:worked} ($184$ against $180$ from its $R = 1$ alone, and more once its $K = 1$ is counted), the variant runs on all of them and is reported as below the stated power; so is any other variant whose $n^*$ exceeds the number of tasks it runs on, such as S2 alone, at $184$ on the same inputs. For
 each variant, record: whether the same system(s) rank highest; how far the point estimate
 and confidence interval shift relative to the Phase 1 reference; and whether the corrected
 $p$-value for the pre-registered comparisons crosses the significance threshold in the
@@ -680,7 +679,7 @@ concrete values: the commercial terms are dated and sourced, while $\alpha = 20$
 
 As last read (September 2026, and 26 October 2026 where stated below), the three largest commercial API providers bill a
 repeated prompt prefix as follows. OpenAI charges cached input tokens at $0.1\times$ the
-standard input price ($0.05\times$ for GPT-6.1 Sol, as of 26 October 2026), applies caching automatically to prefixes of at least $1{,}024$
+standard input price ($0.05\times$ for GPT-6.1 Sol and GPT-6.1 Terra, as of 26 October 2026), applies caching automatically to prefixes of at least $1{,}024$
 tokens, bills the first, cache-writing call at $1.25\times$ for its default lifetime, and keeps a prefix eligible for reuse for at least 30 minutes
 \citep{openai2026caching}. Anthropic charges cached reads at $0.1\times$ ($0.025\times$
 for Claude Fable~5.1 and Mythos~5.1, and, as of 26 October 2026, $0.05\times$ for Claude Opus~5.5 and Sonnet~5.5), bills the first, cache-writing call at $1.25\times$ for a
@@ -888,7 +887,7 @@ the question. The five prompts, verbatim:
 \textbf{Procedure.} Calls were made sequentially in the order model $\times$ effort
 $\times$ prompt, one call per cell, on 11 September 2026 between 07:41 and 08:20 UTC
 (the first run) and 08:55 to 09:10 UTC (retries). Ten calls in six cells, six in the first run and four among the retries, failed with the provider's HTTP 500
-``server error'' and were retried, up to three times with a delay, until they succeeded;
+\texttt{server\_error} and were retried, up to three times with a delay, until they succeeded;
 the retried cells are marked in Table~\ref{tab:e1-calls}. No call was excluded. No call
 reached the output cap (all finish reasons \texttt{stop} or \texttt{end\_turn}).
 
@@ -982,9 +981,7 @@ together they make $\alpha$ a quantity that must be measured on the tasks of int
 code-style problems with a short, checkable answer. On such problems most of the
 output at a high setting is reasoning (in E3, Section~\ref{app:e3}, 72\% for the first model and 60\% for the second, against 69\% and 39\% on the E1 prompts), and the literature on reasoning length shows the
 amount of reasoning a model spends varies by problem type and across model generations:
-\citet{ballon2026thinksharder} find that ``new generations of reasoning models use
-test-time compute more effectively'' and that accuracy declines as reasoning chains grow
-even at fixed difficulty; \citet{lee2025critical} show that ``there exists an optimal amount of
+\citet{ballon2026thinksharder} find that accuracy declines as reasoning chains grow even at fixed difficulty, though less so in more proficient models, which they take to suggest that ``new generations of reasoning models use test-time compute more effectively''; \citet{lee2025critical} show that ``there exists an optimal amount of
 reasoning tokens such that the probability of producing a correct solution is maximized''
 and that it grows with the length of the underlying computation a task requires; and
 \citet{du2025ockbench} report that ``models solving the same
