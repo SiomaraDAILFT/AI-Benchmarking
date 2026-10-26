@@ -287,3 +287,23 @@ Read this time from three angles not used before: the statistics of Section 7 an
 - Conclusion, second sentence: the sweep carries the saving only when the cheap setting is kept (S1), and fewer regenerations raise n* (S2, S6); both qualifications now appear.
 - Appendix B.6, after the worked factors: "T_full/n* is at most 1" hid that the floor of 184 exceeds the 180 tasks available, so at R = 1 even the full task set reaches a power of only 0.79 (recomputed: Phi(5 x sqrt(180)/sqrt(521) - 2.128) = 0.791). Now stated.
 - Appendix C.3, the consequence for the worked instance: "the measured values" pointed to the cost ratios (1.74 to 3.14) while the factors that follow (F_G of 25 to 38) use the token ratios of Table "alpha" (1.75 to 3.18); it now names the token ratios and the table.
+
+## 26 October 2026, 18:22 pass
+
+Read this time from three angles not used before: the title, abstract and contribution list against the body as it now stands; notation and cross-references across the whole paper, with a scratch build; and every bibliography entry cited in Sections 1 to 5 and Appendix A, against its source. Each finding was checked by a second reader trying to refute it; 19 of 24 survived. Two the second reader set aside as the author's own choices and they are left as they are: the title ("AI Models" against "AI Systems") and the author macro in the abstract's last sentence.
+
+- Abstract, the worked-instance sentence; Section 6, closing paragraph; Conclusion; Appendix B.5, first sentence: the "roughly two orders of magnitude" holds only when S1 keeps the cheap setting (F_G = 21 x 3 x 3 = 189 is the 1 + alpha form). With the expensive setting kept F_G is 1.05 x 3 x 3 = 9.45 and Equation 12 gives 10 to 18 times. All four places now say which setting is kept; Section 6 gives the other figure.
+- Section 5, S5, opening: "usually not by much" stated a usual case where the next sentences give a condition; now "not by much when generation dominates the budget", as the 20:14 and 12:20 passes did for Section 6 and S3.
+- Section 6, the overstatement sentence: the measured ratios behind "7 to 11" are those between the highest setting and a lower one (1.75 to 3.18); at the 1.12 of low against none the sentence's "falling below ten once s reaches 0.4" fails at s = 0.3 (recomputed 9.91). Now limited as S1 and Appendix B.2 already are.
+- Conclusion, first sentence: after the 16:22 insertion the last clause sat inside the "because" list; it is now its own sentence.
+- Section 9: "the minimum effect size delta" now matches Section 7.2's definition of delta as a difference in mean score, not a standardised effect size.
+- Section 7.1: d_av's subscript now set in roman like the paper's other word subscripts.
+- Appendix B.1: the access-date line said only OpenAI's page was read on 26 October; Anthropic's and Google's rates in the same subsection are dated that day too. Both sentences now say so.
+- Appendix A, opening: the list of later access dates left out Perplexity's DRACO blog post, which A.1 reports as read on 26 October; added.
+- Appendix B and C: five subsection headings with mathematics made the PDF's bookmarks fail (twelve "Token not allowed in a PDF string" warnings); each heading now carries a plain-text form for the bookmark. The build has no warnings left.
+- Section 2.1: "objective evaluability" was in quotation marks, but the DRACO paper (arXiv 2602.11685v1) does not use that phrase; the sentence now describes the selection without quoting it.
+- Section 5, S1: the measurement service was said to report "per-task token usage for every model it evaluates"; its methodology page says only that it reports the token counts and cost of running its suite. Corrected.
+- Section 5, S1: Kim et al. ask medical studies of language models to report the effort setting, its rationale and whether it was the vendor default, because differing settings can confound comparisons between models; the sentence had dropped the scope. Restored.
+- Bibliography, perplexity2026explainer: now gives the post's date (4 February 2026), its byline and the 26 October access, and says the per-system scores come from the DRACO paper's Table 8.
+- Bibliography, the 12 June 2026 article: the byline and the 13 July update added, as the page shows them.
+- Bibliography, llmstatsdraco: the access line now says both days (10 and 11 September), matching Appendix A.3.

@@ -37,7 +37,7 @@
 \maketitle
 
 \begin{abstract}
-Benchmarks that score several AI systems, from single models to multi-agent debate set-ups \citep{du2023multiagent, liang2024encouraging}, against one another with language-model judges, in the tradition of DRACO \citep{draco2026} and judge-based evaluation \citep{zheng2023judging}, are rigorous and expensive. In a faithful run, where each answer is judged in its own call, the number of judging calls is task count times system count times judge count times repeated-scoring count times regeneration count times configuration-setting count. An interview study of nineteen practitioners describes evaluation practice ``spanning informal `vibe checks' to organizational meta-work'' \citep{vandermaden2026gap}; we take the cost of the rigorous end of that range to be the main reason such comparisons are run rarely or once, while the systems being compared keep changing. This paper writes the cost of a DRACO-style benchmark as an explicit function of its design parameters and derives six simplifications, each with a closed-form reduction factor and a statement of the guarantee it gives up. One result runs against intuition: judge count is usually the wrong place to economise. The combined reduction is a weighted harmonic mean of a generation-side and a judging-side factor, a ratio of total costs; the naive product of per-component factors overstates the saving, by a factor of about seven to thirty in the configurations evaluated here. In the worked instance the combined reduction is roughly two orders of magnitude at that instance's setting-cost ratio and assumed task floor, a third of that at the floor its own power inputs give, and materially less at the ratios we measured. The appendices record the published runs and instantiate the algebra on current commercial terms and on measurements made for this paper. A closing protocol runs the full benchmark once and each simplification beside it, so that the fidelity cost of every simplification is measured against its predicted saving. \Theauthorisare{} not affiliated with the authors of DRACO; this is independent work that builds on their published benchmark.
+Benchmarks that score several AI systems, from single models to multi-agent debate set-ups \citep{du2023multiagent, liang2024encouraging}, against one another with language-model judges, in the tradition of DRACO \citep{draco2026} and judge-based evaluation \citep{zheng2023judging}, are rigorous and expensive. In a faithful run, where each answer is judged in its own call, the number of judging calls is task count times system count times judge count times repeated-scoring count times regeneration count times configuration-setting count. An interview study of nineteen practitioners describes evaluation practice ``spanning informal `vibe checks' to organizational meta-work'' \citep{vandermaden2026gap}; we take the cost of the rigorous end of that range to be the main reason such comparisons are run rarely or once, while the systems being compared keep changing. This paper writes the cost of a DRACO-style benchmark as an explicit function of its design parameters and derives six simplifications, each with a closed-form reduction factor and a statement of the guarantee it gives up. One result runs against intuition: judge count is usually the wrong place to economise. The combined reduction is a weighted harmonic mean of a generation-side and a judging-side factor, a ratio of total costs; the naive product of per-component factors overstates the saving, by a factor of about seven to thirty in the configurations evaluated here. In the worked instance, with the cheaper setting kept, the combined reduction is roughly two orders of magnitude at that instance's setting-cost ratio and assumed task floor, a third of that at the floor its own power inputs give, and materially less at the ratios we measured. The appendices record the published runs and instantiate the algebra on current commercial terms and on measurements made for this paper. A closing protocol runs the full benchmark once and each simplification beside it, so that the fidelity cost of every simplification is measured against its predicted saving. \Theauthorisare{} not affiliated with the authors of DRACO; this is independent work that builds on their published benchmark.
 \end{abstract}
 
 \clearpage
@@ -74,7 +74,7 @@ or statistical-power guidance and reports only the standard deviation of its sco
 third-party run of the benchmark that reports a standard error on its headline difference
 \citep{msftdraco2026}. Appendix~\ref{app:published} records the published figures.
 
-Selecting for ``objective evaluability'' is itself a form of selecting for gradeability, so the published task set is a curated sample from a filtered stratum rather than an unfiltered draw from real usage. The design still supports a weaker claim: each question began as a real user's request made for a real purpose, not as something a benchmark author wrote to be easy to grade, although a language model in the authors' pipeline rewrote it to remove personal details and reduce ambiguity, and added context and scope partly to keep the evaluation criteria consistent, before it entered the set.
+Selecting tasks that are ``objectively evaluable'' is itself a form of selecting for gradeability, so the published task set is a curated sample from a filtered stratum rather than an unfiltered draw from real usage. The design still supports a weaker claim: each question began as a real user's request made for a real purpose, not as something a benchmark author wrote to be easy to grade, although a language model in the authors' pipeline rewrote it to remove personal details and reduce ambiguity, and added context and scope partly to keep the evaluation criteria consistent, before it entered the set.
 
 \subsection{Related and competing multi-system approaches}
 \label{sec:related}
@@ -222,9 +222,9 @@ setting against a minimal one), reducing to the single cheapest setting saves a 
 on generation cost, and a separate factor of $E$ on judging cost (fewer conditions to
 judge). Equation~\ref{eq:s1} assumes the \emph{cheap} setting is the one retained. If
 instead the expensive setting is retained, which for reasons given below is often the appropriate choice, the generation-side factor is $(1+\alpha)/\alpha$, which tends to $1$ as $\alpha$ grows; S1 then saves almost nothing on generation and only the factor $E$ on judging. If the two settings cost the same ($\alpha = 1$), either choice saves the
-trivial factor of $2$. The generation-side case for S1 rests on $\alpha$ being large and on the cheap setting being the operating point of interest. Two pieces of evidence bear on $\alpha$. The largest providers bill a reasoning model's internal ``thinking'' tokens as output tokens and expose the amount as a per-request setting, so a call at a high setting pays the same rate on a much larger token count \citep{openai2026reasoning, anthropic2026thinking}. An independent measurement service that runs a fixed suite at each setting reports, for one frontier model, more than an order of magnitude more output tokens at the highest setting than at the lowest, with a substantial difference in measured quality \citep{aagpt5benchmarks2025}; Appendix~\ref{app:worked} gives the figures, and the same service publishes per-task token usage for every model it evaluates \citep{aaintelligence}, so $\alpha$ can be looked up. It should also be measured. On open-ended analytic prompts we found $\alpha$ between $1.75$ and $3.2$ for two frontier models, comparing the highest setting with a lower one (Appendix~\ref{app:measurements}), an order of magnitude below that published figure; $\alpha$ depends on the model, on how its effort setting is implemented and on the task family.
+trivial factor of $2$. The generation-side case for S1 rests on $\alpha$ being large and on the cheap setting being the operating point of interest. Two pieces of evidence bear on $\alpha$. The largest providers bill a reasoning model's internal ``thinking'' tokens as output tokens and expose the amount as a per-request setting, so a call at a high setting pays the same rate on a much larger token count \citep{openai2026reasoning, anthropic2026thinking}. An independent measurement service that runs a fixed suite at each setting reports, for one frontier model, more than an order of magnitude more output tokens at the highest setting than at the lowest, with a substantial difference in measured quality \citep{aagpt5benchmarks2025}; Appendix~\ref{app:worked} gives the figures, and the same service publishes the token counts and cost of running its whole suite for the models and settings it evaluates \citep{aaintelligence}, so $\alpha$ can be looked up. It should also be measured. On open-ended analytic prompts we found $\alpha$ between $1.75$ and $3.2$ for two frontier models, comparing the highest setting with a lower one (Appendix~\ref{app:measurements}), an order of magnitude below that published figure; $\alpha$ depends on the model, on how its effort setting is implemented and on the task family.
 
-\textbf{What is lost.} Questions about the contrast between settings can no longer be answered, since only one setting is measured. A less obvious loss matters more. Measuring every system at its cheapest setting and reporting a ranking of the \emph{systems} assumes that the order at the cheap setting predicts the order at the expensive one, and the evidence runs the other way. \citet{guedesdesouza2026budget} vary the generation budget, the maximum number of output tokens, over seven levels from 64 to 4,096 for four models on three reasoning benchmarks and find that ``model rankings reverse across budgets on all benchmarks'' ($p < 0.01$), with $3$--$19\%$ of items losing accuracy as the budget grows. The effect of extra compute is itself uneven. It can let a smaller model beat one $14\times$ larger at equal compute, on problems the smaller model already solves some of the time \citep{snell2024scaling}, or one $5\times$ larger \citep{wu2025inference}, lift an open code model from $15.9\%$ to $56\%$ of tasks solved with 250 samples \citep{brown2024monkeys}, and at the same time lower accuracy on hard queries while raising it on easy ones \citep{chen2024morecalls}; in one automated-scoring task higher effort helped on average but its benefit ``varied by model family'', and the most accurate configuration ran at low effort \citep{frohn2026effort}; and on closed-book knowledge questions, answered without search, it ``does not consistently improve accuracy and often leads to more hallucinations'' across 14 reasoning models, although for GPT-5-mini with a search tool, closer to DRACO's setting, it raised accuracy from $41.2\%$ to $53.0\%$ and cut hallucinations from $16.6\%$ to $8.0\%$ \citep{zhao2026testtime}. \citet{kim2026kjr} accordingly ask that the effort setting, its rationale and whether it was left at the vendor default be reported whenever several models are benchmarked.
+\textbf{What is lost.} Questions about the contrast between settings can no longer be answered, since only one setting is measured. A less obvious loss matters more. Measuring every system at its cheapest setting and reporting a ranking of the \emph{systems} assumes that the order at the cheap setting predicts the order at the expensive one, and the evidence runs the other way. \citet{guedesdesouza2026budget} vary the generation budget, the maximum number of output tokens, over seven levels from 64 to 4,096 for four models on three reasoning benchmarks and find that ``model rankings reverse across budgets on all benchmarks'' ($p < 0.01$), with $3$--$19\%$ of items losing accuracy as the budget grows. The effect of extra compute is itself uneven. It can let a smaller model beat one $14\times$ larger at equal compute, on problems the smaller model already solves some of the time \citep{snell2024scaling}, or one $5\times$ larger \citep{wu2025inference}, lift an open code model from $15.9\%$ to $56\%$ of tasks solved with 250 samples \citep{brown2024monkeys}, and at the same time lower accuracy on hard queries while raising it on easy ones \citep{chen2024morecalls}; in one automated-scoring task higher effort helped on average but its benefit ``varied by model family'', and the most accurate configuration ran at low effort \citep{frohn2026effort}; and on closed-book knowledge questions, answered without search, it ``does not consistently improve accuracy and often leads to more hallucinations'' across 14 reasoning models, although for GPT-5-mini with a search tool, closer to DRACO's setting, it raised accuracy from $41.2\%$ to $53.0\%$ and cut hallucinations from $16.6\%$ to $8.0\%$ \citep{zhao2026testtime}. \citet{kim2026kjr} accordingly ask that medical studies of language models report the effort setting, its rationale and whether it was left at the vendor default, since differing settings can confound the gap between models when several are benchmarked.
 
 The consequence for S1 is a scope condition. A comparison run at one
 setting answers the question ``which system is best \emph{at this operating point}'', and
@@ -310,7 +310,7 @@ Section~\ref{sec:calibration} treats with its sources. Anonymised, order-randomi
 
 \subsection{S5: Judge count, and the case against reducing it}
 
-We recommend against this one. Fewer judges are cheaper, and usually not by much. From Equation~\ref{eq:judging-batched}, the absolute saving from reducing $J$ judges to $1$ is
+We recommend against this one. Fewer judges are cheaper, but not by much when generation dominates the budget. From Equation~\ref{eq:judging-batched}, the absolute saving from reducing $J$ judges to $1$ is
 \begin{equation}
 \Delta_J = E \cdot R \cdot T \cdot (J-1) \cdot K \cdot j',
 \label{eq:s5}
@@ -412,11 +412,11 @@ simplifications S3 and S4 contribute almost nothing to the combined figure, howe
 their own factors. The naive product $F_G \cdot E \cdot K \cdot \beta$ (equivalently, all
 factors applied to the whole budget) exceeds the exact reduction by a factor that grows
 with $E \cdot K \cdot \beta$ and with $\alpha$, since it equals $(1-s)\,E \cdot K \cdot \beta + s\,(1+\alpha)$ when S1 keeps the cheap setting (when it keeps the expensive one the second term is $s\,(1+\alpha)/\alpha$, which falls as $\alpha$ grows): $13$ to $29$ in the worked instance (Appendix~\ref{app:worked} gives the
-figures), but $7$ to $11$ at the setting-cost ratios we measured (Appendix~\ref{app:measurements}) under cached-read pricing with no write premium ($w = 1$), falling below ten once $s$ reaches $0.3$, and $8$ to $12$ at a write multiple of $w = 1.25$, falling below ten once $s$ reaches $0.4$. And because $F_G$ and $F_J$ share the factors $R$ and
+figures), but $7$ to $11$ at the setting-cost ratios we measured between the highest setting and a lower one ($1.75$ to $3.18$, Appendix~\ref{app:measurements}) under cached-read pricing with no write premium ($w = 1$), falling below ten once $s$ reaches $0.3$, and $8$ to $12$ at a write multiple of $w = 1.25$, falling below ten once $s$ reaches $0.4$. And because $F_G$ and $F_J$ share the factors $R$ and
 $T_{\text{full}}/n^*$, S2 and S6 are the only simplifications whose benefit is
 independent of $s$; they are also the two whose cost to validity the power calculation expresses directly, S2 through the regeneration term of Equation~\ref{eq:variance-decomposition} and S6 through the floor $n^*$ (Sections~\ref{sec:simplifications} and~\ref{sec:power}).
 
-Appendix~\ref{app:worked} evaluates Equation~\ref{eq:cumulative} for an illustrative configuration: roughly two orders of magnitude, with and without prompt caching, across plausible values of $s$, at that instance's setting-cost ratio $\alpha$ and its assumed floor $n^* = 60$; with the floor of $184$ that its own power inputs give, S6 saves nothing and every figure falls to a third ($46$--$74\times$). At the values of $\alpha$ we measured on analytic prompts (Appendix~\ref{app:measurements}) the same configuration yields well under a hundredfold, because $\alpha$ enters $F_G$ directly.
+Appendix~\ref{app:worked} evaluates Equation~\ref{eq:cumulative} for an illustrative configuration: roughly two orders of magnitude, with and without prompt caching, across plausible values of $s$, at that instance's setting-cost ratio $\alpha$ and its assumed floor $n^* = 60$, when S1 keeps the cheap setting ($10$--$18\times$ when it keeps the expensive one, since $F_G$ is then $1.05 \cdot 3 \cdot 3 = 9.45$); with the floor of $184$ that its own power inputs give, S6 saves nothing and every figure falls to a third ($46$--$74\times$). At the values of $\alpha$ we measured on analytic prompts (Appendix~\ref{app:measurements}) the same configuration yields well under a hundredfold, because $\alpha$ enters $F_G$ directly.
 
 \sectionbreak
 \section{Statistical Constraints on the Simplifications}
@@ -442,7 +442,7 @@ comparisons of interest and not across every pairing the full $C \times C$ compa
 Cohen's
 $d_z$, the paired-samples effect size standardised by the standard deviation of the
 differences themselves and equal to $t/\sqrt{n}$ for the paired $t$-statistic over $n$ tasks, is reported
-alongside every $p$-value; it is distinct from $d_{av}$, which
+alongside every $p$-value; it is distinct from $d_{\text{av}}$, which
 ignores the correlation between the paired measurements \citep{lakens2013}. A statistically
 significant but small effect is a different finding from a significant, large one.
 
@@ -586,11 +586,11 @@ it is dropped. A mixed-effects model with crossed random effects for task and ju
 \citep{baayen2008}, with regenerations nested within task and system but crossed with judge, and repeats nested within judge and answer, would propagate all
 components into a single interval, at the price of simplicity; without it, the interval of Section~\ref{sec:stats} stays conditional on the judge
 panel and aggregation rule. The raw table retained under Section~\ref{sec:stats} is what
-makes fitting such a model later possible without re-running anything. The minimum effect size $\delta$ worth detecting for a given comparison remains a domain-specific judgement, which the formulas in Section~\ref{sec:power} take as an input.
+makes fitting such a model later possible without re-running anything. The minimum difference $\delta$ worth detecting for a given comparison remains a domain-specific judgement, which the formulas in Section~\ref{sec:power} take as an input.
 
 \section{Conclusion}
 
-Rigour in a DRACO-style benchmark is expensive by construction, because four of its six design choices multiply the whole cost when each answer is judged in its own call, as DRACO does, and three still do when judging is batched (Section~\ref{sec:strengths}), and most of that cost can be given back. The sweep over settings and the regenerations carry most of the saving, the sweep only when the cheap setting is the one kept (S1), and the regenerations at some cost in power, since fewer of them raise $n^*$ (S2, S6); the task count adds to it only as far as the power floor of Section~\ref{sec:power} allows. Batched judging carries far less than its unbatched arithmetic suggests once prompt caching is priced in. The judge count, the dimension intuition reaches for first, is the one to keep. The combined reduction is a weighted harmonic mean of a generation-side and a judging-side factor, roughly two orders of magnitude in the worked instance of Appendix~\ref{app:worked} at its assumed task floor, a third of that at the floor its own power inputs give, and less at the setting-cost ratios we measured. What that buys is a benchmark cheap enough to re-run whenever the set of systems changes, provided the reduced protocol is checked against the full one at least once (Section~\ref{sec:validation}).
+Rigour in a DRACO-style benchmark is expensive by construction, because four of its six design choices multiply the whole cost when each answer is judged in its own call, as DRACO does, and three still do when judging is batched (Section~\ref{sec:strengths}). Most of that cost can be given back. The sweep over settings and the regenerations carry most of the saving, the sweep only when the cheap setting is the one kept (S1), and the regenerations at some cost in power, since fewer of them raise $n^*$ (S2, S6); the task count adds to it only as far as the power floor of Section~\ref{sec:power} allows. Batched judging carries far less than its unbatched arithmetic suggests once prompt caching is priced in. The judge count, the dimension intuition reaches for first, is the one to keep. The combined reduction is a weighted harmonic mean of a generation-side and a judging-side factor, roughly two orders of magnitude in the worked instance of Appendix~\ref{app:worked} with the cheap setting kept and at its assumed task floor, a third of that at the floor its own power inputs give, and less at the setting-cost ratios we measured. What that buys is a benchmark cheap enough to re-run whenever the set of systems changes, provided the reduced protocol is checked against the full one at least once (Section~\ref{sec:validation}).
 
 \appendix
 
@@ -599,7 +599,7 @@ Rigour in a DRACO-style benchmark is expensive by construction, because four of 
 \label{app:published}
 
 This appendix records the named, dated figures behind Sections~\ref{sec:draco}
-and~\ref{sec:strengths}. Each was checked against the primary page cited; where a primary page no longer resolves, the entry records this. All access dates are September 2026, except that the Microsoft post was re-checked at its new address on 25 October 2026, and the Valyu post was re-checked and the Claude Opus~5 system card \citep{anthropic2026opus5} read on 26 October 2026.
+and~\ref{sec:strengths}. Each was checked against the primary page cited; where a primary page no longer resolves, the entry records this. All access dates are September 2026, except that the Microsoft post was re-checked at its new address on 25 October 2026, and the Valyu post was re-checked and the Claude Opus~5 system card \citep{anthropic2026opus5} and Perplexity's blog post on DRACO \citep{perplexity2026explainer} read on 26 October 2026.
 
 \subsection{The benchmark}
 
@@ -678,7 +678,7 @@ concrete values: the commercial terms are dated and sourced, while $\alpha = 20$
 
 \subsection{Prompt-caching terms}
 
-As last read (September 2026, and 26 October 2026 for OpenAI), the three largest commercial API providers bill a
+As last read (September 2026, and 26 October 2026 where stated below), the three largest commercial API providers bill a
 repeated prompt prefix as follows. OpenAI charges cached input tokens at $0.1\times$ the
 standard input price ($0.05\times$ for GPT-6.1 Sol, as of 26 October 2026), applies caching automatically to prefixes of at least $1{,}024$
 tokens, bills the first, cache-writing call at $1.25\times$ for its default lifetime, and keeps a prefix eligible for reuse for at least 30 minutes
@@ -690,11 +690,11 @@ $0.1\times$ on most models ($0.05\times$ on its flagship, Gemini~4~Argon, as of 
 \citep{google2026pricing}. None of the three caches output tokens. In the notation of
 Equation~\ref{eq:judging-cached}, the representative values are $c = 0.1$ and $w = 1$
 (Google) or $w = 1.25$ (OpenAI, Anthropic). All three pages were re-read on 11 September
-2026, and OpenAI's again on 26 October 2026, which is where its cache-write charge and 30-minute minimum above come from. OpenAI's terms apply to its current model generation, Anthropic bills a one-hour
+2026, and all three again on 26 October 2026, which is where OpenAI's cache-write charge and 30-minute minimum, and the three rates dated to that day, come from. OpenAI's terms apply to its current model generation, Anthropic bills a one-hour
 cache write at $2\times$, and Google's storage charge ranges from \$0.50 to \$1.80 per million tokens per hour for its Flash and Flash-Lite models and from \$4.50 to \$8.10 for its Pro models,
 depending on model and service tier.
 
-\subsection{The setting-cost ratio $\alpha$}
+\subsection{The setting-cost ratio \texorpdfstring{$\alpha$}{alpha}}
 
 Artificial Analysis ran a fixed evaluation suite against one frontier model, GPT-5, at
 each of its four reasoning-effort settings. The suite consumed $3.5$~million output
@@ -714,7 +714,7 @@ T = 1{,}800$ generation calls, Equation~\ref{eq:judging-unbatched} implies $27{,
 unbatched judging calls, and Equation~\ref{eq:judging-batched} implies $5{,}400$ batched
 judging calls, before any per-call price is attached.
 
-\subsection{The batching factor $\beta$}
+\subsection{The batching factor \texorpdfstring{$\beta$}{beta}}
 
 With $C = 5$ and $\rho = 0.2$, Equation~\ref{eq:s4} gives $\beta = 3.0$ without caching
 ($c = w = 1$). With $c = 0.1$ and $w = 1$ it gives $\beta = 1.2$, and the ceiling
@@ -723,7 +723,7 @@ factor of three on judging cost without caching and, with it, a factor of $1.2$ 
 
 \subsection{The combined reduction}
 
-Take $\alpha = 20$, $R = 3$, $K = 5$, $E = 2$, $C = 5$, $\rho = 0.2$, and a full task
+Take $\alpha = 20$ with the cheap setting kept (S1), $R = 3$, $K = 5$, $E = 2$, $C = 5$, $\rho = 0.2$, and a full task
 count $T_{\text{full}} = 180$ reduced to an assumed floor $n^* = 60$. Then
 Equation~\ref{eq:component-factors} gives $F_G = 21 \cdot 3 \cdot 3 = 189$ and $F_J = 2
 \cdot 3 \cdot 5 \cdot 3 \cdot \beta = 90\beta$, that is $270$ with uncached batching and
@@ -749,7 +749,7 @@ Section~\ref{sec:cumulative} describes. The reference implementation reproduces 
 \label{tab:cumulative}
 \end{table}
 
-\subsection{The task floor $n^*$}
+\subsection{The task floor \texorpdfstring{$n^*$}{n*}}
 
 For three pre-registered comparisons at family-wise $a = 0.05$, Holm's smallest
 per-comparison threshold is $a' = 0.05/3$; one-sided, $z_{a'} \approx 2.13$.
@@ -802,7 +802,7 @@ answers was the same in the first two orderings; in the third, the strongest ans
 strongest answer scored 60, 65 and 48 depending on position, the middle one 45, 55 and 50,
 the weakest 25, 25 and 20. Order alone moved an absolute score by up to 17 points. Section~\ref{sec:related} notes that the choice of judge moves published DRACO scores; here the order of presentation moved scores within one judge, and that is the reason Section~\ref{sec:calibration} asks for the order to be varied across the $K$ repeats.
 
-\subsection{The setting-cost ratio $\alpha$ (experiment E1)}
+\subsection{The setting-cost ratio \texorpdfstring{$\alpha$}{alpha} (experiment E1)}
 
 \textbf{Set-up.} Five open-ended analytic prompts of a business-analysis kind
 (banking, mining, automotive, retail and telecommunications scenarios, each asking for a
@@ -969,7 +969,7 @@ gpt-5.6-sol & none & 5 telecoms & 125 & 1234 & 0 & 39 & stop \\
 \label{tab:e1-calls}
 \end{table}
 
-\subsection{Why the two measurements of $\alpha$ differ}
+\subsection{Why the two measurements of \texorpdfstring{$\alpha$}{alpha} differ}
 \label{app:alpha-why}
 
 Four candidate explanations for the distance between the published $23\times$ and the measured
