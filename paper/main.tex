@@ -222,7 +222,7 @@ setting against a minimal one), reducing to the single cheapest setting saves a 
 on generation cost, and a separate factor of $E$ on judging cost (fewer conditions to
 judge). Equation~\ref{eq:s1} assumes the \emph{cheap} setting is the one retained. If
 instead the expensive setting is retained, which for reasons given below is often the appropriate choice, the generation-side factor is $(1+\alpha)/\alpha$, which tends to $1$ as $\alpha$ grows; S1 then saves almost nothing on generation and only the factor $E$ on judging. If the two settings cost the same ($\alpha = 1$), either choice saves the
-trivial factor of $2$. The generation-side case for S1 rests on $\alpha$ being large and on the cheap setting being the operating point of interest. Two pieces of evidence bear on $\alpha$. The largest providers bill a reasoning model's internal ``thinking'' tokens as output tokens and expose the amount as a per-request setting, so a call at a high setting pays the same rate on a much larger token count \citep{openai2026reasoning, anthropic2026thinking}. An independent measurement service that runs a fixed suite at each setting reports, for one frontier model, more than an order of magnitude more output tokens at the highest setting than at the lowest, with a substantial difference in measured quality \citep{aagpt5benchmarks2025}; Appendix~\ref{app:worked} gives the figures, and the same service publishes the token counts and cost of running its whole suite for the models and settings it evaluates \citep{aaintelligence}, so $\alpha$ can be looked up. It should also be measured. On open-ended analytic prompts we found $\alpha$ between $1.75$ and $3.2$ for two frontier models, comparing the highest setting with a lower one (Appendix~\ref{app:measurements}), an order of magnitude below that published figure; $\alpha$ depends on the model, on how its effort setting is implemented and on the task family.
+trivial factor of $2$. The generation-side case for S1 rests on $\alpha$ being large and on the cheap setting being the operating point of interest. Two pieces of evidence bear on $\alpha$. The largest providers bill a reasoning model's internal ``thinking'' tokens as output tokens and expose the amount as a per-request setting, so a call at a high setting pays the same rate on a much larger token count \citep{openai2026reasoning, anthropic2026thinking}. An independent measurement service that runs a fixed suite at each setting reports, for one frontier model, more than an order of magnitude more output tokens at the highest setting than at the lowest, with a substantial difference in measured quality \citep{aagpt5benchmarks2025}; Appendix~\ref{app:worked} gives the figures, and the same service publishes the token counts and cost of running its whole suite for the models and settings it evaluates \citep{aaintelligence}, so $\alpha$ can be looked up. It should also be measured. On open-ended analytic prompts we found $\alpha$ between $1.75$ and $3.18$ for two frontier models, comparing the highest setting with a lower one (Appendix~\ref{app:measurements}), an order of magnitude below that published figure; $\alpha$ depends on the model, on how its effort setting is implemented and on the task family.
 
 \textbf{What is lost.} Questions about the contrast between settings can no longer be answered, since only one setting is measured. A less obvious loss matters more. Measuring every system at its cheapest setting and reporting a ranking of the \emph{systems} assumes that the order at the cheap setting predicts the order at the expensive one, and the evidence runs the other way. \citet{guedesdesouza2026budget} vary the generation budget, the maximum number of output tokens, over seven levels from 64 to 4,096 for four models on three reasoning benchmarks and find that ``model rankings reverse across budgets on all benchmarks'' ($p < 0.01$), with $3$--$19\%$ of items losing accuracy as the budget grows. The effect of extra compute is itself uneven. It can let a smaller model beat one $14\times$ larger at equal compute, on problems the smaller model already solves some of the time \citep{snell2024scaling}, or one $5\times$ larger \citep{wu2025inference}, lift an open code model from $15.9\%$ to $56\%$ of tasks solved with 250 samples \citep{brown2024monkeys}, and at the same time lower accuracy on hard queries while raising it on easy ones \citep{chen2024morecalls}; in one automated-scoring task higher effort helped on average but its benefit ``varied by model family'', and the most accurate configuration ran at low effort \citep{frohn2026effort}; and on closed-book knowledge questions, answered without search, it ``does not consistently improve accuracy and often leads to more hallucinations'' across 14 reasoning models, although for GPT-5-mini with a search tool, closer to DRACO's setting, it raised accuracy from $41.2\%$ to $53.0\%$ and cut hallucinations from $16.6\%$ to $8.0\%$ \citep{zhao2026testtime}. \citet{kim2026kjr} accordingly ask that medical studies of language models report the effort setting, its rationale and whether it was left at the vendor default, since differing settings can confound the gap between models when several are benchmarked.
 
@@ -701,10 +701,10 @@ each of its four reasoning-effort settings. The suite consumed $3.5$~million out
 tokens at the \texttt{minimal} setting and $82$~million at \texttt{high}, a $23\times$ difference, for Intelligence Index scores of $44$ and $68$ respectively
 \citep{aagpt5benchmarks2025}. Because reasoning tokens are billed as output tokens at the
 same rate regardless of setting \citep{openai2026reasoning, anthropic2026thinking}, this
-is a measured $\alpha \approx 23$ for that model on that suite. The same service publishes
-per-task token usage for each model it evaluates \citep{aaintelligence}; $\alpha$ should
+is a ratio of output costs of about $23$ for that model on that suite, and an upper bound on its $\alpha$ there: the suite's inputs, about $100{,}000$ tokens per question in its long-context benchmark, are paid at both settings and pull the cost ratio below the token ratio (Section~\ref{app:e1-method}). The same service publishes
+the token counts and cost of running its whole suite for the models and settings it evaluates \citep{aaintelligence}; $\alpha$ should
 be looked up or measured for the systems under comparison. Appendix~\ref{app:measurements}
-reports such a measurement on analytic prompts, with $\alpha$ between $1.75$ and $3.2$ for the highest setting against a lower one, and its consequence for the worked instance below.
+reports such a measurement on analytic prompts, with $\alpha$ between $1.75$ and $3.18$ for the highest setting against a lower one, and its consequence for the worked instance below.
 
 \subsection{Call counts for a modest configuration}
 
@@ -793,12 +793,12 @@ length deep-research tasks produce would raise $\rho$ considerably.
 
 \textbf{Test--retest (S3).} The same answer was scored five times with no memory between
 calls. The scores were 50, 50, 60, 50 and 43 on the 100-point scale: mean $50.6$, standard
-deviation $6.1$, range $17$ points. A single scoring of this answer could have fallen anywhere within a 17-point interval, which is the quantity S3 says is lost at $K = 1$.
+deviation $6.1$, range $17$ points. The first of the three caching calls above sent the identical prompt and scored the answer 53, inside that range; over all six scorings the mean is $51.0$ and the standard deviation $5.5$. A single scoring of this answer could have fallen anywhere within a 17-point interval, which is the quantity S3 says is lost at $K = 1$.
 
 \textbf{Order sensitivity (S4, Section~\ref{sec:calibration}).} The three answers were
 scored together in one call, under explicit instructions to grade each independently
 against the absolute rubric, in three rotations of their order. The ranking of the three
-answers was the same in the first two orderings; in the third, the strongest answer scored two points below the middle one, and the weakest stayed last. The
+answers was the same in the first two orderings; in the third, the answer written to be strongest scored two points below the middle one, and the weakest stayed last. Scored alone, in the three caching calls above, the two came out the other way round: 53 for the middle answer and 43 for the strongest. The
 strongest answer scored 60, 65 and 48 depending on position, the middle one 45, 55 and 50,
 the weakest 25, 25 and 20. Order alone moved an absolute score by up to 17 points. Section~\ref{sec:related} notes that the choice of judge moves published DRACO scores; here the order of presentation moved scores within one judge, and that is the reason Section~\ref{sec:calibration} asks for the order to be varied across the $K$ repeats.
 
@@ -807,18 +807,18 @@ the weakest 25, 25 and 20. Order alone moved an absolute score by up to 17 point
 \textbf{Set-up.} Five open-ended analytic prompts of a business-analysis kind
 (banking, mining, automotive, retail and telecommunications scenarios, each asking for a
 method and its most likely failure mode), one system instruction asking for a thorough
-professional answer, and two frontier models, one from each of the two largest providers, each queried once per prompt at some of its documented reasoning-effort
+professional answer, and two frontier models, one from OpenAI and one from Anthropic, each queried once per prompt at some of its documented reasoning-effort
 settings: \texttt{none}, \texttt{low} and \texttt{high} for the first, \texttt{low} and
 \texttt{high} for the second. Output was capped at 24{,}000 tokens; no call reached the
 cap. The calls for six cells failed with transient provider errors (ten failed calls in all) and were retried until they succeeded, so that every cell is filled. Total spend: \$2.17 across 25 successful calls.
 
 \textbf{Result.} Table~\ref{tab:alpha} gives the paired ratios. For the first model the
-\texttt{high} setting consumed $2.8\times$ the output tokens of \texttt{low} (per prompt
-$1.5$--$4.0$) and $3.2\times$ those of \texttt{none}; at \texttt{high} the provider
+\texttt{high} setting consumed $2.83\times$ the output tokens of \texttt{low} (per prompt
+$1.5$--$4.0$) and $3.18\times$ those of \texttt{none}; at \texttt{high} the provider
 reported between $1{,}024$ and $4{,}068$ reasoning tokens per answer, at \texttt{none}
 zero, and \texttt{low} added only $12\%$ over \texttt{none}. For the second model
 \texttt{high} consumed $1.75\times$ the tokens of \texttt{low} (per prompt $1.5$--$2.0$),
-with mean answers of $3{,}600$ and $6{,}300$ tokens. Cost ratios are slightly
+with mean outputs of $3{,}600$ and $6{,}300$ tokens, thinking included. Cost ratios are slightly
 lower than the token ratios ($2.80$, $3.14$ and $1.74$ against $2.83$, $3.18$ and $1.75$; both are $1.12$ for \texttt{low} against \texttt{none}), because the same input cost is added at both settings. Mean
 latency rose from 38 seconds at \texttt{none} to 126 at \texttt{high} for the first model and from 58 to 97 seconds between \texttt{low} and \texttt{high} for the second.
 
@@ -842,8 +842,8 @@ Pooled ratio of summed output tokens over the same five prompts; raw usage recor
 
 \textbf{Interpretation.} The published $23\times$ of Appendix~\ref{app:worked} was
 measured on a reasoning-benchmark suite; on analytic prose tasks the \texttt{high} setting of the two
-models measured here costs $1.74$ to $3.14$ times a lower one. $\alpha$ is therefore not a
-property of a model but of a model on a task family (the same two models gave $1.48$ and $2.67$ on the competition problems of E3, Section~\ref{app:e3}, against $2.83$ and $1.75$ here), and the pilot of
+models measured here uses $1.75$ to $3.18$ times the output tokens of a lower one ($1.74$ to $3.14$ times the cost). $\alpha$ is therefore not a
+property of a model but of a model on a task family (the first model gave $1.48$ on the competition problems of E3, Section~\ref{app:e3}, against $2.83$ here; the second gave $2.67$ there against $1.75$ here, but only because of one problem, without which its ratio there is $1.68$), and the pilot of
 Section~\ref{sec:validation} should measure it on the benchmark's own tasks before S1's
 saving is counted. The consequence for the worked instance of Appendix~\ref{app:worked}
 is material: replacing its illustrative $\alpha = 20$ with the measured token ratios ($1.75$ to $3.18$, Table~\ref{tab:alpha}) gives a
@@ -925,7 +925,7 @@ Tools / browsing & per suite & none \\
 Prompts & thousands (suite total) & five \\
 Repeats & per suite & one call per cell \\
 Token accounting & suite-total output tokens & provider usage fields per call \\
-Instruction & benchmark harness prompts & ``answer thoroughly, use headings'' \\
+Instruction & benchmark harness prompts & one system instruction asking for a thorough answer with headings \\
 Result & $23\times$ (3.5M $\to$ 82M) & $2.83\times$ ($3.18\times$ vs \texttt{none}); $1.75\times$ \\
 \bottomrule
 \end{tabular}
@@ -973,14 +973,14 @@ gpt-5.6-sol & none & 5 telecoms & 125 & 1234 & 0 & 39 & stop \\
 \label{app:alpha-why}
 
 Four candidate explanations for the distance between the published $23\times$ and the measured
-$1.75$--$3.2\times$ are set out below; each would let both figures stand, and
+$1.75$--$3.18\times$ are set out below; each would let both figures stand, and
 together they make $\alpha$ a quantity that must be measured on the tasks of interest. Experiment E3 (Section~\ref{app:e3}) tests the first of them and does not support it.
 
 \textbf{Task family.} The published figure was measured on an evaluation suite composed of
 ``MMLU-Pro, GPQA Diamond, Humanity's Last Exam, LiveCodeBench, SciCode, AIME, IFBench
 \& AA-LCR'' \citep{aagpt5benchmarks2025}, most of which are competition-, examination- or
 code-style problems with a short, checkable answer. On such problems most of the
-output at a high setting is reasoning (in E3, Section~\ref{app:e3}, 72\% for the first model and 60\% for the second), and the literature on reasoning length shows the
+output at a high setting is reasoning (in E3, Section~\ref{app:e3}, 72\% for the first model and 60\% for the second, against 69\% and 39\% on the E1 prompts), and the literature on reasoning length shows the
 amount of reasoning a model spends varies by problem type and across model generations:
 \citet{ballon2026thinksharder} find that ``new generations of reasoning models use
 test-time compute more effectively'' and that accuracy declines as reasoning chains grow

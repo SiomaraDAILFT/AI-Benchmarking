@@ -307,3 +307,23 @@ Read this time from three angles not used before: the title, abstract and contri
 - Bibliography, perplexity2026explainer: now gives the post's date (4 February 2026), its byline and the 26 October access, and says the per-system scores come from the DRACO paper's Table 8.
 - Bibliography, the 12 June 2026 article: the byline and the 13 July update added, as the page shows them.
 - Bibliography, llmstatsdraco: the access line now says both days (10 and 11 September), matching Appendix A.3.
+
+## 26 October 2026, 20:14 pass
+
+Read this time from three angles not used before: every number that appears in more than one place, checked for agreement; points the paper makes twice; and Appendix C against the experiment scripts and raw result files. Each finding was checked by a second reader trying to refute it; 18 of 29 survived. The eleven set aside were the author's own choices of paragraphing or emphasis, and one was not wrong (Appendix B.3's T = 60 is stated where it is used).
+
+- Appendix B.2: the measurement service was still said to publish "per-task token usage for each model it evaluates", the wording the 18:22 pass corrected in S1 but not here. Now matches S1.
+- Appendix B.2: the published 23x is a ratio of output tokens; called "a measured alpha", it overstated alpha, which S1 defines on costs. Its long-context benchmark sends about 100,000 input tokens per question at both settings, which pulls the cost ratio below the token ratio. Now stated as an upper bound, with the reason.
+- Appendix C.2, Interpretation: the published token ratio was set against E1's cost ratios (1.74 to 3.14) in a sentence whose own parenthesis uses token ratios. Now gives the token ratios (1.75 to 3.18) with the cost ratios beside them.
+- Appendix C.2, Result: 2.8 and 3.2 in the first sentences are 2.83 and 3.18 everywhere else, including six lines later in the same paragraph (recomputed: 18,286 / 6,461 = 2.83; 18,286 / 5,749 = 3.18).
+- Section 5, S1; Appendix B.2; Appendix C.4: the range "1.75 to 3.2" rounded its two ends differently; now "1.75 to 3.18", as in Section 6 and Appendix C.2.
+- Appendix C.1, E2 test-retest: the raw records hold six identical scorings of the answer, not five: the first caching call sent the same prompt and scored it 53, inside the reported range. Added, with the mean (51.0) and deviation (5.5) over all six.
+- Appendix C.1, order sensitivity: "the strongest answer" now "the answer written to be strongest", since the scores themselves do not rank it first; the sentence now also gives its scores when read alone.
+- Appendix C.2, Interpretation: the E3 comparison put the two models' figures side by side without saying which was which; each is now set against its own E1 ratio, and the second model's E3 figure is said to rest on one problem.
+- Appendix C.4, task family: the E3 shares are now set beside the E1 shares (69% and 39%).
+- Appendix C.2, Result: the mean answer lengths (3,600 and 6,300 tokens) include thinking; now said.
+- Appendix C.2, Set-up: "one from each of the two largest providers" is a ranking the paper does not support; now "one from OpenAI and one from Anthropic" (the result file's models are gpt-5.6-sol and claude-opus-5).
+- Appendix C.3, comparison table: the instruction row quoted words that are not in the script; now describes the system instruction.
+- Bibliography, anthropic2026caching, openai2026caching, google2026pricing: Appendix B.1 says all three pages were re-read on 11 September and 26 October and cites them for rates dated 26 October; the notes now record both re-reads and the rate each was cited for.
+
+The build has one LaTeX note, "'h' float specifier changed to 'ht'", which the 18:22 build also had; no warnings otherwise, no undefined references.
