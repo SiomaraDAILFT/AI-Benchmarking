@@ -310,7 +310,7 @@ Read this time from three angles not used before: the title, abstract and contri
 
 ## 26 October 2026, 20:14 pass
 
-Read this time from three angles not used before: every number that appears in more than one place, checked for agreement; points the paper makes twice; and Appendix C against the experiment scripts and raw result files. Each finding was checked by a second reader trying to refute it; 18 of 29 survived. The eleven set aside were the author's own choices of paragraphing or emphasis, and one was not wrong (Appendix B.3's T = 60 is stated where it is used).
+Read this time from three angles not used before: every number that appears in more than one place, checked for agreement; points the paper makes twice; and Appendix C against the experiment scripts and raw result files. Each finding was checked by a second reader trying to refute it; 18 of the 28 distinct findings survived (one was found from two angles). The ten set aside were correct as written (Appendix B.3's T = 60 is stated where it is used, for example) or the author's own choices of paragraphing and emphasis.
 
 - Appendix B.2: the measurement service was still said to publish "per-task token usage for each model it evaluates", the wording the 18:22 pass corrected in S1 but not here. Now matches S1.
 - Appendix B.2: the published 23x is a ratio of output tokens; called "a measured alpha", it overstated alpha, which S1 defines on costs. Its long-context benchmark sends about 100,000 input tokens per question at both settings, which pulls the cost ratio below the token ratio. Now stated as an upper bound, with the reason.
@@ -323,7 +323,7 @@ Read this time from three angles not used before: every number that appears in m
 - Appendix C.4, task family: the E3 shares are now set beside the E1 shares (69% and 39%).
 - Appendix C.2, Result: the mean answer lengths (3,600 and 6,300 tokens) include thinking; now said.
 - Appendix C.2, Set-up: "one from each of the two largest providers" is a ranking the paper does not support; now "one from OpenAI and one from Anthropic" (the result file's models are gpt-5.6-sol and claude-opus-5).
-- Appendix C.3, comparison table: the instruction row quoted words that are not in the script; now describes the system instruction.
+- Appendix C.3, comparison table: the instruction row put in quotation marks words that are not in the instruction, which the same subsection quotes in full; now describes it without quoting.
 - Bibliography, anthropic2026caching, openai2026caching, google2026pricing: Appendix B.1 says all three pages were re-read on 11 September and 26 October and cites them for rates dated 26 October; the notes now record both re-reads and the rate each was cited for.
 
 The build has one LaTeX note, "'h' float specifier changed to 'ht'", which the 18:22 build also had; no warnings otherwise, no undefined references.
