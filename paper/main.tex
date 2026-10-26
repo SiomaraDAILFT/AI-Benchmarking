@@ -37,7 +37,7 @@
 \maketitle
 
 \begin{abstract}
-Benchmarks that score several AI systems against one another with language-model judges, in the tradition of DRACO \citep{draco2026}, multi-agent debate \citep{du2023multiagent, liang2024encouraging} and judge-based evaluation \citep{zheng2023judging}, are rigorous and expensive. A faithful run multiplies task count by system count by judge count by repeated-scoring count by regeneration count by configuration-setting count. An interview study of nineteen practitioners describes evaluation practice ``spanning informal `vibe checks' to organizational meta-work'' \citep{vandermaden2026gap}; we take the cost of the rigorous end of that range to be the main reason such comparisons are run rarely or once, while the systems being compared keep changing. This paper writes the cost of a DRACO-style benchmark as an explicit function of its design parameters and derives six simplifications, each with a closed-form reduction factor and a statement of the guarantee it gives up. One result runs against intuition: judge count is usually the wrong place to economise. The combined reduction is a weighted harmonic mean of a generation-side and a judging-side factor, a ratio of total costs; the naive product of per-component factors overstates the saving by more than an order of magnitude. In the worked instance the combined reduction is roughly two orders of magnitude at that instance's setting-cost ratio and materially less at the ratios we measured. The appendices instantiate the algebra on published runs, on current commercial terms and on measurements made for this paper. A closing protocol runs the full benchmark once and each simplification beside it, so that the fidelity cost of every simplification is measured against its predicted saving. \Theauthorisare{} not affiliated with the authors of DRACO; this is independent work that builds on their published benchmark.
+Benchmarks that score several AI systems against one another with language-model judges, in the tradition of DRACO \citep{draco2026}, multi-agent debate \citep{du2023multiagent, liang2024encouraging} and judge-based evaluation \citep{zheng2023judging}, are rigorous and expensive. A faithful run multiplies task count by system count by judge count by repeated-scoring count by regeneration count by configuration-setting count. An interview study of nineteen practitioners describes evaluation practice ``spanning informal `vibe checks' to organizational meta-work'' \citep{vandermaden2026gap}; we take the cost of the rigorous end of that range to be the main reason such comparisons are run rarely or once, while the systems being compared keep changing. This paper writes the cost of a DRACO-style benchmark as an explicit function of its design parameters and derives six simplifications, each with a closed-form reduction factor and a statement of the guarantee it gives up. One result runs against intuition: judge count is usually the wrong place to economise. The combined reduction is a weighted harmonic mean of a generation-side and a judging-side factor, a ratio of total costs; the naive product of per-component factors overstates the saving, by a factor of about seven to thirty in the configurations evaluated here. In the worked instance the combined reduction is roughly two orders of magnitude at that instance's setting-cost ratio and materially less at the ratios we measured. The appendices instantiate the algebra on published runs, on current commercial terms and on measurements made for this paper. A closing protocol runs the full benchmark once and each simplification beside it, so that the fidelity cost of every simplification is measured against its predicted saving. \Theauthorisare{} not affiliated with the authors of DRACO; this is independent work that builds on their published benchmark.
 \end{abstract}
 
 \clearpage
@@ -87,7 +87,7 @@ models, outscoring each constituent model alone \citep{openrouterfusion2026}. Se
 \emph{multi-model research assistant} from a large software vendor, whose published
 replication reports a statistically significant improvement over a single-model baseline
 under a different judge model from the aggregator's \citep{msftdraco2026}. Fourth,
-\emph{retrieval-centred} deep-research products that report the highest published scores,
+\emph{retrieval-centred} deep-research products that report the highest of the scores in Table~\ref{tab:published},
 describe multi-step retrieval across specialised sources, and do not describe multi-model
 ensembling \citep{valyu2026}.
 
@@ -175,8 +175,7 @@ some cases with a premium on the first, cache-writing call, a minimum prefix len
 limited cache lifetime; output tokens are not cached \citep{openai2026caching,
 anthropic2026caching, google2026pricing}. Appendix~\ref{app:worked} records the terms in
 force at the time of writing. A task description together with a rubric of several tens
-of criteria will usually exceed the published minimum prefix lengths, although not always: a forty-criterion rubric on its own measured below one provider's minimum and drew no cached tokens (Appendix~\ref{app:measurements}), so the prefix length should be checked. The $C$ calls that score one task's answers naturally fall within a single
-cache lifetime. Writing $c$
+of criteria will usually exceed the published minimum prefix lengths, although not always: a forty-criterion rubric on its own measured below one provider's minimum and drew no cached tokens (Appendix~\ref{app:measurements}), so the prefix length should be checked. The $C$ calls in which one judge, in one repeat, scores the $C$ systems' answers to one (task, setting, regeneration) triple naturally fall within a single cache lifetime, and the formula below charges a fresh cache write for each such group, that is, for every setting, regeneration and repeat. All $C \cdot E \cdot R \cdot K$ calls one judge makes on a task open with the same prefix, and repeated calls were measured reading the cache (Appendix~\ref{app:measurements}); where they all fall within one lifetime the write is paid once per task and judge, and in the worked instance of Appendix~\ref{app:worked} the cached judging-side factor $F_J$ of Section~\ref{sec:cumulative} falls from $108$ to about $69$, and the cached reductions of Table~\ref{tab:cumulative} from $137$--$176\times$ to about $101$--$161\times$. Writing $c$
 for the cached-read price as a fraction of the standard input price and $w$ for the
 price of the first, cache-writing call as a multiple of the standard input price ($w = 1$ where no write premium is charged), the unbatched judging cost with caching is
 \begin{equation}
@@ -281,7 +280,7 @@ $C(1+\rho)/(1+C\rho)$: it approaches $C$ as $\rho \to 0$ (the fixed overhead dom
 per-call cost, so batching amortises it across all $C$ answers) and approaches $1$ as
 $\rho \to \infty$ (the per-answer reading cost dominates, and there is nothing left to
 amortise). With caching and no write premium ($w = 1$), the corresponding limits are
-$1 + (C-1)\,c$ and $1$: the batching factor can never exceed $1 + (C-1)\,c$, which at the
+$1 + (C-1)\,c$ and $1$: with one cache write per group of $C$ unbatched calls (Equation~\ref{eq:judging-cached}) the batching factor cannot exceed $1 + (C-1)\,c$, which at the
 cached-read fractions currently published (Appendix~\ref{app:worked}) stays well below $C$ and grows by only $c$ for each system added ($1.4$ at $C = 5$ and $c = 0.1$, against $5$ without caching). The cost case for S4 is therefore weak wherever
 prompt caching is available, which is now the default behaviour of several large
 providers (Section~\ref{sec:model}). \textbf{What is added rather than lost}: a judge shown several systems' answers to the same task side by side has
@@ -412,8 +411,8 @@ a weighted harmonic mean of $F_G$ and $F_J$, which always lies between them. As 
 simplifications S3 and S4 contribute almost nothing to the combined figure, however large
 their own factors. The naive product $F_G \cdot E \cdot K \cdot \beta$ (equivalently, all
 factors applied to the whole budget) exceeds the exact reduction by a factor that grows
-with $E \cdot K \cdot \beta$ and exceeds an order of magnitude for typical values (Appendix~\ref{app:worked} gives the
-figures). And because $F_G$ and $F_J$ share the factors $R$ and
+with $E \cdot K \cdot \beta$ and with $\alpha$, since it equals $(1-s)\,E \cdot K \cdot \beta + s\,(1+\alpha)$: $13$ to $29$ in the worked instance (Appendix~\ref{app:worked} gives the
+figures), but $7$ to $11$ at the setting-cost ratios we measured (Appendix~\ref{app:measurements}) under cached-read pricing, falling below ten once $s$ reaches $0.3$. And because $F_G$ and $F_J$ share the factors $R$ and
 $T_{\text{full}}/n^*$, S2 and S6 are the only simplifications whose benefit is
 independent of $s$; they are also the two whose cost to validity the power calculation expresses directly, S2 through the regeneration term of Equation~\ref{eq:variance-decomposition} and S6 through the floor $n^*$ (Sections~\ref{sec:simplifications} and~\ref{sec:power}).
 
@@ -646,8 +645,10 @@ ensembles are compared against.}
 
 The Microsoft replication \citep{msftdraco2026} is a Microsoft Tech Community post of
 30 March 2026 by Gaurav Anand; its statistics are independently quoted by
-\citet{computerworld2026msft}, which also reports the per-dimension gains ($+3.33$
-breadth and depth, $+3.04$ presentation, $+2.58$ factual accuracy). It is the only
+\citet{computerworld2026msft}. The post also gives per-dimension gains ($+3.33$
+breadth and depth, $+3.04$ presentation, $+2.58$ factual accuracy); these are
+measured against Microsoft's own single-model Researcher under the same GPT-5.2 judge,
+not against Perplexity Deep Research. The Microsoft replication is the only
 published DRACO-style run we found that reports a standard error, a significance test,
 and the number of judge repeats together. The OpenRouter post \citep{openrouterfusion2026}
 of 12 June 2026 reports no error bars; it states that its judge was Gemini~3.1~Pro
@@ -665,8 +666,7 @@ Two public leaderboards that aggregate DRACO results were consulted on 10 and ag
 11 September 2026.
 One \citep{llmstatsdraco} showed a top score of $0.772$ ``across 3 evaluated AI models'',
 all three self-reported and none verified; the other \citep{benchlmdraco} showed $88.6\%$
-for the leading entry among three submitted system set-ups. Neither figure appears in any
-of the primary sources above, and the two trackers disagree with each other about which
+for the leading entry among three submitted system set-ups. A score of $88.6\%$ does appear in a primary source not listed above: Anthropic's system card for Claude Opus~5 (24 July 2026, Figure~8.10.4.A) reports it for that model at its highest reasoning effort, graded by Claude Opus~4.6 as the mean of five grading runs \citep{anthropic2026opus5}, which is above every score in Table~\ref{tab:published}. The $0.772$ appears neither in the primary sources above nor in that system card, and the two trackers disagree with each other about which
 system leads. The first page showed $0.732$ ``across 1 evaluated AI model'' when first consulted and $0.772$ ``across 3'' a day later, which illustrates the point made in Section~\ref{sec:strengths}.
 
 \sectionbreak
@@ -681,7 +681,7 @@ concrete, dated, sourced values.
 At the time of writing (September 2026) the three largest commercial API providers bill a
 repeated prompt prefix as follows. OpenAI charges cached input tokens at $0.1\times$ the
 standard input price, applies caching automatically to prefixes of at least $1{,}024$
-tokens, and keeps a prefix eligible for reuse for up to 30 minutes
+tokens, bills the first, cache-writing call at $1.25\times$ for its default lifetime, and keeps a prefix eligible for reuse for at least 30 minutes
 \citep{openai2026caching}. Anthropic charges cached reads at $0.1\times$ ($0.025\times$
 for its newest models), bills the first, cache-writing call at $1.25\times$ for a
 five-minute cache lifetime, and requires minimum prefixes of $512$--$4{,}096$ tokens
@@ -689,10 +689,10 @@ depending on model \citep{anthropic2026caching}. Google charges cached reads at
 $0.1\times$ and adds a per-hour storage charge for explicitly created caches
 \citep{google2026pricing}. None of the three caches output tokens. In the notation of
 Equation~\ref{eq:judging-cached}, the representative values are $c = 0.1$ and $w = 1$
-(OpenAI, Google) or $w = 1.25$ (Anthropic). All three pages were re-read on 11 September
+(Google) or $w = 1.25$ (OpenAI, Anthropic). All three pages were re-read on 11 September
 2026: OpenAI's terms apply to its current model generation, Anthropic bills a one-hour
-cache write at $2\times$, and Google's storage charge ranges from \$0.50 to \$1.80 per
-million tokens per hour depending on model tier.
+cache write at $2\times$, and Google's storage charge ranges from \$0.50 to \$1.80 per million tokens per hour for its Flash and Flash-Lite models and from \$4.50 to \$8.10 for its Pro models,
+depending on model and service tier.
 
 \subsection{The setting-cost ratio $\alpha$}
 
