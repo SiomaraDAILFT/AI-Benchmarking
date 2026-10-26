@@ -48,7 +48,7 @@ Benchmarks that score several AI systems, from single models to multi-agent deba
 \section{Introduction}
 \label{sec:intro}
 
-A benchmark that compares several AI systems or configurations (individual models, ensembles, retrieval-augmented pipelines, multi-agent panels) against one another on a shared task set, scored by one or more language-model judges against a written rubric, is now a standard methodology. It sits beside broad multi-scenario evaluations scored mainly by automatic metrics \citep{liang2023helm} and crowdsourced pairwise-preference leaderboards scored by human votes \citep{chiang2024arena}, and it underlies the automatic, judge-scored benchmarks built from those leaderboards or checked against them \citep{li2024arenahard, dubois2024lengthcontrolled}. DRACO \citep{draco2026} is a recent, well-specified instance and the running example here. We are not affiliated with DRACO's authors, and they have not reviewed this work. The literature on language models as judges, surveyed by \citet{li2024judgessurvey} and \citet{li2025generationjudgment}, supplies what the judging-side simplifications cost, and work on test-time compute, nondeterminism and benchmark compression supplies the rest (Section~\ref{sec:simplifications}); the subject here is the cost of the benchmark as a whole. The methodology is powerful for the same reasons that it is expensive to run faithfully. Task sourcing from real usage, several judges, repeated scoring to separate judge noise from differences between systems, and enough tasks to reach statistical power each add expense and running time, and each of them matters to the result.
+A benchmark that compares several AI systems or configurations (individual models, ensembles, retrieval-augmented pipelines, multi-agent panels) against one another on a shared task set, scored by one or more language-model judges against a written rubric, is now a standard methodology. It sits beside broad multi-scenario evaluations scored mainly by automatic metrics, such as HELM \citep{liang2023helm}, and crowdsourced pairwise-preference leaderboards scored by human votes \citep{chiang2024arena}, and it underlies the automatic, judge-scored benchmarks built from those leaderboards or checked against them \citep{li2024arenahard, dubois2024lengthcontrolled}. DRACO \citep{draco2026} is a recent, well-specified instance and the running example here. We are not affiliated with DRACO's authors, and they have not reviewed this work. The literature on language models as judges, surveyed by \citet{li2024judgessurvey} and \citet{li2025generationjudgment}, supplies what the judging-side simplifications cost, and work on test-time compute, nondeterminism and benchmark compression supplies the rest (Section~\ref{sec:simplifications}); the subject here is the cost of the benchmark as a whole. The methodology is powerful for the same reasons that it is expensive to run faithfully. Task sourcing from real usage, several judges, repeated scoring to separate judge noise from differences between systems, and enough tasks to reach statistical power each add expense and running time, and each of them matters to the result.
 
 That expense is the obstacle addressed here. \Citet{vandermaden2026gap} found practitioners' methods ranging from informal ``vibe checks'' to organisational meta-work, with a gap between gathering evaluation data and acting on it; whether cost is what keeps teams from the rigorous end of that range is not something their study, or any other we know of, measures. We state it as a premise. Money is also only part of the expense. A rigorous multi-system evaluation takes time to set up: tasks and rubrics have to be written, several providers' interfaces connected, the judging blinded and randomised, every raw score retained and the statistics computed. The algebra below addresses the first cost; for the second, the tooling that runs the protocol of Sections~\ref{sec:model}--\ref{sec:stats} is published with this paper.\footnote{\url{https://github.com/SiomaraDAILFT/AI-Benchmarking}: the paper, the protocol runner and the measurement scripts.} The set of systems worth comparing does not stay fixed. New models appear, existing systems are reconfigured, and a comparison that was current one quarter is stale the next. A methodology that can be afforded once a year cannot support decisions that are made continually. The question, then, is which parts of a rigorous protocol can be reduced, by how much, and at what cost to what the result can claim.
 
@@ -214,7 +214,7 @@ Each simplification below states its reduction factor in closed form and, separa
 
 If $E$ settings are swept per system and one setting's generation cost is $\alpha$ times a
 cheaper baseline setting's cost (for example, an extended-reasoning or higher-compute
-setting against a minimal one), reducing to the single cheapest setting saves a factor of
+setting against a minimal one), reducing to the single cheapest setting saves, with $g_e$ the average cost of one generation call at setting $e$ and $g_{\min}$ the lowest of them, a factor of
 \begin{equation}
 \frac{\sum_{e=1}^{E} g_e}{g_{\min}} \Big|_{E=2} = 1 + \alpha
 \label{eq:s1}
@@ -224,7 +224,7 @@ judge). Equation~\ref{eq:s1} assumes the \emph{cheap} setting is the one retaine
 instead the expensive setting is retained, which for reasons given below is often the appropriate choice, the generation-side factor is $(1+\alpha)/\alpha$, which tends to $1$ as $\alpha$ grows; S1 then saves almost nothing on generation and only the factor $E$ on judging. If the two settings cost the same ($\alpha = 1$), either choice saves the
 trivial factor of $2$. The generation-side case for S1 rests on $\alpha$ being large and on the cheap setting being the operating point of interest. Two pieces of evidence bear on $\alpha$. The largest providers bill a reasoning model's internal ``thinking'' tokens as output tokens and expose the amount as a per-request setting, so a call at a high setting pays the same rate on a much larger token count \citep{openai2026reasoning, anthropic2026thinking}. An independent measurement service that runs a fixed suite at each setting reports, for one frontier model, more than an order of magnitude more output tokens at the highest setting than at the lowest, with a substantial difference in measured quality \citep{aagpt5benchmarks2025}; Appendix~\ref{app:worked} gives the figures, and the same service publishes the token counts and cost of running its whole suite for the models and settings it evaluates \citep{aaintelligence}, so $\alpha$ can be looked up. It should also be measured. On open-ended analytic prompts we found $\alpha$ between $1.75$ and $3.18$ for two frontier models, comparing the highest setting with a lower one (Appendix~\ref{app:measurements}), an order of magnitude below that published figure; $\alpha$ depends on the model, on how its effort setting is implemented and on the task family.
 
-\textbf{What is lost.} Questions about the contrast between settings can no longer be answered, since only one setting is measured. A less obvious loss matters more. Measuring every system at its cheapest setting and reporting a ranking of the \emph{systems} assumes that the order at the cheap setting predicts the order at the expensive one, and the evidence runs the other way. \citet{guedesdesouza2026budget} vary the generation budget, the maximum number of output tokens, over seven levels from 64 to 4,096 for four models on three reasoning benchmarks and find that ``model rankings reverse across budgets on all benchmarks'' ($p < 0.01$), with $3$--$19\%$ of items losing accuracy as the budget grows. The effect of extra compute is itself uneven. It can let a smaller model beat one $14\times$ larger at equal compute, on problems the smaller model already solves some of the time \citep{snell2024scaling}, or one $5\times$ larger \citep{wu2025inference}, lift an open code model from $15.9\%$ to $56\%$ of tasks solved with 250 samples \citep{brown2024monkeys}, and at the same time lower accuracy on hard queries while raising it on easy ones \citep{chen2024morecalls}; in one automated-scoring task higher effort helped on average but its benefit ``varied by model family'', and the most accurate configuration ran at low effort \citep{frohn2026effort}; and on closed-book knowledge questions, answered without search, it ``does not consistently improve accuracy and often leads to more hallucinations'' across 14 reasoning models, although for GPT-5-mini with a search tool, closer to DRACO's setting, it raised accuracy from $41.2\%$ to $53.0\%$ and cut hallucinations from $16.6\%$ to $8.0\%$ \citep{zhao2026testtime}. \citet{kim2026kjr} accordingly ask that medical studies of language models report the effort setting, its rationale and whether it was left at the vendor default, since differing settings can confound the gap between models when several are benchmarked.
+\textbf{What is lost.} Questions about the contrast between settings can no longer be answered, since only one setting is measured. A less obvious loss matters more. Measuring every system at its cheapest setting and reporting a ranking of the \emph{systems} assumes that the order at the cheap setting predicts the order at the expensive one, and the evidence runs the other way. \citet{guedesdesouza2026budget} vary the generation budget, the maximum number of output tokens, over seven levels from 64 to 4,096 for four models on three reasoning benchmarks and find that ``model rankings reverse across budgets on all benchmarks'' ($p < 0.01$), with $3$--$19\%$ of items losing accuracy as the budget grows. The effect of extra compute is itself uneven. It can let a smaller model beat one $14\times$ larger at equal compute, on problems the smaller model already solves some of the time \citep{snell2024scaling}, or one $5\times$ larger \citep{wu2025inference}, lift an open code model from $15.9\%$ to $56\%$ of tasks solved with 250 samples \citep{brown2024monkeys}, and at the same time lower accuracy on hard queries while raising it on easy ones \citep{chen2024morecalls}. In one automated-scoring task higher effort helped on average but its benefit ``varied by model family'', and the most accurate configuration ran at low effort \citep{frohn2026effort}. On closed-book knowledge questions, answered without search, extra compute ``does not consistently improve accuracy and often leads to more hallucinations'' across 14 reasoning models, although for GPT-5-mini with a search tool, closer to the conditions of DRACO's tasks, it raised accuracy from $41.2\%$ to $53.0\%$ and cut hallucinations from $16.6\%$ to $8.0\%$ \citep{zhao2026testtime}. \citet{kim2026kjr} accordingly ask that medical studies of language models report the effort setting, its rationale and whether it was left at the vendor default, since differing settings can confound the gap between models when several are benchmarked.
 
 The consequence for S1 is a scope condition. A comparison run at one
 setting answers the question ``which system is best \emph{at this operating point}'', and
@@ -240,7 +240,7 @@ difference) before the sweep is dropped.
 
 Reducing $R$ regenerations to $1$ saves a factor of $R$ on both generation cost (Equation~\ref{eq:generation}) and judging cost (Equations~\ref{eq:judging-unbatched}--\ref{eq:judging-cached}), since both scale linearly with $R$. \textbf{What is lost}: any way of telling whether a single answer was a representative draw from the system's output distribution or an unusually good or bad one. That distribution is not degenerate even at temperature zero. An open-weight model (Qwen3-235B), sampled 1{,}000 times at temperature zero on the same prompt, returned 80 distinct completions, a consequence of server-side batching acting through floating-point non-associativity \citep{thinkingmachines2025}, and in an open-weight reasoning model the same numerical cause moves greedy-decoding accuracy by up to 9 points with batch size and hardware \citep{yuan2025nondeterminism}. At the level of evaluations, accuracy varied by up to 15 points across ten ``deterministic'' runs of five models on eight tasks \citep{atil2024nondeterminism}; between 48\% and 76\% of code-generation tasks had no test on which the programs from five repeated requests at the default temperature all gave the same output, with temperature zero reducing but not removing the effect \citep{ouyang2023nondeterminism}; the choice between greedy decoding and sampling shifts measured performance \citep{song2024greedy}; and \citet{madaan2024variance}, measuring the variance across seeds and checkpoints, say their work ``encourages practitioners to carefully factor in variance when comparing models''. At $R = 1$ this within-system variance is not removed; it goes unmeasured and is absorbed into whatever difference the benchmark reports. Where S2 is applied, the decoding configuration should be fixed and stated, and the pilot of Section~\ref{sec:validation} should include a small multi-regeneration subset so that the size of the ignored variance is at least estimated.
 
-\subsection{S3: Reducing judge repeat-scorings}
+\subsection{S3: Reducing judge repeat scorings}
 
 Reducing $K$ repeats to $1$ saves a factor of $K$ on judging cost only (Equations
 \ref{eq:judging-unbatched}--\ref{eq:judging-cached}); generation cost is unaffected, since
@@ -339,7 +339,7 @@ the same items; the panel's accuracy fell 8--22 points short of what independent
 would have achieved, and the best single model matched or exceeded the whole panel.
 Nor is diversity of provider a sufficient remedy. Across more than 350 models,
 \citet{kim2025correlated} find that ``larger and more accurate models have highly
-correlated errors, even with distinct architectures and providers''; on one leaderboard dataset ``models agree 60\% of the time when both models err''; and they trace the consequence into LLM-as-judge evaluation directly. Judge independence has to be measured: inter-judge agreement, or an effective-sample-size estimate of the
+correlated errors, even with distinct architectures and providers''; on one leaderboard dataset ``models agree 60\% of the time when both models err''; and they trace the consequence directly into evaluation with language-model judges. Judge independence has to be measured: inter-judge agreement, or an effective-sample-size estimate of the
 kind \citet{kohli2026ninejudges} uses, should be reported so that a reader can see how much independent evidence the panel contains, a reporting standard
 \citet{yang2026judgechanges} also call for after showing that ``an LLM-as-judge score can
 move even when the candidate responses stay fixed, simply because the evaluator has
@@ -357,7 +357,7 @@ Before any dimension is reduced, find the term of Equation~\ref{eq:total} it con
 
 \subsection{S6: Reducing task count, bounded by statistical power}
 
-Reducing $T$ saves linearly on both generation and judging cost, and it has an explicit consequence: below a computable floor $n^*$ (Section~\ref{sec:power}), the benchmark no longer has the stated power to detect, at the stated significance level, the effect size it was designed to detect. Fewer regenerations (S2) also cost power, since they raise $\sigma$, the standard deviation of the task-level paired differences, and with it $n^*$ (Equation~\ref{eq:variance-decomposition}); S6 is the dimension that floor bounds directly, and the floor can be computed once a pilot has produced a variance estimate.
+Reducing $T$ saves linearly on both generation and judging cost, and it has an explicit consequence: below a computable floor $n^*$ (Section~\ref{sec:power}), the benchmark no longer has the stated power to detect, at the stated significance level, the difference in mean score it was designed to detect. Fewer regenerations (S2) also cost power, since they raise $\sigma$, the standard deviation of the task-level paired differences, and with it $n^*$ (Equation~\ref{eq:variance-decomposition}); S6 is the dimension that floor bounds directly, and the floor can be computed once a pilot has produced a variance estimate.
 \textbf{What is lost}: statistical power alone, provided the reduced task set
 is representative of the full one. That proviso is where the evidence from the
 benchmark-compression literature is relevant. \citet{polo2024tinybenchmarks} show that
@@ -407,11 +407,11 @@ J_{\text{full}}/F_J$, so
 J_{\text{full}}/F_J} = \left( \frac{1-s}{F_G} + \frac{s}{F_J} \right)^{-1},
 \label{eq:cumulative}
 \end{equation}
-a weighted harmonic mean of $F_G$ and $F_J$, which always lies between them. As $s \to 0$ the reduction tends to $F_G$, so when generation dominates the budget, which needs a generation call to cost much more than the $J \cdot K$ judging calls ($15$ in the worked instance) made on its answer, the judging-side
+a weighted harmonic mean of $F_G$ and $F_J$, which always lies between them. As $s \to 0$ the reduction tends to $F_G$. Generation dominates the budget when a generation call costs much more than the $J \cdot K$ judging calls ($15$ in the worked instance) made on its answer, and in that case the judging-side
 simplifications S3 and S4 contribute almost nothing to the combined figure, however large
 their own factors. The naive product $F_G \cdot E \cdot K \cdot \beta$ (equivalently, all
 factors applied to the whole budget) exceeds the exact reduction by a factor that grows
-with $E \cdot K \cdot \beta$ and with $\alpha$, since it equals $(1-s)\,E \cdot K \cdot \beta + s\,(1+\alpha)$ when S1 keeps the cheap setting (when it keeps the expensive one the second term is $s\,(1+\alpha)/\alpha$, which falls as $\alpha$ grows): $13$ to $29$ in the worked instance (Appendix~\ref{app:worked} gives the
+with $E \cdot K \cdot \beta$ and with $\alpha$, since it equals $(1-s)\,E \cdot K \cdot \beta + s\,(1+\alpha)$ when S1 keeps the cheap setting (when it keeps the expensive one the second term is $s\,(1+\alpha)/\alpha$, which falls as $\alpha$ grows): with the cheap setting kept, $13$ to $29$ in the worked instance (Appendix~\ref{app:worked} gives the
 figures), but $7$ to $11$ at the setting-cost ratios we measured between the highest setting and a lower one ($1.75$ to $3.18$, Appendix~\ref{app:measurements}) under cached-read pricing with no write premium ($w = 1$), falling below ten once $s$ reaches $0.3$, and $8$ to $12$ at a write multiple of $w = 1.25$, falling below ten once $s$ reaches $0.4$. And because $F_G$ and $F_J$ share the factors $R$ and
 $T_{\text{full}}/n^*$, S2 and S6 are the only simplifications whose benefit is
 independent of $s$; they are also the two whose cost to validity the power calculation expresses directly, S2 through the regeneration term of Equation~\ref{eq:variance-decomposition} and S6 through the floor $n^*$ (Sections~\ref{sec:simplifications} and~\ref{sec:power}).
@@ -638,7 +638,7 @@ Microsoft 365 Copilot Researcher ``Critique'' \citep{msftdraco2026, computerworl
 different judges are not comparable: the Microsoft figure was produced by the judge the
 benchmark's own authors identify as the strictest, the OpenRouter figures by a newer
 model than the paper's primary judge. The single-model scores in the OpenRouter post
-(among them Fable~5 $65.3\%$ on the 93 tasks it completed, DeepSeek V4~Pro $60.3\%$, GPT-5.5 $60.0\%$ and Opus~4.8 $58.8\%$, and the budget panel's other two members, Kimi K2.6 $53.7\%$ and Gemini~3 Flash $43.1\%$) are what the
+(among them Fable~5 $65.3\%$ on the 93 tasks it completed, GPT-5.5 $60.0\%$ and Opus~4.8 $58.8\%$, and the budget panel's three members, DeepSeek V4~Pro $60.3\%$, Kimi K2.6 $53.7\%$ and Gemini~3 Flash $43.1\%$) are what the
 ensembles are compared against.}
 \label{tab:published}
 \end{table}
@@ -743,7 +743,7 @@ Reduction, cached-read pricing, $w = 1$ ($F_J = 108$) & $176\times$ & $154\times
 \caption{Combined reduction from S1--S4 and S6 (Equation~\ref{eq:cumulative}) for the
 worked instance, with $F_G = 189$. Multiplying every factor against the total cost
 would give $(1+\alpha) \cdot E \cdot R \cdot K \cdot \beta \cdot T_{\text{full}}/n^* = 5{,}670\times$
-for the same inputs without caching and $2{,}268\times$ with it, the overstatement
+for the same inputs without caching and $2{,}268\times$ with it at $w = 1$ ($2{,}504\times$ at $w = 1.25$), the overstatement
 Section~\ref{sec:cumulative} describes. The reference implementation reproduces every entry of this table
 (\texttt{tests/simplifications.test.mjs}).}
 \label{tab:cumulative}
@@ -846,7 +846,7 @@ models measured here uses $1.75$ to $3.18$ times the output tokens of a lower on
 property of a model but of a model on a task family (the first model gave $1.48$ on the competition problems of E3, Section~\ref{app:e3}, against $2.83$ here; the second gave $2.67$ there against $1.75$ here, but only because of one problem, without which its ratio there is $1.68$), and the pilot of
 Section~\ref{sec:validation} should measure it on the benchmark's own tasks before S1's
 saving is counted. The consequence for the worked instance of Appendix~\ref{app:worked}
-is material: replacing its illustrative $\alpha = 20$ with the measured token ratios ($1.75$ to $3.18$, Table~\ref{tab:alpha}) gives a
+is material: replacing its illustrative $\alpha = 20$ with the measured token ratios of the highest setting against a lower one ($1.75$ to $3.18$, Table~\ref{tab:alpha}) gives a
 generation-side factor $F_G$ of $25$ to $38$ instead of $189$, and a combined reduction
 (Equation~\ref{eq:cumulative}) of roughly $27$--$66\times$ across the same range of $s$
 and caching assumptions instead of $137$--$222\times$, about one and a half orders of magnitude instead of two. If the expensive setting is the one retained
@@ -900,7 +900,7 @@ and \texttt{output\_tokens} (second provider; this also includes the thinking to
 price plus output tokens times the output price, at the prices above; no cached-input
 discount applied (every prompt, system instruction included, came to 125 to 199 input tokens, far below the caching minimum, and every usage record reports zero cached tokens). Latency is wall-clock time of the HTTP request.
 
-\textbf{Analysis.} For each model and pair of settings, $\alpha$ is the ratio of the
+\textbf{Analysis.} For each model and pair of settings, $\alpha$, which S1 defines on cost, is estimated by the ratio of the
 \emph{sums} of output tokens over the five prompts (pooled ratio); the per-prompt ratios
 are reported alongside as the range. The cost ratio is computed the same way; it is slightly lower than the
 token ratio, by at most $0.04$, because the identical input cost is added to both sums. No statistical test
@@ -965,7 +965,7 @@ gpt-5.6-sol & none & 4 retail & 128 & 1225 & 0 & 37 & stop \\
 gpt-5.6-sol & none & 5 telecoms & 125 & 1234 & 0 & 39 & stop \\
 \bottomrule
 \end{tabular}
-\caption{Every successful call of experiment E1 (25 calls, one per cell, 11 September 2026); the ten failed calls are not listed. In/Out/Reasoning are the providers' own usage fields; ``Reasoning'' is included in ``Out'' for both providers (\texttt{reasoning\_tokens} for the first, \texttt{thinking\_tokens} for the second). Stop = provider finish reason; no call stopped on the output cap.}
+\caption{Every successful call of experiment E1 (25 calls, one per cell, 11 September 2026); the ten failed calls are not listed. In/Out/Reasoning are token counts from the providers' own usage fields; ``Reasoning'' is included in ``Out'' for both providers (\texttt{reasoning\_tokens} for \texttt{gpt-5.6-sol}, \texttt{thinking\_tokens} for \texttt{claude-opus-5}). Stop = provider finish reason, and ``retry $n$'' marks a cell whose call succeeded on its $n$th retry, after $n$ failed calls; no call stopped on the output cap.}
 \label{tab:e1-calls}
 \end{table}
 
@@ -994,9 +994,9 @@ is itself long at every setting: about $930$ to $1{,}390$ tokens per answer for 
 
 \textbf{Arithmetic of the ratio.} Because $\alpha$ is a ratio of \emph{total} output
 tokens, a large visible answer compresses it. In E1 the first model produced about $1{,}150$
-tokens at \texttt{none} with zero reasoning tokens and about $3{,}650$ at \texttt{high}, of
+tokens at \texttt{none} with zero reasoning tokens and about $3{,}660$ at \texttt{high}, of
 which about $2{,}520$ were reasoning ($1{,}024$ to $4{,}068$ per answer): measured on reasoning tokens alone the ratio is
-unbounded, measured on total tokens it is $3.2$. A benchmark whose answers are a single
+unbounded, measured on total tokens it is $3.18$. A benchmark whose answers are a single
 number has almost no visible floor, so the same reasoning behaviour yields a far larger
 total-token ratio. This follows from the definition and says nothing about the models.
 

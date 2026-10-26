@@ -327,3 +327,24 @@ Read this time from three angles not used before: every number that appears in m
 - Bibliography, anthropic2026caching, openai2026caching, google2026pricing: Appendix B.1 says all three pages were re-read on 11 September and 26 October and cites them for rates dated 26 October; the notes now record both re-reads and the rate each was cited for.
 
 The build has one LaTeX note, "'h' float specifier changed to 'ht'", which the 18:22 build also had; no warnings otherwise, no undefined references.
+
+## 26 October 2026, 22:14 pass
+
+Read this time from three angles not used before: every equation and worked number in Sections 4, 6 and 7 and Appendix B recomputed by hand from the inputs stated at that point; every table and figure caption against what it shows and how the text cites it; and terminology and first use (abbreviations, symbols, one name per thing, sentences a reader has to read twice). Each finding was checked by a second reader trying to refute it; 18 of 36 survived. Two readers proposed the same definition of g_e, so it went in once, leaving 17 corrections. The others were set aside as right as written or as the author's choice of phrasing; one could not be applied safely because its text occurs twice and was left.
+
+- Section 6, the overstatement sentence: every figure after the colon (13 to 29, 7 to 11, 8 to 12, and the two points where it falls below ten) comes from the cheap-setting form; with the expensive setting kept the range and both thresholds differ (recomputed: 6.5 to 27 for the worked instance). The sentence now says "with the cheap setting kept".
+- Section 5, S1: Equation 7 and Section 6 used g_e and g_min without defining them; both are now defined before the equation.
+- Appendix C.4, arithmetic of the ratio: 3.2 is 3.18 everywhere else (18,286 / 5,749 = 3.181); the 20:14 pass missed this one. In the same sentence, the high-setting mean rounds to about 3,660 at the sentence's own precision, not 3,650.
+- Appendix C.3, caption of "Every successful call of experiment E1": In, Out and Reasoning are now said to be token counts, the two providers' fields are named by model rather than "the first" and "the second", and the caption now says what the "retry n" marks in the Stop column count.
+- Appendix A.2, caption of "Published DRACO scores": "the budget panel's other two members" named only two of its three members; DeepSeek V4 Pro is now named as the third.
+- Appendix C.2, interpretation: the range 1.75 to 3.18 is of the highest setting against a lower one; the table cited also holds 1.12 (low against none). The qualifier earlier passes added in S1, B.2 and Section 6 is now here too.
+- Appendix B.5, caption of "Combined reduction from S1--S4 and S6": the cached figure of 2,268 holds at w = 1; the caption now says so and gives 2,504 at w = 1.25.
+- Appendix C.3, analysis: alpha is defined on cost in S1; here it is now said to be estimated by the token ratio, not defined by it.
+- Section 5, S1: "DRACO's setting" read as DRACO's effort level in a paragraph about effort settings; now "the conditions of DRACO's tasks". A 139-word sentence chaining seven results is split into three, so its last "it" no longer reaches back a hundred words.
+- Section 5, S6: the power floor's target is now "the difference in mean score", as delta is defined everywhere else since the 16:22 pass.
+- Section 1: HELM is now named where the paper is first cited, since S6 later refers to results "on HELM".
+- Section 6, after Equation 10: a 25-word "which" clause that interrupted the sentence is now its own sentence.
+- Section 5, S5: "LLM-as-judge" was the only use of the abbreviation in the paper's own words; now "evaluation with language-model judges".
+- Section 5, S3 heading: "repeat-scorings" now "repeat scorings"; the hyphen belongs only in the adjective form.
+
+The build has the same one float-placement note as before; no warnings otherwise, no undefined references.
