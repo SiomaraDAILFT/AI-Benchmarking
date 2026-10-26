@@ -237,3 +237,29 @@ Read this time from three angles: Sections 2 and 3 against every source they cit
 - Appendix C.3: the long field name output_tokens_details.thinking_tokens ran 71 points into the margin; it now breaks at its dots.
 
 The four items logged at 22:27 on 25 October: n* = 60 against 128 is handled (Appendix B and now the abstract and Section 6); DRACO's Table 15, Zhao et al.'s scope and "the pilot of Section 8" were resolved in the 26 October 00:14 pass above.
+
+## 26 October 2026, 14:21 pass
+
+Read this time from three angles: Section 4 and Appendix B equation by equation, with every price term re-read on the providers' pages; the introduction and Appendix A against their sources; and every table and caption against its text, with a language pass over the whole paper. Each finding was checked by a second reader, then by hand; five were dropped as already right or style.
+
+- Abstract, first sentence: debate was listed beside DRACO and judge-based evaluation as a tradition of benchmarks; Du et al. and Liang et al. describe debate as a way of producing answers. It is now among the systems such benchmarks score.
+- Introduction, first paragraph: the reliability literature was said to supply "what each simplification costs"; it covers the judging-side ones, and the work on test-time compute, nondeterminism and benchmark compression cited in Section 5 covers the rest. It now says so.
+- Section 3, closing paragraph: after the 12:20 change the paragraph counts calls for a run that judges each answer in its own call, where four counts (systems, tasks, regenerations, settings) multiply the whole cost and two multiply the judging term; it still cited the batched total, where three do. Both are now stated with their equations.
+- Section 4, parameter K: "test-retest" now matches the paper's "test--retest" elsewhere.
+- Section 5, S6: the closing clause repeated "once several rounds of retained raw data exist" from two sentences earlier; removed.
+- Sections 2.2 and 7.1 to 7.4: five subsection headings in title case among twenty in sentence case; now sentence case.
+- Section 7.3: "the remedy those authors propose" followed a sentence naming three sets of authors; it now names Wang et al., whose paper proposes balanced position calibration.
+- Section 9: "the interval reported here" had no referent (the paper reports no interval of its own); it now points to Section 7's.
+- Conclusion: "roughly two orders of magnitude" for the worked instance now carries the same floor caveat as the abstract and Section 6.
+- Title block: the date now says the paper was revised on 26 October 2026, since it reports sources read on 25 and 26 October.
+- Appendix A.1: the company's blog post on DRACO was said not to be retrievable; read on 26 October it is dated 4 February 2026, reports four systems, and its figures for the company's product are those of the Opus 4.5 version in the paper's Tables 12 and 10, not of the Opus 4.6 version the appendix reports. Now stated; the paper's tables stay the cited source.
+- Appendix A.2, table "Published DRACO scores": the Microsoft row's 57.4 was the only score without a percent sign; the caption listed four of the OpenRouter post's seven solo scores and left out the budget panel's own members, which Section 2.2's comparison needs. The caption now gives Kimi K2.6 at 53.7% and Gemini 3 Flash at 43.1%, and notes Fable 5's score is over the 93 tasks it completed.
+- Appendix A.2, OpenRouter paragraph: the post graded each response three times, where the DRACO paper used five; now stated.
+- Appendix B.1: OpenAI's newest model reads cache at 0.05x, Anthropic's Opus 5.5 and Sonnet 5.5 at 0.05x, and Google's flagship Gemini 4 Argon at 0.05x (pages read 26 October 2026); each was given only the general rate. The opening "at the time of writing (September 2026)" now says which provider was re-read in October.
+- Appendix B.2: alpha "between 1.75 and 3.2" left out Table 4's 1.12 for low against none (the same fix as S1 at 12:20); it now names the comparison.
+- Appendix B.5 and the table of combined reductions: F_J = 108 holds only with no cache-write premium (w = 1, Google's terms). At OpenAI's and Anthropic's w = 1.25 it is about 119 and the cached row becomes about 179, 161 and 146 times; the text gives both and the row label says w = 1.
+- Appendix C.1, E2 order sensitivity: "moved them within one judge" referred back to published DRACO scores; it now says scores. The swap of the top two answers was stated twice in the paragraph; the repeat is gone.
+- Appendix C.2 and C.3, E1: "six calls failed" counted cells, not calls; the run logs show ten failed calls in six cells. The call table's caption now says it lists every successful call, and the alpha table's column holding "first provider" is headed Provider, not Model. "Model identifiers and prices are the providers' list prices" now says they are as the providers listed them.
+- Appendix C.4: "none of them is a contradiction" now says each explanation would let both figures stand.
+- Appendix C.5, E3: "six calls ... (three attempts each)" now counts the calls for six cells; the table caption names the low and high settings (E3 did not run none) and defines Out as summed over the five problems.
+- Bibliography, llmstatsdraco: the note gave three entries on 10 September, against Appendix A.3's one on 10 and three on 11 September; it now matches.
