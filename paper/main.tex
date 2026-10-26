@@ -420,8 +420,7 @@ factors applied to the whole budget) exceeds the exact reduction by a factor tha
 with $E \cdot K \cdot \beta$ and exceeds an order of magnitude for typical values (Appendix~\ref{app:worked} gives the
 figures). And because $F_G$ and $F_J$ share the factors $R$ and
 $T_{\text{full}}/n^*$, S2 and S6 are the only simplifications whose benefit is
-independent of $s$; they are also the two whose cost to validity is measurable in the
-pilot (Sections~\ref{sec:simplifications} and~\ref{sec:power}).
+independent of $s$; they are also the two whose cost to validity the power calculation expresses directly, S2 through the regeneration term of Equation~\ref{eq:variance-decomposition} and S6 through the floor $n^*$ (Sections~\ref{sec:simplifications} and~\ref{sec:power}).
 
 Appendix~\ref{app:worked} evaluates Equation~\ref{eq:cumulative} for an illustrative configuration: roughly two orders of magnitude, with and without prompt caching, across plausible values of $s$, at that instance's setting-cost ratio $\alpha$. At the values of $\alpha$ we measured on analytic prompts (Appendix~\ref{app:measurements}) the same configuration yields well under a hundredfold, because $\alpha$ enters $F_G$ directly.
 
@@ -462,7 +461,7 @@ standard paired-sample size formula,
 n^* = \frac{(z_{a'} + z_{\pi})^2 \sigma^2}{\delta^2},
 \label{eq:power}
 \end{equation}
-one-sided, with $a'$ the Holm-corrected per-comparison significance level (the smallest threshold the correction procedure can demand across the pre-registered comparisons; using the uncorrected family-wise $a$ here systematically understates the requirement), $z_{\pi}$ the standard normal quantile at the intended power $\pi$, $\sigma$
+one-sided, with $a'$ the Holm-corrected per-comparison significance level (the smallest threshold the correction procedure can demand across the pre-registered comparisons; using the uncorrected family-wise $a$ here systematically understates the requirement), $z_{a'}$ and $z_{\pi}$ the standard normal quantiles at $1-a'$ and at the intended power $\pi$, $\sigma$
 the observed standard deviation of task-level paired differences from a pilot run, and
 $\delta$ the minimum effect size worth detecting, a decision made before the pilot runs. Statistics texts usually write the significance level as $\alpha$ and the power as $1-\beta$; we use $a$ and $\pi$ because $\alpha$ is already the setting-cost ratio of S1 and $\beta$ the batching factor of S4. Equation~\ref{eq:power} is the one-sided form of the standard
 normal-approximation sample-size formula; \citet{miller2024errorbars} derives the
@@ -568,7 +567,7 @@ significantly influence'' the result, in particular which systems are included a
 
 The generation-cost parameter $g$ is treated as a single external number per system per
 setting; in practice it may itself have meaningful variance (a system's answer length, and
-therefore its cost, can differ substantially task to task), which the framework absorbs into the variance term $\sigma$ used for power calculations instead of modelling it separately; a more complete treatment would model the distribution of $g$. The batching
+therefore its cost, can differ substantially task to task), which the framework absorbs by taking $g$ as an average over tasks (Section~\ref{sec:model}) instead of modelling it separately. Because $g$ enters the generation cost and the total only as a multiplier (Equations~\ref{eq:generation} and~\ref{eq:total}), both are right on average, but the framework does not say how far the actual spend can differ from them; a more complete treatment would model the distribution of $g$. The batching
 saving in Equation~\ref{eq:s4} assumes a judge can meaningfully score $C$ answers in one
 call without a quality cost from context length or attention dilution as $C$ grows large;
 this should be checked empirically for large $C$.
@@ -597,7 +596,7 @@ makes fitting such a model later possible without re-running anything. The minim
 
 \section{Conclusion}
 
-Rigour in a DRACO-style benchmark is expensive by construction, because its cost is a product of six design choices, and most of that product can be given back. The sweep over settings, the regenerations and the task count carry most of the saving. Batched judging carries far less than its unbatched arithmetic suggests once prompt caching is priced in. The judge count, the dimension intuition reaches for first, is the one to keep. The combined reduction is a weighted harmonic mean of a generation-side and a judging-side factor, roughly two orders of magnitude in the worked instance of Appendix~\ref{app:worked} and less at the setting-cost ratios we measured. What that buys is a benchmark cheap enough to re-run whenever the set of systems changes, provided the reduced protocol is checked against the full one at least once (Section~\ref{sec:validation}).
+Rigour in a DRACO-style benchmark is expensive by construction, because three of its six design choices multiply the whole cost and the other three each multiply one of its two terms (Equation~\ref{eq:total}), and most of that cost can be given back. The sweep over settings, the regenerations and the task count carry most of the saving. Batched judging carries far less than its unbatched arithmetic suggests once prompt caching is priced in. The judge count, the dimension intuition reaches for first, is the one to keep. The combined reduction is a weighted harmonic mean of a generation-side and a judging-side factor, roughly two orders of magnitude in the worked instance of Appendix~\ref{app:worked} and less at the setting-cost ratios we measured. What that buys is a benchmark cheap enough to re-run whenever the set of systems changes, provided the reduced protocol is checked against the full one at least once (Section~\ref{sec:validation}).
 
 \appendix
 
