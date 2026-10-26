@@ -100,7 +100,7 @@ but do not, to our knowledge, publish a benchmark score of any kind.
 
 Because judge choice alone moves published DRACO scores by a wide margin (Appendix~\ref{app:published}), comparisons across those numbers should be read as directional at best. For that reason S5 (Section~\ref{sec:simplifications}) argues against reducing the number of judges, and Section~\ref{sec:limitations} explains that the interval of Section~\ref{sec:stats} is conditional on the judges used.
 
-Combining several models' outputs has its own evidence base: sampling several answers from one model and keeping the most consistent one \citep{wang2023selfconsistency}, ranking and fusing the candidates of several open models \citep{jiang2023llmblender}, and layered mixture-of-agents designs, one of which, built only from open models, reached $65.1\%$ on a judge-scored instruction-following benchmark against $57.5\%$ for GPT-4 Omni \citep{wang2024moa}. That benchmark scores length-controlled win rates because its judge favours longer answers \citep{dubois2024lengthcontrolled}, which is one reason Section~\ref{sec:stats} treats the judge as a source of error. Multi-agent debate over several rounds improves factual accuracy and reasoning relative to a single instance \citep{du2023multiagent, liang2024encouraging}. The same literature supplies a caution. \citet{zhang2025stopovervaluing} argue that reported debate gains are often confounded with extra compute or more diverse models, and \citet{cemri2025mast}, who annotated more than 1,600 multi-agent traces, sort the failures into three groups: system design, misalignment between agents, and task verification. Both are reasons to take the statistics of the scoring (Section~\ref{sec:stats}) as seriously as the comparison itself.
+Combining several models' outputs has its own evidence base: sampling several answers from one model and keeping the most consistent one \citep{wang2023selfconsistency}, ranking and fusing the candidates of several open models \citep{jiang2023llmblender}, and layered mixture-of-agents designs, one of which, built only from open models, reached $65.1\%$ on a judge-scored instruction-following benchmark against $57.5\%$ for GPT-4 Omni \citep{wang2024moa}. That benchmark scores length-controlled win rates because its judge favours longer answers \citep{dubois2024lengthcontrolled}, which is one reason Section~\ref{sec:stats} treats the judge as a source of error. Multi-agent debate over several rounds improves factual accuracy and reasoning relative to a single instance \citep{du2023multiagent, liang2024encouraging}. The same literature supplies a caution. \citet{zhang2025stopovervaluing} find that debate methods often fail to beat single-agent baselines such as chain-of-thought and self-consistency, even when they use more computation, although debate improves when its agents are drawn from different models rather than all from one. \citet{cemri2025mast}, who annotated more than 1,600 multi-agent traces, sort the failures into three groups: system design, misalignment between agents, and task verification. Both are reasons to take the statistics of the scoring (Section~\ref{sec:stats}) as seriously as the comparison itself.
 
 \sectionbreak
 \section{Merits and Costs of the DRACO Protocol}
@@ -109,8 +109,7 @@ Combining several models' outputs has its own evidence base: sampling several an
 Drawing tasks from real usage rather than composing them for the benchmark addresses a documented weakness of curated benchmarks: their construct validity, the degree to which they measure what they are framed as measuring, is often unexamined \citep{raji2021everything}, and dataset design and annotation reliability bound what a benchmark can show \citep{bowman2021fix}; sourcing from real users is now an established design for that reason \citep{chiang2024arena, lin2024wildbench}. A multi-dimension rubric graded per task is more informative than a pass/fail judgement or a generic quality prompt:
 \citet{ye2024flask} show that ``the fine-graininess of evaluation is crucial for attaining
 a holistic view of model performance and increasing the reliability of the evaluation'',
-and rubric-conditioned judging against user-defined criteria has become the standard
-design of purpose-built evaluator models \citep{kim2024prometheus2}. Repeated judge scoring separates judge noise from signal; S3 in Section~\ref{sec:simplifications} gives the evidence that the noise is real.
+and Prometheus~2, a purpose-built evaluator model, judges against user-defined criteria, which its authors report existing open evaluators often could not do \citep{kim2024prometheus2}. Repeated judge scoring separates judge noise from signal; S3 in Section~\ref{sec:simplifications} gives the evidence that the noise is real.
 
 Against that, no sample-size or statistical-power methodology has been published for DRACO. Judge choice moves absolute score levels: the benchmark's own authors report that one of their three judges ``consistently assigned lower scores'' \citep[Appendix~A]{draco2026}, and the effect is general \citep{thakur2025judging}. Third-party trackers of DRACO results already disagree about which system leads and by how much (Appendix~\ref{app:published}); no figure should yet be taken from them.
 
@@ -266,11 +265,7 @@ judging interface exposes the probabilities the judge assigns to each candidate 
 token, a single call yields the \emph{expected} score over that distribution, and
 \citet{wang2025judgmentdist} find that ``taking the mean of the judgment distribution
 consistently outperforms taking the mode (i.e.\ greedy decoding) in all evaluation
-settings'', that is, pointwise, pairwise and listwise. Repeated sampling at non-zero temperature
-is a Monte Carlo approximation of that same mean, so where score probabilities are
-available, one call replaces the $K$ repeats for the purpose of averaging out sampling
-noise; $K > 1$ then remains useful only for position calibration
-(Section~\ref{sec:calibration}) and where the interface offers no probabilities.
+settings'', that is, pointwise, pairwise and listwise. Repeated sampling at temperature one, from a judge that states its score without writing any reasoning first, is a Monte Carlo approximation of that same mean, so for such a judge, where score probabilities are available, one call replaces the $K$ repeats for the purpose of averaging out sampling noise. A judge that writes reasoning or a justification before its score is different, and DRACO's judges write a short justification before each criterion's verdict \citep{draco2026}. After such reasoning, \citet{wang2025judgmentdist} find that the score distribution often sharpens, ``making the mean judgment similar to the mode'', as the model ``commits to one instantiation of a reasoning trace''; one call's mean is then conditional on that one trace and does not average over the traces that repeated calls would sample. $K > 1$ therefore remains useful for position calibration (Section~\ref{sec:calibration}), for a judge that reasons before it scores, and where the interface offers no probabilities.
 
 \subsection{S4: Batching judging across systems}
 
@@ -363,7 +358,7 @@ Before any dimension is reduced, find the term of Equation~\ref{eq:total} it con
 
 \subsection{S6: Reducing task count, bounded by statistical power}
 
-Reducing $T$ saves linearly on both generation and judging cost, but unlike S1--S5 it has a separate, explicit consequence: below a computable floor $n^*$ (Section~\ref{sec:power}), the benchmark can no longer detect the effect size it was designed to detect at the stated confidence level. This is the one dimension where the cost-reduction objective and the statistical-validity objective trade off directly against each other, and its floor can be computed once a pilot has produced a variance estimate.
+Reducing $T$ saves linearly on both generation and judging cost, and it has an explicit consequence: below a computable floor $n^*$ (Section~\ref{sec:power}), the benchmark can no longer detect the effect size it was designed to detect at the stated confidence level. Fewer regenerations (S2) also cost power, since they raise $\sigma$ and with it $n^*$ (Equation~\ref{eq:variance-decomposition}); S6 is the dimension that floor bounds directly, and the floor can be computed once a pilot has produced a variance estimate.
 \textbf{What is lost}: statistical power alone, provided the reduced task set
 is representative of the full one. That proviso is where the evidence from the
 benchmark-compression literature is relevant. \citet{polo2024tinybenchmarks} show that
@@ -1038,7 +1033,7 @@ Hugging Face datasets API; system instruction: ``Solve the competition mathemati
 problem. Show your reasoning briefly, then give the final answer as an integer on the
 last line in the form `ANSWER: <integer>'.'' Output cap 16{,}000 tokens, never reached.
 One call per cell; six calls, all to the first provider, failed with transient HTTP 500 errors during
-an outage (three attempts each) and were retried until they succeeded. Total spend: \$0.39 across 20 calls. The
+an outage (three attempts each) and were retried until they succeeded. Total spend: \$0.38 across 20 calls. The
 scripts (\texttt{e3-aime.mjs}, \texttt{e3-retry.mjs}), the problems and the raw usage
 records are committed alongside E1's.
 
@@ -1078,10 +1073,12 @@ competition problem that a frontier model answers correctly in 26 tokens is not,
 model, a hard problem, and a public 2025 problem set is likely to have been seen in the
 training of models released in 2026. What E3 does show is consistent with the
 effort-semantics and model-generation explanations of Section~\ref{app:alpha-why}: for
-these models the \texttt{low} setting already spends reasoning where the model judges it
-necessary and the \texttt{high} setting adds little where it does not, so the pooled ratio stays
+these models the \texttt{high} setting adds little on most items, so the pooled ratio stays
 between about one and a half and three on both task families ($1.48$ to $2.83$), with a heavy tail on individual
-items. The published $23\times$ is therefore best read as a property of a particular 2025
+items. The large additions did not come where \texttt{low} fell short: the three largest per-problem
+ratios (the second model's $72.7$ and $2.12$, the first model's $2.02$) are on problems already
+answered correctly at \texttt{low}, and on the only problem answered wrongly at \texttt{low} (problem~3,
+second model) \texttt{high} used slightly fewer tokens ($358$ against $370$) and answered it correctly. The published $23\times$ is therefore best read as a property of a particular 2025
 model, whose effort levels behaved as coarse switches, on a suite that was hard for it at
 the time, and not a constant of the effort setting. A test of task family that survives
 this confound would need problems demonstrably unseen by the models and hard enough that
