@@ -57,9 +57,11 @@ function answersIn(user) {
 /**
  * A scripted model. Generation returns "answer of <system> at <setting> #<n>". A judging call
  * asks `verdicts(answerText, callIndex)` for each answer shown: an array of booleans (MET or
- * UNMET per criterion), or null for a refusal of that call. `delay(systemId)` slows generation.
+ * UNMET per criterion), or null for a refusal of that call. `delay(systemId, prompt)` slows
+ * generation; `cut(output, callIndex)` rewrites a judging call's output (to cut it short);
+ * `dailft` gives every generation and every judging call a fixed DAILFT-token usage.
  */
-function scriptedModel({ verdicts = () => [true, false, true, false], delay = () => 0, refuse = () => false } = {}) {
+function scriptedModel({ verdicts = () => [true, false, true, false], delay = () => 0, refuse = () => false, cut = (text) => text, dailft = null } = {}) {
   const seen = new Map()
   const calls = { generation: 0, judging: 0, judgingPrompts: [] }
   const fn = async ({ system: s, prompt, effort }) => {
@@ -67,14 +69,15 @@ function scriptedModel({ verdicts = () => [true, false, true, false], delay = ()
       calls.generation++
       const n = (seen.get(s.id + effort) || 0) + 1
       seen.set(s.id + effort, n)
-      const ms = delay(s.id)
+      const ms = delay(s.id, prompt.user)
       if (ms) await new Promise((r) => setTimeout(r, ms))
-      return { text: `answer of ${s.id} at ${effort ?? 'default'} #${n}`, inputTokens: 1, outputTokens: 1 }
+      return { text: `answer of ${s.id} at ${effort ?? 'default'} #${n}`, inputTokens: 1, outputTokens: 1, ...(dailft ? { dailftTokens: dailft.generation } : {}) }
     }
     const index = calls.judging++
     calls.judgingPrompts.push(prompt.user)
     const { batched, texts } = answersIn(prompt.user)
-    if (refuse(texts, index)) return { text: 'I am not able to grade these answers.', inputTokens: 1, outputTokens: 1 }
+    const usage = { inputTokens: 1, outputTokens: 1, ...(dailft ? { dailftTokens: dailft.judging } : {}) }
+    if (refuse(texts, index)) return { text: 'I am not able to grade these answers.', ...usage }
     const lines = []
     texts.forEach((t, pos) => {
       const v = verdicts(t, index)
@@ -82,7 +85,7 @@ function scriptedModel({ verdicts = () => [true, false, true, false], delay = ()
       v.forEach((met, i) => lines.push(`${batched ? L + '-' : ''}C${i + 1}: ${met ? 'MET' : 'UNMET'}`))
       lines.push(batched ? `SCORE ${L}: ${Math.round((100 * v.filter(Boolean).length) / v.length)}` : `SCORE: ${Math.round((100 * v.filter(Boolean).length) / v.length)}`)
     })
-    return { text: lines.join('\n'), inputTokens: 1, outputTokens: 1 }
+    return { text: cut(lines.join('\n'), index), ...usage }
   }
   return { fn, calls }
 }
@@ -133,7 +136,7 @@ describe('fault 2: on a weighted rubric the score line is not a scoring; the ver
   })
 
   test('verdict lines with no score line are scored from the verdicts', () => {
-    const parsed = P.parseJudgeOutput('A-C1: MET\nA-C2: UNMET\nA-C3: MET\nA-C4: UNMET\nB-C1: MET\nB-C3: MET\nB-C4: MET', { batched: true, n: 4 })
+    const parsed = P.parseJudgeOutput('A-C1: MET\nA-C2: UNMET\nA-C3: MET\nA-C4: UNMET\nB-C1: MET\nB-C2: UNMET\nB-C3: MET\nB-C4: MET', { batched: true, n: 4 })
     assert.equal(P.scoreJudgement(WEIGHTED, parsed.A).score, 75)
     assert.equal(P.scoreJudgement(WEIGHTED, parsed.B).score, 60)
   })
@@ -383,10 +386,19 @@ describe('fault 9: every repeat shows the answers in a seeded random order', () 
     const shape = (raw) => raw.scores.map((s) => `${s.taskId}|${s.repeat}|${s.systemId}|${s.position}|${(s.shownOrder || []).join(',')}`).sort()
     const slowA = await P.runProtocol(config, CONNECTION, () => {}, { callModel: scriptedModel({ delay: (id) => (id === 'sa' ? 15 : 0) }).fn })
     const slowC = await P.runProtocol(config, CONNECTION, () => {}, { callModel: scriptedModel({ delay: (id) => (id === 'sc' ? 15 : 0) }).fn })
+    // 3 tasks x 2 repeats x 3 answers: without these two lines a run with no scorings at all
+    // passed the loop below and compared two empty lists (review of 27 October, finding 1).
+    assert.equal(slowA.raw.scores.length, 18)
+    assert.equal(slowC.raw.scores.length, 18)
     for (const s of slowA.raw.scores) {
       assert.ok(Array.isArray(s.shownOrder) && s.shownOrder.length === 3)
       assert.equal(s.shownOrder[s.position], s.systemId)
+      // The order is the one drawn from the run's seed (1) and the batch's own name, task,
+      // setting, regeneration and judge, with the answers in configuration order.
+      assert.deepEqual(s.shownOrder, P.orderForRepeat(3, s.repeat, 1, `${s.taskId}|0|0|j1`).map((i) => ['sa', 'sb', 'sc'][i]))
     }
+    // The batches do not all share one order at a repeat.
+    assert.ok(new Set(slowA.raw.scores.filter((s) => s.repeat === 0).map((s) => s.shownOrder.join(','))).size > 1)
     assert.deepEqual(shape(slowA.raw), shape(slowC.raw))
   })
 })
@@ -491,5 +503,190 @@ describe('fault 11: add-one p-value, the interval from the inverted test, and ev
     assert.ok(cols.includes('verdicts'))
     assert.ok(cols.includes('shownOrder'))
     assert.equal(first.split(',')[cols.indexOf('verdicts')], 'MUMU')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Review of 27 October 2026: the findings of the two second readers, numbered in the order
+// of their list. Findings 1, 2 and 6 are tests above (fault 9's run test); 7 and 14 are wording
+// in the paper and README.txt; 9 and 10 are app/public/app.js, checked in a headless browser.
+// ---------------------------------------------------------------------------
+
+describe('review, finding 3: on a weighted rubric a scoring that leaves a criterion without a verdict is missing', () => {
+  test('a batched output cut off partway through B\'s verdicts: A is scored, B has no score', () => {
+    const text = 'A-C1: MET\nA-C2: UNMET\nA-C3: MET\nA-C4: UNMET\nSCORE A: 50\nB-C1: MET\nB-C2: MET'
+    const parsed = P.parseJudgeOutput(text, { batched: true, n: 4 })
+    assert.equal(P.scoreJudgement(WEIGHTED, parsed.A).score, 75)
+    const b = P.scoreJudgement(WEIGHTED, parsed.B)
+    // Scored as it stood, C3 counted unmet and the error C4 counted absent: (10 + 5) / 20 = 75.
+    assert.equal(b.score, null)
+    assert.equal(b.incomplete, true)
+    assert.deepEqual(b.verdicts, ['MET', 'MET', null, null])
+    assert.equal(b.dimensionScores, null)
+  })
+
+  test('unbatched too, whatever score line the judge writes', () => {
+    const parsed = P.parseJudgeOutput('C1: MET\nC3: MET\nSCORE: 100', { batched: false, n: 4 })
+    assert.equal(P.scoreJudgement(WEIGHTED, parsed.A).score, null)
+    assert.equal(P.scoreJudgement(WEIGHTED, parsed.A).judgeScore, 100)
+  })
+
+  test('in a run, the cut-off scoring is left out of the median', async () => {
+    // Batched, K = 2: the first judging call loses its last three lines, so the answer shown
+    // second has verdicts on C1 and C2 only (as it stood, 10 / 20 = 50). Every full scoring is 75.
+    const model = scriptedModel({ cut: (text, index) => (index === 0 ? text.split('\n').slice(0, -3).join('\n') : text) })
+    const config = { systems: [system('sa'), system('sb')], judges: [JUDGE], tasks: [WEIGHTED], R: 1, K: 2, batched: true, concurrency: 1, comparisons: [] }
+    const { raw, summary } = await P.runProtocol(config, CONNECTION, () => {}, { callModel: model.fn })
+    assert.equal(raw.scores.length, 4)
+    assert.equal(raw.scores.filter((s) => s.score == null && s.incomplete).length, 1)
+    assert.equal(summary.perTask['sa|0'].w1, 75)
+    assert.equal(summary.perTask['sb|0'].w1, 75)
+  })
+})
+
+describe('review, finding 13: on an unweighted rubric, no score line but a verdict on every criterion is scored by the share met, batched or not', () => {
+  const plain = { id: 'p', criteria: ['a', 'b', 'c', 'd'] }
+
+  test('batched as unbatched', () => {
+    const batched = P.parseJudgeOutput('A-C1: MET\nA-C2: UNMET\nA-C3: MET\nA-C4: MET\nB-C1: MET', { batched: true, n: 4 })
+    assert.equal(P.scoreJudgement(plain, batched.A).score, 75)
+    assert.equal(P.scoreJudgement(plain, batched.B).score, null)
+    const one = P.parseJudgeOutput('C1: MET\nC2: UNMET\nC3: MET\nC4: MET', { batched: false, n: 4 })
+    assert.equal(P.scoreJudgement(plain, one.A).score, 75)
+  })
+
+  test('a criterion with no verdict is not made up for by a repeated line', () => {
+    // C4 has no verdict; C2's UNMET line twice made four verdict lines for four criteria.
+    const part = P.parseJudgeOutput('C1: MET\nC2: UNMET\nC2: UNMET\nC3: MET', { batched: false, n: 4 })
+    assert.equal(P.scoreJudgement(plain, part.A).score, null)
+  })
+})
+
+describe('review, finding 4: the validation reference is never simpler than the reduced run', () => {
+  const base = { protocol: 'validate', systems: [system('sa'), system('sb')], judges: [JUDGE], tasks: [WEIGHTED], R: 2, K: 3 }
+
+  test('a reference R or K below the reduced run\'s is refused', () => {
+    const errs = P.validateConfig({ ...base, reference: { R: 1, K: 2 } })
+    assert.ok(errs.some((e) => /reference R/.test(e)), errs.join('; '))
+    assert.ok(errs.some((e) => /reference K/.test(e)), errs.join('; '))
+    assert.deepEqual(P.validateConfig({ ...base, reference: { R: 2, K: 5 } }), [])
+  })
+
+  test('and where it is run without that check, it is raised to the reduced run\'s', () => {
+    const ref = P.applyPreset({ ...base, reference: { R: 1, K: 2 } }, 'reference')
+    assert.equal(ref.R, 2)
+    assert.equal(ref.K, 3)
+    const higher = P.applyPreset({ ...base, reference: { R: 3, K: 5 } }, 'reference')
+    assert.equal(higher.R, 3)
+    assert.equal(higher.K, 5)
+  })
+
+  test('the page starts the reference above the reduced run: R = 3 and K = 5, the full protocol of Appendix B', () => {
+    const page = fs.readFileSync(path.join(ROOT, 'app', 'public', 'index.html'), 'utf8')
+    const value = (id) => Number(page.match(new RegExp(`id="${id}"[^>]*value="(\\d+)"`))[1])
+    assert.equal(value('refR'), 3)
+    assert.equal(value('refK'), 5)
+    assert.ok(value('refR') > value('R') && value('refK') > value('K'))
+  })
+})
+
+describe('review, finding 5: judging usage is counted once per judging call', () => {
+  const threeSwept = [system('sa', ['low', 'high']), system('sb', ['low', 'high']), system('sc', ['low', 'high'])]
+  const twoJudges = [JUDGE, { ...JUDGE, id: 'j2' }]
+
+  for (const batched of [true, false]) {
+    test(`${batched ? 'batched' : 'unbatched'}: the DAILFT tokens are the calls times the tokens per call`, async () => {
+      const model = scriptedModel({ dailft: { generation: 7, judging: 10 } })
+      const config = { systems: threeSwept, judges: twoJudges, tasks: [WEIGHTED], R: 1, K: 2, batched, concurrency: 3, comparisons: [] }
+      const { summary } = await P.runProtocol(config, CONNECTION, () => {}, { callModel: model.fn })
+      assert.equal(model.calls.judging, batched ? 8 : 24)
+      assert.equal(summary.usage.calls.judging, model.calls.judging)
+      assert.equal(summary.usage.dailftTokens, 7 * model.calls.generation + 10 * model.calls.judging)
+    })
+  }
+
+  test('a configuration that leaves batching unset is batched, and its calls are counted as such', async () => {
+    const model = scriptedModel({ dailft: { generation: 7, judging: 10 } })
+    const config = { systems: threeSwept, judges: twoJudges, tasks: [WEIGHTED], R: 1, K: 2, concurrency: 3, comparisons: [] }
+    const { summary } = await P.runProtocol(config, CONNECTION, () => {}, { callModel: model.fn })
+    assert.equal(model.calls.judging, 8)
+    assert.equal(summary.usage.calls.judging, 8)
+    assert.equal(summary.usage.dailftTokens, 7 * 6 + 10 * 8)
+  })
+
+  test('validation reports the reference as the dearer run', async () => {
+    const model = scriptedModel({ dailft: { generation: 7, judging: 10 } })
+    const config = { systems: threeSwept, judges: twoJudges, tasks: [WEIGHTED], R: 1, K: 2, batched: true, concurrency: 3, comparisons: [['sa', 'sb']], reference: { R: 1, K: 2 } }
+    const { comparison } = await P.runValidation(config, CONNECTION, () => {}, { callModel: model.fn })
+    // Reference: 6 generations and 3 x 2 x 2 x 2 = 24 judging calls; reduced: 6 and 8.
+    assert.equal(comparison.cost.referenceDailftTokens, 7 * 6 + 10 * 24)
+    assert.equal(comparison.cost.reducedDailftTokens, 7 * 6 + 10 * 8)
+    near(comparison.cost.tokenRatio, 282 / 122, 1e-12)
+  })
+})
+
+describe('review, finding 8: the summary does not depend on which call finished first', () => {
+  test('two runs that differ only in the timing of their generation calls give the same summary', async () => {
+    const tasks = Array.from({ length: 24 }, (_, i) => ({ ...WEIGHTED, id: `w${i + 1}`, question: `Weighted question ${i + 1}?` }))
+    const config = { systems: [system('sa'), system('sb'), system('sc')], judges: [JUDGE], tasks, R: 1, K: 1, batched: true, concurrency: 4, comparisons: [['sa', 'sb']] }
+    // The verdicts follow the answer (its system and its generation number, which is the task's
+    // place in the queue), so both runs judge the same answers the same way.
+    const verdicts = (text) => {
+      const [, id, n] = text.match(/answer of (\w+) at \S+ #(\d+)/)
+      const k = Number(n) * (id === 'sa' ? 3 : id === 'sc' ? 2 : 1)
+      return [k % 2 === 0, k % 3 !== 0, true, k % 5 === 0]
+    }
+    const delays = (seed) => (id, user) => (Number(user.match(/question (\d+)/)[1]) * seed + id.charCodeAt(1)) % 9
+    const one = await P.runProtocol(config, CONNECTION, () => {}, { callModel: scriptedModel({ verdicts, delay: delays(1) }).fn })
+    const two = await P.runProtocol(config, CONNECTION, () => {}, { callModel: scriptedModel({ verdicts, delay: delays(5) }).fn })
+    const order = (raw) => raw.scores.map((s) => `${s.taskId}|${s.systemId}`).join(' ')
+    assert.notEqual(order(one.raw), order(two.raw), 'the two raw tables should be in different orders')
+    assert.deepEqual(two.summary.exploratory, one.summary.exploratory)
+    assert.deepEqual(two.summary.comparisons, one.summary.comparisons)
+    assert.deepEqual(two.summary.conditions, one.summary.conditions)
+    assert.deepEqual(Object.keys(two.summary.perTask), Object.keys(one.summary.perTask))
+    // Pairs are formed in configuration order, systems first, then settings; tasks too.
+    assert.deepEqual(one.summary.exploratory.map((e) => `${e.a}>${e.b}`), ['sa|0>sb|0', 'sa|0>sc|0', 'sb|0>sc|0'])
+    assert.deepEqual(Object.keys(one.summary.perTask['sa|0']), tasks.map((t) => t.id))
+  })
+})
+
+describe('review, finding 11: the summary is computed without holding up the server', () => {
+  test('runProtocol keeps the event loop turning while the interval is computed, and gives the same summary', async () => {
+    // 40 tasks: above the exact test's 20, so the p-value and the interval are sampled.
+    const tasks = Array.from({ length: 40 }, (_, i) => ({ ...WEIGHTED, id: `w${i + 1}` }))
+    const verdicts = (text) => { const k = Number(text.match(/#(\d+)/)[1]) + (text.includes('of sa') ? 1 : 0); return [k % 2 === 0, k % 3 !== 0, k % 4 !== 0, k % 7 === 0] }
+    const config = { systems: [system('sa'), system('sb')], judges: [JUDGE], tasks, R: 1, K: 1, batched: true, concurrency: 4, comparisons: [['sa', 'sb']] }
+    // A timer every 5 ms; the longest gap between its ticks is how long the loop stood still.
+    const turn = () => new Promise((resolve) => setTimeout(resolve, 15))
+    let last = performance.now(), worst = 0
+    const timer = setInterval(() => { const now = performance.now(); worst = Math.max(worst, now - last); last = now }, 5)
+    await turn()
+    const out = await P.runProtocol(config, CONNECTION, () => {}, { callModel: scriptedModel({ verdicts }).fn })
+    await turn()
+    clearInterval(timer)
+    // The same summary computed in place, and how long that takes on this machine.
+    const started = performance.now()
+    const inPlace = P.summarise(config, out.raw)
+    const inPlaceMs = performance.now() - started
+    assert.equal(inPlace.comparisons[0].n, 40)
+    assert.ok(worst < inPlaceMs / 2, `the event loop stood still for ${Math.round(worst)} ms; the summary takes ${Math.round(inPlaceMs)} ms in place`)
+    assert.deepEqual(out.summary, inPlace)
+  })
+})
+
+describe('review, finding 12: an unbounded interval says so in the JSON', () => {
+  test('the bounds the test cannot reach are flagged, and survive JSON', () => {
+    const scores = []
+    ;[2, 3, 5, 8].forEach((x, i) => scores.push(row('sa', 0, `t${i}`, 50 + x), row('base', 0, `t${i}`, 50)))
+    ;[3, -1, 4, 1, -5, 9, 2, -6, 5, 3].forEach((x, i) => scores.push(row('sc', 0, `t${i}`, 50 + x)))
+    for (let i = 4; i < 10; i++) scores.push(row('base', 0, `t${i}`, 50))
+    const config = { systems: [system('sa'), system('base'), system('sc')], comparisons: [['sa', 'base'], ['sc', 'base']] }
+    const [few, ten] = JSON.parse(JSON.stringify(P.summarise(config, rawOf(scores)))).comparisons
+    assert.equal(few.n, 4)
+    assert.deepEqual(few.ciUnbounded, [true, true])
+    assert.equal(ten.n, 10)
+    assert.deepEqual(ten.ciUnbounded, [false, false])
+    assert.ok(Number.isFinite(ten.ci[0]) && Number.isFinite(ten.ci[1]))
   })
 })

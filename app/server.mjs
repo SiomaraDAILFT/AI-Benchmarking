@@ -19,7 +19,7 @@ import http from 'node:http'
 import fs from 'node:fs'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
-import { runProtocol, runValidation, applyPreset, planCounts, scoresCsv, PROTOCOL_PRESETS } from './lib/protocol.mjs'
+import { runProtocol, runValidation, applyPreset, planCounts, scoresCsv, validateConfig, PROTOCOL_PRESETS } from './lib/protocol.mjs'
 import { DIRECT_PROVIDERS, fetchDailftModels } from './lib/providers.mjs'
 import { loadDracoTasks, stratifiedSample, DRACO_DATASET_SOURCE } from './lib/draco-dataset.mjs'
 
@@ -48,22 +48,6 @@ function defaults() {
       direct: 'Direct mode calls each provider with its own key and supports that provider\'s documented effort settings, so a system can be swept across settings (E > 1).',
     },
   }
-}
-
-function validateConfig(c) {
-  const errs = []
-  if (!Array.isArray(c.systems) || c.systems.length < 2) errs.push('at least two systems under test')
-  if (!Array.isArray(c.judges) || c.judges.length < 1) errs.push('at least one judge')
-  if (!Array.isArray(c.tasks) || c.tasks.length < 1) errs.push('at least one task')
-  for (const t of c.tasks || []) { if (!t.question) errs.push(`task ${t.id || '?'} has no question`); if (!Array.isArray(t.criteria) || t.criteria.length < 1) errs.push(`task ${t.id || '?'} has no rubric criteria`) }
-  for (const s of [...(c.systems || []), ...(c.judges || [])]) if (!s.modelId) errs.push(`${s.label || s.id} has no model id`)
-  const R = Number(c.R), K = Number(c.K)
-  if (!(R >= 1 && R <= 10)) errs.push('R must be 1-10'); if (!(K >= 1 && K <= 10)) errs.push('K must be 1-10')
-  if (c.protocol === 'validate' && c.reference) {
-    const rR = Number(c.reference.R), rK = Number(c.reference.K)
-    if (!(rR >= 1 && rR <= 10)) errs.push('reference R must be 1-10'); if (!(rK >= 1 && rK <= 10)) errs.push('reference K must be 1-10')
-  }
-  return errs
 }
 
 const server = http.createServer(async (req, res) => {

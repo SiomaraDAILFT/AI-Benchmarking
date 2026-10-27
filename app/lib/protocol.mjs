@@ -4,14 +4,16 @@
  * Parameters (Section 4): C systems, T tasks, E settings, R regenerations, J judges,
  * K repeat scorings; S4 batching on/off. Judging is blind (systems are shown as letters),
  * absolute (rubric criteria MET/UNMET -> score 0-100) and, when batched, each batch is shown
- * in a seeded random order, rotated one place per repeat so that every C repeats put each
- * answer in each position once and the repeats double as position calibration (Section 7.3).
+ * in a seeded random order, rotated one place per repeat so that every n repeats put each of
+ * the batch's n answers in each position once (n = C when every system's answer is there) and
+ * the repeats double as position calibration (Section 7.3).
  * Every scoring is retained with each criterion's verdict and the order shown (Section 7.4).
  * Statistics: task-level paired differences at a named setting of each system, one-sided and
  * two-sided paired permutation tests with the observed pattern counted, Holm correction across
  * every pre-registered comparison, Cohen's d_z and the interval from the inverted test
  * (Section 7.1), using the paper's own src/ modules.
  */
+import { Worker } from 'node:worker_threads'
 import { callModel } from './providers.mjs'
 import { pairedPermutationTest, signFlipConfidenceInterval } from '../../src/permutation-test.mjs'
 import { holmBonferroni } from '../../src/holm-bonferroni.mjs'
@@ -62,12 +64,13 @@ export function buildJudgePrompt(task, answers, { batched }) {
 
 /**
  * Parse a judge's output into { [letter]: { score, met, unmet, metIndices, verdicts } }; unbatched
- * uses letter 'A'. `score` is the judge's own score line (null if it wrote none), `metIndices`
- * (0-based criterion numbers marked MET) is what weighted scoring needs, and `verdicts` is the
- * verdict on each criterion in rubric order, 'MET', 'UNMET' or null where none was read (a
- * criterion marked both counts as MET, as in the weighted score). A letter appears when its
- * output has a score line or at least one verdict line; an output with neither, such as a
- * refusal, gives no entry at all.
+ * uses letter 'A'. `score` is the judge's own score line or, where it wrote none but gave a
+ * verdict on every criterion, the percentage of criteria marked MET (null otherwise, batched or
+ * not); `metIndices` (0-based criterion numbers marked MET) is what weighted scoring needs, and
+ * `verdicts` is the verdict on each criterion in rubric order, 'MET', 'UNMET' or null where none
+ * was read (a criterion marked both counts as MET, as in the weighted score). A letter appears
+ * when its output has a score line or at least one verdict line; an output with neither, such
+ * as a refusal, gives no entry at all.
  */
 export function parseJudgeOutput(text, { batched, n }) {
   const out = {}
@@ -82,14 +85,17 @@ export function parseJudgeOutput(text, { batched, n }) {
     }
     return verdicts
   }
+  /* No score line: the share marked MET, only when every criterion has a verdict (counting
+     verdict lines would let a repeated line stand in for a missing criterion). */
+  const shareMet = (verdicts) => (n > 0 && verdicts.every((v) => v != null) ? Math.round((100 * verdicts.filter((v) => v === 'MET').length) / n) : null)
   if (!batched) {
     const m = text.match(/SCORE\s*:\s*([0-9]+(?:\.[0-9]+)?)/i)
     const metIndices = [...new Set(indices(/\bC(\d+)\s*:\s*MET\b/gi))]
     const met = metIndices.length
     const unmet = (text.match(/\bC\d+\s*:\s*UNMET\b/gi) || []).length
     if (!m && met + unmet === 0) return out
-    const score = m ? Number(m[1]) : (met + unmet === n && n > 0 ? Math.round((100 * met) / n) : null)
-    out.A = { score, met, unmet, metIndices, verdicts: verdictsFor('') }
+    const verdicts = verdictsFor('')
+    out.A = { score: m ? Number(m[1]) : shareMet(verdicts), met, unmet, metIndices, verdicts }
     return out
   }
   /* Every letter with a score line or a verdict line: on a weighted rubric the verdicts are the
@@ -101,7 +107,8 @@ export function parseJudgeOutput(text, { batched, n }) {
     const lines = [...text.matchAll(new RegExp(`SCORE\\s+${L}\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)`, 'gi'))]
     const metIndices = [...new Set(indices(new RegExp(`\\b${L}-C(\\d+)\\s*:\\s*MET\\b`, 'gi')))]
     const unmet = (text.match(new RegExp(`\\b${L}-C\\d+\\s*:\\s*UNMET\\b`, 'gi')) || []).length
-    out[L] = { score: lines.length ? Number(lines[lines.length - 1][1]) : null, met: metIndices.length, unmet, metIndices, verdicts: verdictsFor(`${L}-`) }
+    const verdicts = verdictsFor(`${L}-`)
+    out[L] = { score: lines.length ? Number(lines[lines.length - 1][1]) : shareMet(verdicts), met: metIndices.length, unmet, metIndices, verdicts }
   }
   return out
 }
@@ -112,21 +119,26 @@ export function parseJudgeOutput(text, { batched, n }) {
  *
  * Where the task carries criterion weights (the DRACO task set) the scoring is computed from
  * the verdicts alone (Section 7.1): the weight-normalised fraction of criteria met, overall and
- * per dimension. An answer with no verdict the parser can read, such as a refusal or a score
- * line without verdict lines, has no scoring: its score is null, and the summary leaves it out
- * of the median instead of counting it as 0. The judge's own score line is kept as judgeScore.
- * Otherwise the score is the judge's own score line.
+ * per dimension. It needs a verdict on every criterion. An answer that leaves any criterion
+ * without a verdict the parser can read, such as a refusal, a score line without verdict lines,
+ * or an output cut off partway, has no scoring: its score is null, and the summary leaves it out
+ * of the median instead of counting the missing criteria as unmet (which loses their weight, or,
+ * for an error criterion, raises the score). `incomplete` marks an answer with some verdicts but
+ * not all. The judge's own score line is kept as judgeScore. Otherwise the score is the judge's
+ * own score line (see parseJudgeOutput).
  */
 export function scoreJudgement(task, entry, { scoring = 'weighted' } = {}) {
   const p = entry
   const verdicts = p?.verdicts ?? null
   const kept = { judgeScore: p ? p.score : null, met: p ? p.met : null, unmet: p ? p.unmet : null, verdicts }
   if (scoring === 'weighted' && task.weights) {
-    const read = !!p && (verdicts ? verdicts.some((v) => v != null) : p.met + p.unmet > 0)
-    const weighted = read ? weightedScore(task, p.metIndices || []) : null
-    return { score: weighted ? weighted.overall : null, ...kept, dimensionScores: weighted ? weighted.perDimension : null }
+    const n = task.criteria.length
+    const read = Array.isArray(verdicts) && verdicts.some((v) => v != null)
+    const complete = read && verdicts.length === n && verdicts.every((v) => v != null)
+    const weighted = complete ? weightedScore(task, p.metIndices || []) : null
+    return { score: weighted ? weighted.overall : null, ...kept, incomplete: read && !complete, dimensionScores: weighted ? weighted.perDimension : null }
   }
-  return { score: p ? p.score : null, ...kept, dimensionScores: null }
+  return { score: p ? p.score : null, ...kept, incomplete: false, dimensionScores: null }
 }
 
 /** FNV-1a, 32 bits: a batch's name to a seed. */
@@ -149,7 +161,9 @@ function mulberry32(seed) {
 
 /**
  * The order in which repeat k (0-based) of one batch shows its n answers, as a permutation of
- * 0..n-1 (position -> answer index, answers in configuration order). Each block of n repeats
+ * 0..n-1 (position -> answer index, answers in configuration order). n is the number of answers
+ * in the batch: C when every system's answer is there, fewer when a generation call failed or
+ * at a setting index only some systems have. Each block of n repeats
  * draws a random order from the fixed `seed` and the batch's name (task, setting,
  * regeneration, judge) and rotates it one place per repeat, so every repeat's order is a
  * seeded random permutation, the order differs between batches even at K = 1, and any n
@@ -186,7 +200,7 @@ export async function runProtocol(config, connection, onEvent = () => {}, deps =
   const call = deps.callModel || callModel
   const { systems, judges, tasks, R = 1, K = 1, batched = true, alpha = 0.05, concurrency = 3, scoring = 'weighted' } = config
   const orderSeed = config.orderSeed == null || config.orderSeed === '' || !Number.isFinite(Number(config.orderSeed)) ? 1 : Number(config.orderSeed)
-  const raw = { generations: [], scores: [], errors: [], orderSeed }
+  const raw = { generations: [], scores: [], errors: [], orderSeed, batched }
   const emit = (type, data) => onEvent({ type, at: new Date().toISOString(), ...data })
   const cells = []
   for (const s of systems) for (const [ei, setting] of (s.settings?.length ? s.settings : [null]).entries()) for (const [ti, task] of tasks.entries()) for (let r = 0; r < R; r++) cells.push({ s, setting, ei, task, ti, r })
@@ -258,10 +272,40 @@ export async function runProtocol(config, connection, onEvent = () => {}, deps =
   const jq = [...judgeJobs]
   await Promise.all(Array.from({ length: Math.min(concurrency, jq.length) }, () => judgeWorker(jq)))
 
-  const summary = summarise(config, raw, { alpha, aggregation: config.aggregation })
+  const summary = await summariseOffThread(config, raw, { alpha, aggregation: config.aggregation })
   emit('done', { summary })
   return { raw, summary }
 }
+
+/**
+ * summarise() in a worker thread, so that the server keeps answering while it runs: each
+ * pre-registered comparison's interval takes about 45 passes over the sampled sign patterns,
+ * seconds at a hundred tasks or more, and the page polls every two seconds. The result is what
+ * summarise() returns, infinite bounds included. Should the thread fail to start or stop
+ * without an answer, the summary is computed in place, so a paid run is never lost to it.
+ */
+export function summariseOffThread(config, raw, options = {}) {
+  return new Promise((resolve, reject) => {
+    let settled = false
+    const inPlace = () => {
+      if (settled) return
+      settled = true
+      try { resolve(summarise(config, raw, options)) } catch (e) { reject(e) }
+    }
+    let worker
+    try {
+      worker = new Worker(new URL('./summary-worker.mjs', import.meta.url), { workerData: { config, raw, options } })
+    } catch {
+      return inPlace()
+    }
+    worker.once('message', (summary) => { if (!settled) { settled = true; resolve(summary) } })
+    worker.once('error', inPlace)
+    worker.once('exit', inPlace)
+  })
+}
+
+/** The judging call a retained scoring came from: one call per batch when batched, one per answer when not. */
+const judgingCall = (s, batched) => `${s.taskId}|${s.settingIndex}|${s.regeneration}|${s.judgeId}|${s.repeat}${batched ? '' : `|${s.systemId}`}`
 
 /**
  * Aggregate to one score per (system, setting, task).
@@ -276,15 +320,28 @@ export async function runProtocol(config, connection, onEvent = () => {}, deps =
  * means the system's compareSetting if it carries one that was run, otherwise its first
  * configured setting, in configuration order. Holm's correction runs across every named
  * comparison: one that could not be tested still counts in the family, with p = 1, so it is
- * never rejected and the thresholds of the others do not loosen (Section 7.1).
+ * never rejected and the thresholds of the others do not loosen (Section 7.1). Each comparison
+ * carries the interval from the inverted test as ci = [lower, upper] at level ciLevel; a bound the
+ * test cannot reach (5 tasks or fewer at a = 0.05) is -Infinity or Infinity, which JSON writes
+ * as null, so ciUnbounded = [lower unbounded, upper unbounded] says which.
+ *
+ * The retained scorings are taken in configuration order (system, setting, task, regeneration,
+ * judge, repeat), not in the order their calls finished, so that the same raw table gives the
+ * same summary to the last digit: the exploratory pairs are formed in that order, and the
+ * tasks' order fixes which sampled sign falls on which task.
  */
 export function summarise(config, raw, { alpha = 0.05, aggregation = 'median' } = {}) {
   const med = (xs) => { const a = xs.filter((x) => x != null).sort((p, q) => p - q); if (!a.length) return null; return a.length % 2 ? a[(a.length - 1) / 2] : (a[a.length / 2 - 1] + a[a.length / 2]) / 2 }
   const avg = (xs) => { const a = xs.filter((x) => x != null); return a.length ? mean(a) : null }
   const median = aggregation === 'mean' ? avg : med
+  const placeOf = (list) => { const m = new Map((list || []).map((x, i) => [x.id, i])); return (id) => (m.has(id) ? m.get(id) : m.size) }
+  const systemAt = placeOf(config.systems), taskAt = placeOf(config.tasks), judgeAt = placeOf(config.judges)
+  const ordered = raw.scores.map((s, i) => [s, i]).sort(([a, i], [b, j]) =>
+    systemAt(a.systemId) - systemAt(b.systemId) || a.settingIndex - b.settingIndex || taskAt(a.taskId) - taskAt(b.taskId) ||
+    a.regeneration - b.regeneration || judgeAt(a.judgeId) - judgeAt(b.judgeId) || a.repeat - b.repeat || i - j).map(([s]) => s)
   const perTask = {} // system|setting -> taskId -> score
   const groups = {}
-  for (const s of raw.scores) {
+  for (const s of ordered) {
     const g = `${s.systemId}|${s.settingIndex}|${s.taskId}|${s.regeneration}|${s.judgeId}`
     ;(groups[g] = groups[g] || []).push(s.score)
   }
@@ -328,7 +385,7 @@ export function summarise(config, raw, { alpha = 0.05, aggregation = 'median' } 
     if (diffs.length < 3) return { ...named, n: diffs.length, error: 'fewer than 3 paired tasks' }
     const test = pairedPermutationTest(diffs, { countObserved: true })
     const ci = signFlipConfidenceInterval(diffs, { alpha, countObserved: true })
-    return { ...named, n: diffs.length, meanDiff: mean(diffs), dz: cohensDz(diffs), p: test.pValueOneSided, exact: test.exact, ci: [ci.lower, ci.upper], ciLevel: ci.level }
+    return { ...named, n: diffs.length, meanDiff: mean(diffs), dz: cohensDz(diffs), p: test.pValueOneSided, exact: test.exact, ci: [ci.lower, ci.upper], ciUnbounded: [ci.lower === -Infinity, ci.upper === Infinity], ciLevel: ci.level }
   })
   const tested = comps.filter((c) => !c.error)
   const holm = holmBonferroni([...tested.map((c) => c.p), ...comps.filter((c) => c.error).map(() => 1)], alpha)
@@ -346,15 +403,18 @@ export function summarise(config, raw, { alpha = 0.05, aggregation = 'median' } 
     exploratory.push({ a: keys[x], b: keys[y], n: diffs.length, meanDiff: mean(diffs), dz: cohensDz(diffs), pTwoSided: Math.min(1, 2 * Math.min(pG, pL)) })
   }
 
-  const judgeAgreement = judgeAgreementSummary(raw)
-  const usage = { generationOutputTokens: raw.generations.reduce((a, g) => a + (g.outputTokens || 0), 0), dailftTokens: raw.generations.reduce((a, g) => a + (g.dailftTokens || 0), 0) + judgeDailftTokens(raw), calls: { generation: raw.generations.length, judging: new Set(raw.scores.map((s) => `${s.taskId}|${s.settingIndex}|${s.regeneration}|${s.judgeId}|${s.repeat}|${config.batched ? '' : s.systemId}`)).size } }
+  const judgeAgreement = judgeAgreementSummary({ ...raw, scores: ordered })
+  /* Whether the run batched its judging: recorded with the raw table by runProtocol (whose
+     default is batched); a configuration's own flag for a raw table from before that. */
+  const batched = raw.batched ?? config.batched ?? true
+  const usage = { generationOutputTokens: raw.generations.reduce((a, g) => a + (g.outputTokens || 0), 0), dailftTokens: raw.generations.reduce((a, g) => a + (g.dailftTokens || 0), 0) + judgeDailftTokens(ordered, batched), calls: { generation: raw.generations.length, judging: new Set(ordered.map((s) => judgingCall(s, batched))).size } }
   return { conditions, comparisons: comps, exploratory, judgeAgreement, usage, errors: raw.errors.length, perTask, aggregation, operatingPoints }
 }
 
-/** Judge usage in DAILFT tokens, counted once per judging call (batched calls share one usage figure across their rows). */
-function judgeDailftTokens(raw) {
+/** Judge usage in DAILFT tokens, counted once per judging call: the rows of a batched call all carry that call's one usage figure. */
+function judgeDailftTokens(scores, batched) {
   const seen = new Set(); let total = 0
-  for (const s of raw.scores) { const k = `${s.taskId}|${s.settingIndex}|${s.regeneration}|${s.judgeId}|${s.repeat}|${s.position === 0 ? '' : s.systemId}`; if (s.position !== 0 && seen.has(k)) continue; if (s.position === 0) { if (seen.has(k)) continue; seen.add(k) } total += s.judgeDailftTokens || 0 }
+  for (const s of scores) { const call = judgingCall(s, batched); if (seen.has(call)) continue; seen.add(call); total += s.judgeDailftTokens || 0 }
   return total
 }
 
@@ -386,6 +446,26 @@ export function scoresCsv(raw) {
 }
 
 // ---------------------------------------------------------------- Protocol presets and validation
+
+/** The checks a configuration must pass before a run starts (POST /api/run); a list of what is wrong, empty when nothing is. */
+export function validateConfig(c) {
+  const errs = []
+  if (!Array.isArray(c.systems) || c.systems.length < 2) errs.push('at least two systems under test')
+  if (!Array.isArray(c.judges) || c.judges.length < 1) errs.push('at least one judge')
+  if (!Array.isArray(c.tasks) || c.tasks.length < 1) errs.push('at least one task')
+  for (const t of c.tasks || []) { if (!t.question) errs.push(`task ${t.id || '?'} has no question`); if (!Array.isArray(t.criteria) || t.criteria.length < 1) errs.push(`task ${t.id || '?'} has no rubric criteria`) }
+  for (const s of [...(c.systems || []), ...(c.judges || [])]) if (!s.modelId) errs.push(`${s.label || s.id} has no model id`)
+  const R = Number(c.R), K = Number(c.K)
+  if (!(R >= 1 && R <= 10)) errs.push('R must be 1-10'); if (!(K >= 1 && K <= 10)) errs.push('K must be 1-10')
+  if (c.protocol === 'validate' && c.reference) {
+    /* The reference is the complete protocol (Section 8, Phase 1): fewer regenerations or
+       repeat scorings than the reduced run would make it the simpler of the two. */
+    const rR = Number(c.reference.R), rK = Number(c.reference.K)
+    if (!(rR >= 1 && rR <= 10)) errs.push('reference R must be 1-10'); else if (rR < R) errs.push(`reference R must be at least the reduced run's R (${R}): the reference is the complete protocol`)
+    if (!(rK >= 1 && rK <= 10)) errs.push('reference K must be 1-10'); else if (rK < K) errs.push(`reference K must be at least the reduced run's K (${K}): the reference is the complete protocol`)
+  }
+  return errs
+}
 
 /**
  * Protocol presets. `draco` follows the published DRACO protocol as the benchmark paper describes it
@@ -422,13 +502,15 @@ export function applyPreset(config, presetId) {
  * Section 8, Phase 1: the complete, unsimplified protocol on the same systems and tasks, run
  * once as the reference. Every configured setting of every system (E), the reference's own
  * regenerations and repeat scorings (config.reference.R and .K; the run's R and K where a
- * configuration has none), every answer judged in its own call (no S4), and the same scoring
- * and aggregation rule as the reduced run, so the two differ only in the simplifications.
+ * configuration has none, and never fewer than the run's, so the reference is never the
+ * simpler of the two; validateConfig refuses such a configuration before it gets here), every
+ * answer judged in its own call (no S4), and the same scoring and aggregation rule as the
+ * reduced run, so the two differ only in the simplifications.
  */
 export function referenceConfig(config) {
   const reduced = applyPreset(config, 'reduced')
-  const R = Number(config.reference?.R) || Number(config.R) || 1
-  const K = Number(config.reference?.K) || Number(config.K) || 1
+  const R = Math.max(Number(config.reference?.R) || 0, Number(config.R) || 1)
+  const K = Math.max(Number(config.reference?.K) || 0, Number(config.K) || 1)
   return { ...reduced, R, K, batched: false, protocol: 'reference' }
 }
 

@@ -51,7 +51,9 @@ What's here
   - effect-size.mjs — Cohen's $d_z$ and the matched-pairs rank-biserial
     correlation
   - permutation-test.mjs — a paired permutation (sign-flip) test, exact
-    for small task counts and Monte Carlo above that
+    for small task counts and Monte Carlo above that, its two-sided form, and
+    the confidence interval for the mean paired difference found by inverting
+    the two-sided test (Section 7.1)
   - holm-bonferroni.mjs — the multiple-comparisons step-down correction
   - rank-agreement.mjs — Kendall's tau between two rankings
   - stats-utils.mjs — small shared primitives (inverse normal CDF, mean,
@@ -167,9 +169,9 @@ What you can do in the interface:
    or import/export as JSON. The judge marks each criterion MET or UNMET and
    writes a score line, which it is asked to make the percentage of criteria
    MET; on these unweighted tasks the score is the number on that line, which
-   need not equal the share of criteria it marked MET (an unbatched judge that
-   writes no score line but marks every criterion is scored by the percentage
-   it marked MET). "Load the DRACO task set" replaces them with the 100 published DRACO tasks and
+   need not equal the share of criteria it marked MET (a judge that writes no
+   score line but gives a verdict on every criterion is scored by the
+   percentage it marked MET, batched or not). "Load the DRACO task set" replaces them with the 100 published DRACO tasks and
    their expert rubrics (four dimensions, integer criterion weights, negative
    weights for errors), from the MIT-licensed dataset at
    https://huggingface.co/datasets/perplexity-ai/draco; a copy and its licence
@@ -177,8 +179,10 @@ What you can do in the interface:
    the dataset's own rule (raw weighted sum over the positive weights,
    clamped to 0–100, per dimension too), and the rubric shown to the judge
    marks each penalty criterion so that MET means "the error is present". A
-   judge answer with no verdict the runner can read, such as a refusal, is a
-   missing scoring, left out of the median, not a 0. A sample size draws
+   judge answer that leaves any criterion without a verdict the runner can
+   read, such as a refusal or an answer cut off partway, is a missing scoring,
+   left out of the median, not a 0 and not a score with those criteria counted
+   unmet. A sample size draws
    exactly that many tasks as a reproducible stratified sample, fixed before
    any system runs (S6): in proportion to the ten domains with at least one
    task from each, or, for fewer than ten tasks, one task from each of that
@@ -194,7 +198,9 @@ What you can do in the interface:
    place per repeat, so repeats double as position calibration. Validation:
    run both runs the complete protocol of Section 8 (Phase 1) once as the
    reference, with every ticked setting, each answer judged in its own call,
-   the reference R and K you set and the same median rule, then the reduced
+   the reference R and K you set (3 and 5 to start, the full protocol of
+   Appendix B, and never fewer than the reduced run's) and the same median
+   rule, then the reduced
    protocol on the same systems and tasks, and reports rank agreement
    (Kendall's τ over the systems, each at the setting it is compared at),
    whether the leader is the same, whether each pre-registered comparison
@@ -208,11 +214,16 @@ What you can do in the interface:
    counts the observed sign pattern, so it is never zero) with Holm
    correction across every pre-registered comparison, including any that
    could not be tested, Cohen's d_z and the confidence interval found by
-   inverting the test, all other pairs as exploratory two-sided tests, judge
+   inverting the test (in the JSON, ciUnbounded marks a bound the test cannot
+   reach, as with 5 tasks or fewer), all other pairs as exploratory two-sided
+   tests, judge
    test–retest and between-judge spread, usage, and downloads of the complete
    raw table (JSON) and the scores (CSV), with each judge's verdict on each
    criterion and the order the answers were shown in; nothing is averaged
-   away before storage (Section 7.4 of the paper).
+   away before storage (Section 7.4 of the paper). The summary takes the
+   scorings in configuration order, so the same raw table always gives the
+   same summary whichever call finished first, and it is worked out in a
+   separate thread, so the page keeps updating meanwhile.
 
 Judging is blind (systems appear as letters), absolute (rubric criteria
 MET/UNMET), and never told which system produced an answer.

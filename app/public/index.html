@@ -55,7 +55,7 @@
   </section>
 
   <section id="tasks" class="card">
-    <h2>4. Tasks and rubrics <span class="muted">(T)</span> <span class="hint"><button type="button" class="hint-btn" aria-label="About tasks">?</button><span class="tip" role="tooltip">Starter tasks are included so the mechanism runs out of the box; replace them with your own. One rubric criterion per line. The judge marks each MET or UNMET and writes a score line, asked to be the percentage MET; on these tasks that line is the score. Weighted tasks from the DRACO set are scored from the verdicts.</span></span></h2>
+    <h2>4. Tasks and rubrics <span class="muted">(T)</span> <span class="hint"><button type="button" class="hint-btn" aria-label="About tasks">?</button><span class="tip" role="tooltip">Starter tasks are included so the mechanism runs out of the box; replace them with your own. One rubric criterion per line. The judge marks each MET or UNMET and writes a score line, asked to be the percentage MET; on these tasks that line is the score. Weighted tasks from the DRACO set are scored from the verdicts, and only when every criterion has one.</span></span></h2>
     <div class="row">
       <button class="btn secondary" id="load-draco">Load the DRACO task set</button>
       <label class="inline">sample <input type="number" id="draco-sample" min="0" max="100" value="0" style="width:5em"> of 100</label>
@@ -79,8 +79,8 @@
     <div class="grid3">
       <label>Regenerations per task, R <input type="number" id="R" min="1" max="10" value="1"></label>
       <label>Repeat scorings per judge, K <input type="number" id="K" min="1" max="10" value="3"></label>
-      <label class="ref-only hidden"><span>Reference R <span class="hint"><button type="button" class="hint-btn" aria-label="About the reference run">?</button><span class="tip" role="tooltip">Validation only. The reference is the complete protocol of Section 8, Phase 1: every ticked setting, each answer judged in its own call, and these regenerations and repeat scorings, with the same median rule as the reduced run.</span></span></span> <input type="number" id="refR" min="1" max="10" value="1"></label>
-      <label class="ref-only hidden">Reference K <input type="number" id="refK" min="1" max="10" value="3"></label>
+      <label class="ref-only hidden"><span>Reference R <span class="hint"><button type="button" class="hint-btn" aria-label="About the reference run">?</button><span class="tip" role="tooltip">Validation only. The reference is the complete protocol of Section 8, Phase 1: every ticked setting, each answer judged in its own call, and these regenerations and repeat scorings, never fewer than the reduced run's, with the same median rule. It starts at R = 3 and K = 5, the full protocol of Appendix B.</span></span></span> <input type="number" id="refR" min="1" max="10" value="3"></label>
+      <label class="ref-only hidden">Reference K <input type="number" id="refK" min="1" max="10" value="5"></label>
       <label>Family-wise α <input type="number" id="alpha" min="0.001" max="0.2" step="0.005" value="0.05"></label>
       <label>Concurrent calls <input type="number" id="concurrency" min="1" max="8" value="3"></label>
       <label class="check"><input type="checkbox" id="batched" checked> <span>Batched judging (S4) <span class="hint"><button type="button" class="hint-btn" aria-label="About batched judging">?</button><span class="tip" role="tooltip">All systems' answers to a task go to the judge in one call. Each batch is shown in a seeded random order, rotated across repeats so the repeats double as position calibration.</span></span></span></label>

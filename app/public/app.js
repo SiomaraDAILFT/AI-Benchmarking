@@ -8,6 +8,21 @@
   const save = () => localStorage.setItem('draco-runner', JSON.stringify({ systems: state.systems, judges: state.judges, tasks: state.tasks, R: $('#R').value, K: $('#K').value, refR: $('#refR').value, refK: $('#refK').value, alpha: $('#alpha').value, concurrency: $('#concurrency').value, batched: $('#batched').checked, baseline: $('#baseline').value, mode: mode(), dailftBaseUrl: $('#dailftBaseUrl').value, dailftBatch: $('#dailftBatch').checked, protocol: protocol() }))
   const mode = () => $('input[name=mode]:checked').value
   const protocol = () => $('#protocol-preset').value || 'reduced'
+  /* The settings a system is run at, in the order the request sends them (configuration order),
+     and the one it is compared at (Section 7.1): its chosen compareSetting while that is still
+     among them, else the first. One rule for what the page shows and what it sends, the
+     server's own rule. */
+  const sentSettings = (s) => (mode() === 'dailft' ? s.settings.filter((e) => catalogueEfforts(s.modelId).includes(e)) : s.settings)
+  const comparedAt = (s) => { const set = sentSettings(s); return set.includes(s.compareSetting) ? s.compareSetting : (set[0] ?? null) }
+  /* The reference of a validation is the complete protocol (Section 8, Phase 1): never fewer
+     regenerations or repeat scorings than the reduced run, which the server refuses. */
+  function keepReferenceAbove() {
+    for (const [ref, red] of [['#refR', '#R'], ['#refK', '#K']]) {
+      const floor = Number($(red).value) || 1
+      $(ref).min = floor
+      if ((Number($(ref).value) || 0) < floor) $(ref).value = floor
+    }
+  }
 
   /* Protocol presets (lib/protocol.mjs): 'draco' fixes R = 1, K = 5, unbatched judging and no
      setting sweep, so those controls lock; 'reduced' frees them; 'validate' runs both. */
@@ -90,7 +105,7 @@
     const saved = JSON.parse(localStorage.getItem('draco-runner') || 'null')
     if (saved) {
       state.systems = saved.systems || []; state.judges = saved.judges || []; state.tasks = saved.tasks || []
-      $('#R').value = saved.R || 1; $('#K').value = saved.K || 3; $('#refR').value = saved.refR || saved.R || 1; $('#refK').value = saved.refK || saved.K || 3; $('#alpha').value = saved.alpha || 0.05; $('#concurrency').value = saved.concurrency || 3; $('#batched').checked = saved.batched !== false
+      $('#R').value = saved.R || 1; $('#K').value = saved.K || 3; $('#refR').value = saved.refR || Math.max(3, Number(saved.R) || 1); $('#refK').value = saved.refK || Math.max(5, Number(saved.K) || 3); $('#alpha').value = saved.alpha || 0.05; $('#concurrency').value = saved.concurrency || 3; $('#batched').checked = saved.batched !== false
       if (saved.mode) $(`input[name=mode][value=${saved.mode}]`).checked = true
       if (saved.dailftBaseUrl) $('#dailftBaseUrl').value = saved.dailftBaseUrl
       if (saved.dailftBatch === false) $('#dailftBatch').checked = false
@@ -113,9 +128,13 @@
       { id: uid(), label: 'System B', provider: 'anthropic', modelId: 'claude-opus-5', settings: [] },
     ]
     if (!state.judges.length) state.judges = [{ id: uid(), label: 'Judge 1', provider: 'google', modelId: 'gemini-3.8-flash' }]
-    renderProviderKeys(); renderSystems(); renderJudges(); renderTasks(); renderBaseline(); modeChanged(); estimate()
+    renderProviderKeys(); renderSystems(); renderJudges(); renderTasks(); renderBaseline()
+    /* The saved baseline, while that system is still there; without this every comparison was
+       made against the first system after a reload. */
+    if (saved?.baseline && [...$('#baseline').options].some((o) => o.value === saved.baseline)) $('#baseline').value = saved.baseline
+    keepReferenceAbove(); modeChanged(); estimate()
     $$('input[name=mode]').forEach((r) => r.addEventListener('change', () => { modeChanged(); renderSystems(); save(); estimate() }))
-    ;['#R', '#K', '#refR', '#refK', '#alpha', '#concurrency', '#batched', '#baseline', '#dailftBaseUrl', '#dailftBatch'].forEach((s) => $(s).addEventListener('change', () => { save(); estimate() }))
+    ;['#R', '#K', '#refR', '#refK', '#alpha', '#concurrency', '#batched', '#baseline', '#dailftBaseUrl', '#dailftBatch'].forEach((s) => $(s).addEventListener('change', () => { keepReferenceAbove(); save(); estimate() }))
     $('#add-system').onclick = () => { state.systems.push({ id: uid(), label: `System ${String.fromCharCode(65 + state.systems.length)}`, provider: 'openai', modelId: '', settings: [] }); renderSystems(); renderBaseline(); save(); estimate() }
     $('#add-judge').onclick = () => { state.judges.push({ id: uid(), label: `Judge ${state.judges.length + 1}`, provider: 'openai', modelId: '' }); renderJudges(); save(); estimate() }
     $('#add-task').onclick = () => { state.tasks.push({ id: 't' + uid(), title: 'New task', context: '', question: '', criteria: [] }); renderTasks(); save(); estimate() }
@@ -156,15 +175,16 @@
       else if (!efforts.length) box.innerHTML = `<span class="muted">${mode() === 'dailft' ? (state.catalogue ? (catalogueEntry(sys.modelId) ? 'model default (no documented effort dial)' : 'model default (id not in the loaded list)') : 'model default; load the model list to choose settings') : 'provider default'}</span>`
       for (const e of efforts) { const l = document.createElement('label'); const c = Object.assign(document.createElement('input'), { type: 'checkbox', checked: sys.settings.includes(e) }); c.onchange = () => { sys.settings = efforts.filter((x) => x === e ? c.checked : sys.settings.includes(x)); renderSystems(); save(); estimate() }; l.append(c, ' ' + e); box.appendChild(l) }
       /* With two or more settings ticked, the setting this system is compared at (Section 7.1):
-         its first ticked setting unless another is chosen. Saved configurations without a
-         choice load with the first. */
-      const ticked = efforts.filter((e) => sys.settings.includes(e))
+         the settings in the order they are sent, and comparedAt(), the rule config() sends, so
+         the page never shows one setting while the run is compared at another. Saved
+         configurations without a choice load with the first. */
+      const ticked = protocol() === 'draco' ? [] : sentSettings(sys)
       if (ticked.length > 1) {
         const l = document.createElement('label'); l.className = 'compare-at'
         const sel = document.createElement('select'); sel.style.width = 'auto'
         sel.innerHTML = ticked.map((e) => `<option value="${esc(e)}">${esc(e)}</option>`).join('')
-        sel.value = ticked.includes(sys.compareSetting) ? sys.compareSetting : ticked[0]
-        sel.onchange = () => { sys.compareSetting = sel.value; save() }
+        sel.value = comparedAt(sys)
+        sel.onchange = () => { sys.compareSetting = sel.value; save(); estimate() }
         l.append('compared at ', sel); box.appendChild(l)
       }
       tdS.appendChild(box)
@@ -230,12 +250,11 @@
   }
 
   function config() {
-    const systems = state.systems.map((s) => ({ ...s, provider: mode() === 'dailft' ? 'dailft' : s.provider, settings: mode() === 'dailft' ? s.settings.filter((e) => catalogueEfforts(s.modelId).includes(e)) : s.settings, baseUrl: s.provider === 'openai-compatible' ? ($('#custom-base')?.value || '') : undefined }))
-    /* Each side of a comparison names the setting it is made at: the system's chosen
-       compareSetting if it is still ticked, else its first ticked setting (Section 7.1). */
-    const side = (s) => ({ systemId: s.id, setting: s.settings.includes(s.compareSetting) ? s.compareSetting : (s.settings[0] ?? null) })
+    const systems = state.systems.map((s) => ({ ...s, provider: mode() === 'dailft' ? 'dailft' : s.provider, settings: sentSettings(s), baseUrl: s.provider === 'openai-compatible' ? ($('#custom-base')?.value || '') : undefined }))
+    /* Each side of a comparison names the setting it is made at (Section 7.1), by comparedAt(). */
+    const side = (id) => { const s = state.systems.find((x) => x.id === id); return { systemId: id, setting: comparedAt(s) } }
     const base = systems.find((s) => s.id === $('#baseline').value)
-    const comparisons = base ? systems.filter((s) => s.id !== base.id).map((s) => [side(s), side(base)]) : []
+    const comparisons = base ? systems.filter((s) => s.id !== base.id).map((s) => [side(s.id), side(base.id)]) : []
     return { protocol: protocol(), systems, judges: state.judges.map((j) => ({ ...j, provider: mode() === 'dailft' ? 'dailft' : j.provider, baseUrl: j.provider === 'openai-compatible' ? ($('#custom-base')?.value || '') : undefined })), tasks: state.tasks, R: Number($('#R').value), K: Number($('#K').value), reference: { R: Number($('#refR').value) || Number($('#R').value), K: Number($('#refK').value) || Number($('#K').value) }, batched: $('#batched').checked, alpha: Number($('#alpha').value), concurrency: Number($('#concurrency').value), comparisons }
   }
   function connection() {
