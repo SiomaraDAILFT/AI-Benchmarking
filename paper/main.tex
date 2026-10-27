@@ -24,7 +24,7 @@
 \title{Benchmarking AI Models Efficiently}
 
 \author{Siomara van Straalen\thanks{Correspondence through the paper's repository, \url{https://github.com/SiomaraDAILFT/AI-Benchmarking}. Text of this paper: \textcopyright{} 2026 Siomara van Straalen, licensed under CC BY-NC 4.0 (free to share and adapt with attribution for non-commercial use; commercial use requires a licence from the author). Accompanying code: PolyForm Noncommercial License 1.0.0.}}
-\date{14 September 2026; revised 26 October 2026}
+\date{14 September 2026; revised 27 October 2026}
 
 % Section break rule: a section starts on a new page unless the previous section only just ran over (at most five lines on the page).
 \newcommand{\sectionbreak}{\par\ifdim\pagetotal<5.5\baselineskip\relax\else\clearpage\fi}
@@ -174,7 +174,7 @@ providers now bill a repeated prompt \emph{prefix} at a discounted cached-read r
 some cases with a premium on the first, cache-writing call, a minimum prefix length and a
 limited cache lifetime; output tokens are not cached \citep{openai2026caching,
 anthropic2026caching, google2026pricing}. Appendix~\ref{app:worked} records the terms in
-force at the time of writing. A task description together with a rubric of several tens
+force when the providers' pages were read, on 11 September and 26 October 2026. A task description together with a rubric of several tens
 of criteria can fall on either side of the published minimum prefix lengths: a 40-criterion rubric with its task and question came to about 1{,}005 tokens, just below one provider's 1{,}024-token minimum, and drew no cached tokens (Appendix~\ref{app:measurements}), so the prefix length should be checked. The $C$ calls in which one judge, in one repeat, scores the $C$ systems' answers to one (task, setting, regeneration) triple naturally fall within a single cache lifetime, and the formula below charges a fresh cache write for each such group, that is, for every setting, regeneration and repeat. All $C \cdot E \cdot R \cdot K$ calls one judge makes on a task open with the same prefix, and repeated calls with an identical prompt were measured reading the cache (Appendix~\ref{app:measurements}); where they all fall within one lifetime the write is paid once per task and judge, and in the worked instance of Appendix~\ref{app:worked} the cached judging-side factor $F_J$ of Section~\ref{sec:cumulative} falls from $108$ to about $69$, and the cached reductions of Table~\ref{tab:cumulative} from $137$--$176\times$ to about $101$--$161\times$. Writing $c$
 for the cached-read price as a fraction of the standard input price and $w$ for the
 price of the first, cache-writing call as a multiple of the standard input price ($w = 1$ where no write premium is charged), the unbatched judging cost with caching is
@@ -434,7 +434,7 @@ system B''), and \emph{pre-specified before any data are collected}: a paired pe
 (sign-flip) test on the task-level differences, which is exact and distribution-free under
 the null hypothesis that each task's difference is symmetric about zero, as it is when the two systems' labels are exchangeable within each task \citep{ernst2004permutation}, and which does not
 rely on the central-limit approximation that \citet{bowyer2025clt} show to understate
-uncertainty for evaluations with ``fewer than a few hundred datapoints'', which is the regime every task count in this paper falls into. At those counts the $2^n$ sign patterns of $n$ tasks are too many to enumerate, so the $p$-value is estimated from a random sample of them (the published runner draws $100{,}000$), and the test stays exact only if the observed pattern is counted with the sample, adding one to both the number of patterns at least as extreme and the number drawn. We recommend \emph{against} testing the differences for normality and then choosing between a $t$-test and a non-parametric alternative. The simulation evidence on whether that two-stage procedure inflates the Type~I error rate is mixed \citep{schucany2006, rasch2011pretesting, rochon2012}, and the recommendation does not depend on it: a branch chosen after seeing the data is a researcher degree of freedom of the kind that ``dramatically increases actual false-positive rates'' \citep{simmons2011falsepositive}, and a power calculation derived for one test (Section~\ref{sec:power}) is not valid for whichever test the branch selects.
+uncertainty for evaluations with ``fewer than a few hundred datapoints'', which is the regime every task count in this paper falls into. At those counts the $2^n$ sign patterns of $n$ tasks are too many to enumerate, so the $p$-value is estimated from a random sample of them (the published runner draws $100{,}000$), and the test stays exact only if the observed pattern is counted with the sample, adding one to both the number of patterns at least as extreme and the number drawn. The published runner adds neither, so its $p$-value can be zero and its test is not exact in this sense. We recommend \emph{against} testing the differences for normality and then choosing between a $t$-test and a non-parametric alternative. The simulation evidence on whether that two-stage procedure inflates the Type~I error rate is mixed \citep{schucany2006, rasch2011pretesting, rochon2012}, and the recommendation does not depend on it: a branch chosen after seeing the data is a researcher degree of freedom of the kind that ``dramatically increases actual false-positive rates'' \citep{simmons2011falsepositive}, and a power calculation derived for one test (Section~\ref{sec:power}) is not valid for whichever test the branch selects.
 A Holm correction \citep{holm1979}, which controls the family-wise error rate at a chosen level $a$
 and is uniformly more powerful than Bonferroni, is applied across the specific, named
 comparisons of interest and not across every pairing the full $C \times C$ comparison matrix could generate, since that would over-correct for hypotheses that were never posed.
@@ -443,7 +443,7 @@ $d_z$, the paired-samples effect size standardised by the standard deviation of 
 differences themselves and equal to $t/\sqrt{n}$ for the paired $t$-statistic over $n$ tasks, is reported
 alongside every $p$-value; it is distinct from $d_{\text{av}}$, which
 ignores the correlation between the paired measurements \citep{lakens2013}. A statistically
-significant but small effect is a different finding from a significant, large one. The confidence interval for the mean paired difference is obtained by inverting the same test: it holds every value that, subtracted from each task's difference, leaves the two-sided sign-flip test unable to reject at the chosen level, so it rests on the same symmetry assumption and not on the central-limit approximation.
+significant but small effect is a different finding from a significant, large one. The confidence interval for the mean paired difference is obtained by inverting the same test: it holds every value that, subtracted from each task's difference, leaves the two-sided sign-flip test unable to reject at the chosen level, so it rests on the same symmetry assumption and not on the central-limit approximation. The published runner does not compute this interval; it reports the mean difference, $d_z$ and the $p$-value of each comparison.
 
 \subsection{Power and the S6 floor}
 \label{sec:power}
@@ -505,7 +505,7 @@ Section~\ref{sec:simplifications} names the residual risk this does not eliminat
 
 \subsection{Data retention}
 
-Every individual measurement (each judge's verdict on each rubric criterion, for each repeat scoring, each regeneration and each setting) should be retained at its finest grain and never averaged down before storage. Every reported summary statistic is then a view computed from that raw table, and the raw table remains the record. This is what makes it possible to
+Every individual measurement (each judge's verdict on each rubric criterion, for each repeat scoring, each regeneration and each setting) should be retained at its finest grain and never averaged down before storage. Every reported summary statistic is then a view computed from that raw table, and the raw table remains the record. The published runner keeps less than this: for each judging call and answer it stores the score and the numbers of criteria met and unmet (and per-dimension scores for weighted rubrics), not the verdict on each criterion. This is what makes it possible to
 later compute a confidence interval or a $p$-value for any pair of systems not among the
 originally pre-registered comparisons, without re-running a single generation or judging
 call, provided that any such post-hoc comparison is reported as \emph{exploratory} and is not included in the same family-wise error control as the comparisons that were pre-registered
@@ -688,7 +688,7 @@ $0.1\times$ on most models ($0.05\times$ on its flagship, Gemini~4~Argon, as of 
 \citep{google2026pricing}. None of the three caches output tokens. In the notation of
 Equation~\ref{eq:judging-cached}, the representative values are $c = 0.1$ and $w = 1$
 (Google) or $w = 1.25$ (OpenAI, Anthropic). All three pages were re-read on 11 September
-2026, and all three again on 26 October 2026, which is where OpenAI's cache-write charge and 30-minute minimum, and the three rates dated to that day, come from. OpenAI's terms apply to its current model generation, Anthropic bills a one-hour
+2026, and all three again on 26 October 2026, which is where OpenAI's cache-write charge and 30-minute minimum, and the three rates dated to that day, come from. OpenAI's terms apply to GPT-5.6 and later models, Anthropic bills a one-hour
 cache write at $2\times$, and Google's storage charge ranges from \$0.50 to \$1.80 per million tokens per hour for its Flash and Flash-Lite models and from \$4.50 to \$8.10 for its Pro models,
 depending on model and service tier.
 
@@ -766,7 +766,7 @@ reference implementation reproduces both figures (\path{tests/power.test.mjs}).
 
 The appendices above rely on published figures. Several premises of the cost model and of the simplifications are inexpensive enough to be measured directly, and three experiments measured them on 11 September 2026 with a small,
 pre-stated budget; the scripts, prompts and raw provider usage records are in the
-repository under \path{experiments/}; \path{experiments/MANIFEST.pdf} lists every run with its purpose, scripts, models, stated and actual spend, and result files with their SHA-256 hashes; its machine-readable copy, \path{experiments/RUNS.json}, also gives each run's caveats. Every figure below is a single small measurement made on one day and is reported so that a reader can judge the premise; the validation
+repository under \path{experiments/}; \path{experiments/MANIFEST.pdf} lists every run with its purpose, scripts, models, stated and actual spend, and result files with their SHA-256 hashes; its machine-readable copy, \path{experiments/RUNS.json}, also gives each run's caveats. Both date from September 2026 and are kept as the runs' own record; some of their headline figures (for E2 the prefix and prompt lengths, $\rho$ and the ranking across orderings; for E3 the eight retried cells and \$0.39) were later corrected against the result files, and the figures below replace them. Every figure below is a single small measurement made on one day and is reported so that a reader can judge the premise; the validation
 protocol of Section~\ref{sec:validation} is where such measurements belong at scale.
 
 \subsection{Judging-side premises (experiment E2)}
@@ -918,7 +918,7 @@ contradiction but an open question, taken up in Section~\ref{app:alpha-why}:
 \midrule
 Model & GPT-5 (2025) & gpt-5.6-sol; claude-opus-5 (2026) \\
 Settings & \texttt{minimal} vs \texttt{high} & \texttt{none}/\texttt{low} vs \texttt{high}; \texttt{low} vs \texttt{high} \\
-Tasks & the Intelligence Index suite (reasoning, knowledge and coding benchmarks; eight in 2025, listed in Section~\ref{app:alpha-why}) & five open-ended analytic prose prompts \\
+Tasks & the Intelligence Index suite (reasoning, knowledge and coding benchmarks; eight in August 2025, listed in Section~\ref{app:alpha-why}) & five open-ended analytic prose prompts \\
 Tools / browsing & per suite & none \\
 Prompts & thousands (suite total) & five \\
 Repeats & per suite & one call per cell \\

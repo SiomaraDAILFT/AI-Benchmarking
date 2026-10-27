@@ -410,3 +410,33 @@ Typography and consistency:
 - Bibliography: Chatbot Arena, Arena-Hard, MT-Bench, "Towards" and OpenRouter's Fusion protected from lower-casing; Ballon et al.'s versions written as "v1, ...; v2, ..."; tinyBenchmarks' ICML proceedings given their year, as the other ICML entries are; Zhao et al.'s COLM 2026 named the Third Conference on Language Modeling, as the other COLM entries are.
 
 The build has the same one float-placement note as before; no warnings otherwise, no undefined references.
+
+## 27 October 2026, 04:14 pass
+
+Read this time from three angles not used before: everything the paper tells a reader to run, open or find, read against the repository (paths, scripts, what the runner computes and keeps); every URL, DOI, arXiv id and access date, each opened; and every date, version and "at the time of writing", checked against its source and the git history. Each finding was checked by a second reader trying to refute it: 21 of 23 survived, three of them the same fix; two were refuted (the Hugging Face "datasets API" wording, which names the right service loosely, and Wu et al.'s year, which is ICLR 2025 as the entry says).
+
+The paper against the published runner:
+- Section 7.1: the add-one rule for the Monte Carlo p-value sat beside the runner's 100,000 draws, so a reader would assume the runner applies it. It does not (src/permutation-test.mjs returns the count over the draws); the sentence now says so, and that its p-value can then be zero.
+- Section 7.1: the confidence interval found by inverting the test is not computed by the runner, which reports the mean difference, d_z and the p-value; now stated.
+- Section 7.4: the runner keeps each judge's score and the numbers of criteria met and unmet, not the verdict on each criterion the section asks to keep; now stated.
+- Appendix C: RUNS.json and MANIFEST.pdf were pointed to without saying that some of their headline figures (E2's prefix and prompt lengths, rho and ranking; E3's eight retried cells and $0.39) were later corrected against the result files; the appendix now says they are the runs' own record and that its figures replace them.
+
+Links, identifiers and access dates:
+- Title block: revised 27 October 2026, not 26 October; two passes changed the text on 27 October.
+- Bibliography, AllChat: the benchmarks address is now a link (\url), like every other address in a note.
+- Bibliography, van der Maden et al.: the CHI 2026 publication and its DOI (10.1145/3772318.3791069), as the arXiv page links it.
+- Bibliography, Ouyang et al.: the TOSEM 34(2) 2025 publication and its DOI (10.1145/3697010), as the arXiv page links it.
+- Bibliography, Cheng et al. (batch prompting): pages 792 to 810 and the DOI from the ACL Anthology, as the other Anthology entries carry.
+- Bibliography, Liang et al.: the DOI from the ACL Anthology.
+- Bibliography, the Microsoft DRACO post: the blog is "Microsoft Copilot Blog", as the page names it, not "Microsoft 365 Copilot Blog".
+- Bibliography, Computerworld, Thinking Machines, Not Diamond and Martian: the four web sources without an access date now carry one (10 September 2026, the date this file's header records; Thinking Machines also its 25 October re-read).
+- Bibliography header: entries were re-verified on 10 or 11 September 2026, not all on the 10th (Anthropic's effort page says 11 September).
+
+Dates and versions:
+- Appendix C.3 table: the Intelligence Index had eight evaluations in August 2025 (version 2.2), not through 2025; version 3.0 from 2 September had ten (Artificial Analysis methodology page, version history).
+- Appendix B.1: OpenAI's caching terms apply to GPT-5.6 and later, as its page says, not to "its current model generation", which could be read as excluding gpt-5.6-sol, the model E1 and E2 used.
+- Section 4: the caching terms are those in force when the providers' pages were read, on 11 September and 26 October 2026, not "at the time of writing".
+
+For the runner's next version (the paper now describes it as it is; the tool should match the method): add one to the count and the draws in the Monte Carlo p-value; compute the confidence interval by inverting the test; keep each judge's verdict on each criterion in the raw table.
+
+The build has the same one float-placement note as before; no warnings otherwise, no undefined references.
