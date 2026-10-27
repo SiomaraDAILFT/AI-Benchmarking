@@ -440,3 +440,35 @@ Dates and versions:
 For the runner's next version (the paper now describes it as it is; the tool should match the method): add one to the count and the draws in the Monte Carlo p-value; compute the confidence interval by inverting the test; keep each judge's verdict on each criterion in the raw table.
 
 The build has the same one float-placement note as before; no warnings otherwise, no undefined references.
+
+## 27 October 2026, 06:14 pass
+
+Read this time from three angles not used before: every mathematical symbol and its meaning across the paper; every pointer inside the paper (each \ref and each "see above" in words) against what it points to; and sentences a careful reader has to read twice (an unclear "this" or "it", a comparison missing its second term, two claims packed into one sentence). Each finding was checked by a second reader trying to refute it: 29 of 40 survived, two of them the same fix, so 28 corrections. The refuted ones were right as written or a phrasing preference.
+
+Symbols and their meaning:
+- Appendix C.4: alpha is defined on cost (Section 5, S1); this paragraph's ratio of total output tokens is how it is estimated here, as Appendix C.3 already says.
+- Appendix B.2, Section 5 (S1) and Section 6: the measured 1.75 to 3.18 are ratios of output tokens; by cost they are 1.74 to 3.14 (the cost ratios Appendix C.2 already gives), now stated beside them. Every figure and threshold in Section 6's overstatement sentence holds on either set (recomputed).
+- Section 7.2: sigma_A^2 and sigma_B^2 are the variances of a system's score in a single regeneration; "across regenerations" read as the score Section 7.1 already averages over the R regenerations, which has no such variance, and the equation divides them by R.
+- Section 8, Phase 0: kappa named as Cohen's kappa, as the cited study reports it.
+- Appendix B.6: delta is "a minimum difference in mean score", as Section 7.2 and Section 9 call it; "effect" is kept for d_z.
+
+Pointers inside the paper:
+- Section 5, S4: prompt caching is offered by the three largest providers and is on by default at OpenAI only (Appendix B.1); "the default behaviour of several large providers" claimed more than Section 4 and the cited pages say.
+- Section 9: Equation 13 takes sigma^2 as an input; the sentence said it calculated a variance. Now "before sigma^2 is estimated for Equation 13".
+- Section 5, S6: fewer repeat scorings (S3) also cost power, as Section 7.2 and Phase 2 already say; S6 named only S2.
+
+Sentences read twice:
+- Section 7.4: "This" now names what it refers to (retaining every measurement at its finest grain).
+- Appendix C.1, E2 order paragraph: scored alone, the two answers came out "as in the third ordering", not "the other way round" (checked against the run log), and the answer is "the answer written to be strongest", as elsewhere since the 20:14 pass of 24 October.
+- Section 6: "it equals" now "that factor equals"; and "every figure falls to a third (46 to 74x)" now says that range is the one with the cheap setting kept.
+- Section 2.2: "more computation" now "than the baselines"; "Both are reasons" now "Both findings are reasons".
+- Section 5, S6: "Until then" now "Until such data exist".
+- Section 4, caching: the sentence on one cache write per task now says which calls ("all the calls one judge makes on a task") and stands on its own.
+- Appendix C.2: the two mean outputs labelled by setting (3,600 at low, 6,300 at high; recomputed from the table).
+- Abstract and conclusion: "a ratio of total costs" and "roughly two orders of magnitude" now attach to the combined reduction, not to one of its factors.
+- Appendix A.1: "It" now "The post".
+- Section 2.1: the precision figure is a standard error, which a third-party run reports; the sentence had called the run itself a figure.
+- Section 8: "both versions" now "the full and the simplified protocol", "the two" now "the two cases".
+- Section 3, Section 8 Phase 2 and Appendix C.5: three long sentences split where they joined two separate claims; no claim or number changed.
+
+The build has the same one float-placement note as before; no warnings otherwise, no undefined references.
