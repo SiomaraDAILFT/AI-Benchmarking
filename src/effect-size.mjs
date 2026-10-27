@@ -8,9 +8,9 @@ import { mean, sampleStdDev } from './stats-utils.mjs'
  * Cohen's d_z: the paired-samples effect size standardised by the standard
  * deviation of the differences themselves.
  *
- * Distinct from, and routinely confused with, d_av (which standardises by
- * the raw scores' own spread rather than the differences' spread) - see the
- * paper's Section 7.1 note on this. Always report which one you mean.
+ * Distinct from d_av, which standardises by the raw scores' own spread and
+ * so ignores the correlation between the paired measurements (Section 7.1).
+ * Always report which one you mean.
  *
  * @param {number[]} differences - one paired difference per task (system A
  *   score minus system B score, task by task)

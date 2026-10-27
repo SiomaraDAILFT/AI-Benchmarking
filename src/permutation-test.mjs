@@ -1,13 +1,16 @@
 /**
  * A one-sided paired permutation (sign-flip) test, Section 7.1 of the
  * paper: pre-specified in place of a normality-test-then-branch procedure,
- * since that two-stage procedure is a documented source of inflated
- * Type I error and also invalidates a power calculation derived for one
- * specific downstream test.
+ * because choosing the test after seeing the data is a researcher degree of
+ * freedom and invalidates a power calculation derived for one specific
+ * downstream test. (Whether the two-stage procedure also inflates the
+ * Type I error rate is mixed in the simulation evidence; Section 7.1 does
+ * not rest on it.)
  *
- * Under the null hypothesis (no true difference between the two systems),
- * each task's paired difference is equally likely to have occurred with
- * either sign. The test statistic is the mean of the observed differences;
+ * Under the null hypothesis that the task-level differences are independent
+ * and each symmetric about zero (as when the two systems' labels are
+ * exchangeable within each task), each task's paired difference is equally
+ * likely to have occurred with either sign. The test statistic is the mean of the observed differences;
  * its null distribution is built by independently flipping each
  * difference's sign at random (or, for a small task count, by exhaustive
  * enumeration of every possible sign pattern) and recomputing the mean each

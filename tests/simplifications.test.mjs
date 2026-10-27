@@ -446,7 +446,7 @@ describe('Section 6: the overstatement of the naive product', () => {
     }
   })
 
-  test('"falling below 10 once s reaches 0.3" (w = 1): the exact crossing lies above 0.2 and at or below 0.3 for every measured ratio', () => {
+  test('"falling below 10 once s passes about 0.22 to 0.26" (w = 1): the exact crossing lies above 0.2 and at or below 0.3 for every measured ratio', () => {
     // The overstatement falls with s (E K beta = 12 exceeds 1 + alpha), so it is below 10
     // for every s above the crossing s* = (E K beta - 10) / (E K beta - (1 + alpha)).
     const stars = MEASURED_ALPHAS.map((alpha) => {
@@ -471,7 +471,7 @@ describe('Section 6: the overstatement of the naive product', () => {
     }
   })
 
-  test('"falling below 10 once s reaches 0.4" (w = 1.25): the exact crossing lies above 0.3 and at or below 0.4 for every measured ratio', () => {
+  test('"falling below 10 once s passes about 0.31 to 0.36" (w = 1.25): the exact crossing lies above 0.3 and at or below 0.4 for every measured ratio', () => {
     const stars = MEASURED_ALPHAS.map((alpha) => {
       const sStar = overstatementCrossing(BETA_CACHED_W125, alpha)
       near(naiveOverstatement({ s: sStar, E: 2, K: 5, beta: BETA_CACHED_W125, alpha }), 10, 1e-9)

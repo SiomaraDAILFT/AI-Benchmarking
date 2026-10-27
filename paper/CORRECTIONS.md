@@ -519,3 +519,32 @@ Two sentences corrected on the way, found by those checks:
 Also: README.txt pointed to a claims ledger (paper/CLAIMS-AUDIT.md) and a sources/ folder with a fetch script, none of which is in the repository, described rho the wrong way round in its example, and named the paper licence file wrongly; corrected. The permutation test gained an option (countObserved, off by default) that adds one to both counts of the sampled p-value, the form Section 7.1 calls exact; the published runner does not use it, so Section 7.1's "the published runner adds neither" stays true.
 
 Rebuilt with latexmk: no errors, no undefined references.
+
+## 27 October 2026, 10:14 pass (applied 17:3x)
+
+Three new angles: every worked number put through the reference implementation, the typeset result (build log and PDF layout), and the modelling assumptions. Each finding was checked by a second reader who tried to refute it. Applied at 17:3x because the account's weekly usage limit stopped all work from about 10:40 to 17:00.
+
+Numbers through the code (the code reproduces every printed figure; these are the gaps it showed):
+- Section 1, footnote on the repository: it listed "the paper, the protocol runner and the measurement scripts", while the caption of the table "Combined reduction from S1--S4 and S6" and Appendix B.6 refer to "the reference implementation". The footnote now names the reference implementation and the tests that reproduce the worked figures.
+- Section 4, "Effect of prompt caching", and Appendix B.1, first sentence: the dates the providers' pages were read left out 27 October 2026, the date of Google's caching page cited in Appendix B.1's footnote. Both now include it.
+
+Typeset result:
+- Preamble: the cmap package is loaded before fontenc, so the PDF's text can be copied and searched; the title used to come out of the PDF as "Eciently", with the ligature lost.
+- Appendix A.2, table "Published DRACO scores", and Appendix C.3, the table comparing the published 23x with E1: the text columns are set ragged right, which removes the badly stretched lines in those cells.
+- References: the bibliography is set ragged right, for the same reason with long URLs.
+- Preamble: a widow penalty, so a paragraph no longer leaves its last line alone at the top of the next page (Section 8 did).
+- After these the build log shows no overfull and no underfull boxes.
+
+Assumptions stated where used:
+- Section 4, definition of J: "the number of independent judges" is now "the number of judges", with a pointer to S5, which explains why their errors cannot be assumed independent.
+- Section 4, definition of j: one judge scoring one answer once is counted as one judging call; DRACO scores each criterion independently (its Section 4.2, "scores assigned independently for each criterion"), which can take one call per criterion, so j then covers all the calls of one scoring.
+- Section 5, S1: the factor E for judging holds if an answer costs the same to judge at every setting; where the expensive setting's answers are longer, it is above E when the cheap setting is kept and below it when the expensive one is.
+- Section 7.1, the permutation test: the null hypothesis now also states that the task-level differences are independent of one another, which the sign-flip test relies on.
+- Section 7.2, Equation 14: it holds if the two systems' scores vary independently within a task; S4, which scores both answers in one call, does not ensure that. Now said.
+- Section 9, generalisability: it generalises over tasks as far as they are a random sample of the tasks a conclusion is meant to cover; DRACO's are a curated sample from a filtered stratum.
+- Section 9, first sentence on g: Equations 1 and 6 use one average g over every system and setting, not a number per system per setting; the sentence now says so.
+- Section 9, last sentence: the full reference run is made once, on one set of systems, so reusing its sigma, alpha and measured fidelity losses after that set changes assumes they carry over; alpha already differs between the two models of Appendix C.
+
+Also, in the reference implementation (no paper change): src/effect-size.mjs said d_z is "routinely confused with" d_av and pointed to a note the paper removed on 26 October (Lakens 2013 does not support it); src/permutation-test.mjs justified the test by the two-stage procedure's inflated Type I error, which Section 7.1 calls mixed evidence, and stated the null differently from Section 7.1; two test names in tests/simplifications.test.mjs quoted the old "reaches 0.3" and "0.4". All three now follow the paper. 92 of 92 tests pass.
+
+Rebuilt with latexmk: no errors, no undefined references.
