@@ -38,11 +38,21 @@ function meanOf(xs) {
  * @param {number} [options.exactThreshold=20] - enumerate all 2^n sign
  *   patterns exactly when n is at or below this; Monte Carlo above it
  * @param {number} [options.seed=1] - PRNG seed, for reproducible test runs
+ * @param {boolean} [options.countObserved=false] - in the Monte Carlo branch,
+ *   count the observed sign pattern with the sample, adding one to both the
+ *   number of patterns at least as extreme and the number drawn:
+ *   p = (count + 1) / (iterations + 1). Section 7.1: the sampled test "stays
+ *   exact only if the observed pattern is counted with the sample". Off by
+ *   default, which is what the published runner (app/lib/protocol.mjs) does:
+ *   "The published runner adds neither, so its p-value can be zero". The exact
+ *   branch already counts the observed pattern among the 2^n it enumerates, so
+ *   the option does not change it.
  * @returns {{ observedMean: number, pValueOneSided: number, exact: boolean,
- *   permutations: number }}
+ *   permutations: number }} permutations is the number of sign patterns
+ *   enumerated or drawn (not counting the observed one added by countObserved)
  */
 export function pairedPermutationTest(differences, options = {}) {
-  const { iterations = 100000, exactThreshold = 20, seed = 1 } = options
+  const { iterations = 100000, exactThreshold = 20, seed = 1, countObserved = false } = options
   const n = differences.length
   if (n < 1) throw new RangeError('need at least one paired difference')
 
@@ -82,7 +92,7 @@ export function pairedPermutationTest(differences, options = {}) {
   }
   return {
     observedMean,
-    pValueOneSided: countGreaterOrEqual / permutations,
+    pValueOneSided: countObserved ? (countGreaterOrEqual + 1) / (permutations + 1) : countGreaterOrEqual / permutations,
     exact: false,
     permutations,
   }

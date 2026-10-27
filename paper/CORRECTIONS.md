@@ -9,7 +9,7 @@ One entry per pass. Each line says what was wrong and what it is now.
 - Section 7.2: it pointed to Section 7 from inside Section 7 and said the normal approximation was "only a first approximation". It now points to the test subsection (7.1).
 - Sections 5 and 7: single-author citations took plural verbs (Kohli use, Miller derive, Miller give).
 
-Open, larger than a wording fix: the paper cites tests/simplifications.test.mjs and tests/power.test.mjs and a reference implementation that reproduces Tables 2 and the n* figures. Neither the tests nor that code are in this repository.
+Open, larger than a wording fix: the paper cites tests/simplifications.test.mjs and tests/power.test.mjs and a reference implementation that reproduces Tables 2 and the n* figures. Neither the tests nor that code are in this repository. Closed on 27 October 2026: see the entry of that date, "the reference implementation and its tests".
 
 ## 24 October 2026, 20:15 pass
 
@@ -500,5 +500,22 @@ Units and rounding:
 Parameters stated consistently:
 - Section 5 (S1), Section 6, Appendix B.2 and Appendix C.2: E1's "highest setting" is its high setting. Both models offer xhigh and max above it (experiments/e1-alpha.mjs runs none, low and high only), while the published GPT-5 comparison did run that model's highest setting. Each place now names high.
 - Appendix C.3, the table comparing the published 23x with E1, Settings row: the published column now says minimal and high are the lowest and highest of GPT-5's four settings, and the E1 column that xhigh and max were not run.
+
+Rebuilt with latexmk: no errors, no undefined references.
+
+## 27 October 2026, the reference implementation and its tests
+
+The gap logged on 24 October is closed. The paper said a reference implementation reproduces the table "Combined reduction from S1--S4 and S6" (tests/simplifications.test.mjs) and both task floors (tests/power.test.mjs); neither existed. Now in the repository:
+
+- src/cost-model.mjs: one function per numbered equation of Sections 4 to 6 and Appendix B, each naming its equation label. src/power.mjs: the task floor n*, the variance decomposition, Holm's smallest threshold, the power at a given task count, and a normal quantile and CDF written from scratch (agreeing with published values to about 1e-15). src/simplifications.mjs: the cumulativeReductionFactor that README.txt documents.
+- tests/simplifications.test.mjs: every entry of the combined-reduction table (195, 208, 222; 176, 154, 137), the w = 1.25 row (179, 161, 146), F_G = 189, F_J = 270, 108 and about 119, beta = 3.0, 1.2 and 1.325 with the ceiling 1.4, the naive products 5,670, 2,268 and 2,504, Section 6's overstatement ranges, the expensive-setting figures, Appendix C.2's ranges and Appendix B's call counts. The measured setting-cost ratios are computed from the 25 rows of the table "Every successful call of experiment E1", not typed in. tests/power.test.mjs: n* = 128 and 184, z of about 2.13 and 0.84, the power of 0.79 at 180 tasks. tests/stats.test.mjs: the five statistics modules, against values computed independently.
+- 92 tests, all passing (npm test). Each was shown able to fail: the code was broken eleven ways on a scratch copy and every break failed between one and eight tests.
+- The equations were checked against the code one by one by a second reader, and every printed number by a third, recomputed by hand and with high-precision arithmetic. No figure in the paper fails to follow from its stated inputs.
+
+Two sentences corrected on the way, found by those checks:
+- Section 6, the overstatement sentence: it fell below 10 "once s reaches 0.3" (w = 1) and "0.4" (w = 1.25), which holds only in steps of 0.1. The exact crossings are s = 2/(11 - alpha) and 3.25/(12.25 - alpha): about 0.22 to 0.26 and 0.31 to 0.36 for alpha of 1.75 to 3.18. Now stated.
+- Appendix B, call counts: the counts are for T = 60; the full protocol of the worked instance (T_full = 180) makes three times as many (5,400, 81,000 and 16,200). Now said, so the two are not confused.
+
+Also: README.txt pointed to a claims ledger (paper/CLAIMS-AUDIT.md) and a sources/ folder with a fetch script, none of which is in the repository, described rho the wrong way round in its example, and named the paper licence file wrongly; corrected. The permutation test gained an option (countObserved, off by default) that adds one to both counts of the sampled p-value, the form Section 7.1 calls exact; the published runner does not use it, so Section 7.1's "the published runner adds neither" stays true.
 
 Rebuilt with latexmk: no errors, no undefined references.

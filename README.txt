@@ -24,8 +24,8 @@ quantity is a symbol, and no provider, model or price is named. The concrete,
 dated material lives in three appendices — published DRACO-style runs
 (Appendix A), a worked cost instance at current commercial terms
 (Appendix B), and the measurements made for the paper (Appendix C). Every claim in the paper is sourced to a cited,
-publicly reachable document; the claim-by-claim ledger is
-paper/CLAIMS-AUDIT.md.
+publicly reachable document; every correction made since publication, and
+why, is logged in paper/CORRECTIONS.md.
 
 What's here
 -----------
@@ -34,34 +34,37 @@ What's here
   and a compiled main.pdf). Read this first; the code below is a direct,
   equation-by-equation implementation of it.
 - src/ — a dependency-free JavaScript (Node.js) reference
-  implementation of every formula in the paper:
-  - cost-model.mjs — Equations 1–6 (generation cost; judging cost
-    unbatched, batched, and unbatched-with-prompt-caching; total cost)
-  - simplifications.mjs — Equations 7–12 (the six simplifications, S1–S6,
-    the two component factors, and the cumulative reduction as an exact ratio
-    of totals)
-  - power.mjs — Equations 13–14 (sample-size/power calculation, and the
-    variance decomposition that links regenerations to the task floor) and
-    the Holm per-comparison alpha they should be plugged into
+  implementation of the paper's numbered equations:
+  - cost-model.mjs — Sections 4 to 6: generation cost; judging cost
+    unbatched, batched and unbatched with prompt caching; the total; the
+    batching saving; each simplification's factor (S1 to S6, including the
+    batching factor beta); the two component factors F_G and F_J; the
+    combined reduction as a weighted harmonic mean; and the naive product
+    it replaces. Each function names the equation it implements.
+  - simplifications.mjs — one convenience function, cumulativeReductionFactor,
+    that takes a benchmark's design in plain terms and returns the combined
+    reduction
+  - power.mjs — Section 7.2: the task floor n*, the variance decomposition
+    that links regenerations to it, Holm's smallest per-comparison threshold,
+    the power reached at a given task count, and the normal quantile and CDF
+    they use
   - effect-size.mjs — Cohen's $d_z$ and the matched-pairs rank-biserial
     correlation
   - permutation-test.mjs — a paired permutation (sign-flip) test, exact
     for small task counts and Monte Carlo above that
   - holm-bonferroni.mjs — the multiple-comparisons step-down correction
+  - rank-agreement.mjs — Kendall's tau between two rankings
   - stats-utils.mjs — small shared primitives (inverse normal CDF, mean,
     sample standard deviation)
-- sources/ — every work cited in the paper, saved as a PDF
-  (<bibkey>.pdf, one per entry in paper/references.bib), with
-  INDEX.md recording for each the URL used, retrieval date, file size and
-  SHA-256, and whether the file is the publisher's own PDF or a web page
-  printed to PDF. The PDFs themselves stay local (they are git-ignored,
-  since redistribution rights differ per source); fetch-sources.mjs
-  regenerates the folder from the bibliography.
-- tests/ — real tests for every module above, including ones that
-  reproduce the paper's worked cumulative-reduction table in Appendix B
-  (roughly 140–220× depending on the judging share of the full budget and on
-  whether prompt caching is available) and its task-floor example directly
-  from the code.
+- tests/ — tests for every module above. tests/simplifications.test.mjs
+  reproduces every entry of the paper's combined-reduction table (Appendix B:
+  137 to 222 times, depending on the judging share of the full budget and on
+  whether prompt caching is available) and the other worked figures of
+  Sections 4 to 6 and Appendix C; tests/power.test.mjs reproduces the task
+  floors of 128 and 184 and the power of 0.79; tests/stats.test.mjs checks the
+  statistics modules against independently computed values. The cited works
+  themselves are not stored here; each entry in paper/references.bib gives its
+  address and the date it was read.
 
 Using it
 --------
@@ -81,7 +84,7 @@ To use the framework on your own benchmark, import whichever module you need:
       repeats: 5,           // each judge scores each answer 5x
       settingsSwept: 2,     // you sweep 2 settings per system in the full protocol
       systems: 4,           // you're comparing 4 systems
-      rho: 0.3,             // your rubric/task text is ~30% the length of a typical answer
+      rho: 0.3,             // reading one answer costs ~30% of the fixed rubric and task text
       fullTasks: 120,
       reducedTasks: 40,     // your own power-analysis floor
       judgingShare: 0.2,    // judging is ~20% of your FULL protocol's cost
@@ -112,7 +115,7 @@ Code (src/, app/, tests/, experiments/): PolyForm Noncommercial License 1.0.0,
 copyright 2026 Siomara van Straalen (see LICENSE): free to use, change and share
 for non-commercial purposes; commercial use requires a licence from the author.
 
-Paper text: CC BY-NC 4.0, copyright 2026 Siomara van Straalen (see LICENSE-PAPER.md):
+Paper text: CC BY-NC 4.0, copyright 2026 Siomara van Straalen (see LICENSE-PAPER):
 free to share and adapt with attribution for non-commercial use; commercial use
 requires a licence from the author.
 

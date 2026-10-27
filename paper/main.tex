@@ -411,7 +411,7 @@ simplifications S3 and S4 contribute almost nothing to the combined figure, howe
 their own factors. The naive product $F_G \cdot E \cdot K \cdot \beta$ (equivalently, all
 factors applied to the whole budget) exceeds the exact reduction by a factor that grows
 with $E \cdot K \cdot \beta$ and with $\alpha$, since that factor equals $(1-s)\,E \cdot K \cdot \beta + s\,(1+\alpha)$ when S1 keeps the cheap setting (when it keeps the expensive one the second term is $s\,(1+\alpha)/\alpha$, which falls as $\alpha$ grows): with the cheap setting kept, $13$ to $29$ in the worked instance (Appendix~\ref{app:worked} gives the
-figures), but $7$ to $11$ at the setting-cost ratios we measured between the \texttt{high} setting and a lower one ($1.74$ to $3.14$, or $1.75$ to $3.18$ by output tokens, Appendix~\ref{app:measurements}) under cached-read pricing with no write premium ($w = 1$), falling below $10$ once $s$ reaches $0.3$, and $8$ to $12$ at a write multiple of $w = 1.25$, falling below $10$ once $s$ reaches $0.4$. And because $F_G$ and $F_J$ share the factors $R$ and
+figures), but $7$ to $11$ at the setting-cost ratios we measured between the \texttt{high} setting and a lower one ($1.74$ to $3.14$, or $1.75$ to $3.18$ by output tokens, Appendix~\ref{app:measurements}) under cached-read pricing with no write premium ($w = 1$), falling below $10$ once $s$ passes about $0.22$ to $0.26$, and $8$ to $12$ at a write multiple of $w = 1.25$, falling below $10$ once $s$ passes about $0.31$ to $0.36$. And because $F_G$ and $F_J$ share the factors $R$ and
 $T_{\text{full}}/n^*$, S2 and S6 are the only simplifications whose benefit is
 independent of $s$; they are also the two whose cost to validity the power calculation expresses directly, S2 through the regeneration term of Equation~\ref{eq:variance-decomposition} and S6 through the floor $n^*$ (Sections~\ref{sec:simplifications} and~\ref{sec:power}).
 
@@ -710,7 +710,7 @@ For $C = 5$ systems, $T = 60$ tasks, $E = 2$ settings, $R = 3$ regenerations, $J
 judges and $K = 5$ repeats, Equation~\ref{eq:generation} implies $C \cdot E \cdot R \cdot
 T = 1{,}800$ generation calls, Equation~\ref{eq:judging-unbatched} implies $27{,}000$
 unbatched judging calls, and Equation~\ref{eq:judging-batched} implies $5{,}400$ batched
-judging calls, before any per-call price is attached.
+judging calls, before any per-call price is attached. The full protocol of the worked instance below, with $T_{\text{full}} = 180$ tasks, makes three times as many: $5{,}400$, $81{,}000$ and $16{,}200$.
 
 \subsection{The batching factor \texorpdfstring{$\beta$}{beta}}
 
