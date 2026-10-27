@@ -472,3 +472,33 @@ Sentences read twice:
 - Section 3, Section 8 Phase 2 and Appendix C.5: three long sentences split where they joined two separate claims; no claim or number changed.
 
 The build has the same one float-placement note as before; no warnings otherwise, no undefined references.
+
+## 27 October 2026, 08:13 pass
+
+Read this time from three angles not used before: the abstract, the list of contributions and the conclusion checked sentence by sentence against the body; every number that carries a unit or a precision; and every parameter a reader needs to repeat the work, against the experiment files. Each finding was checked by a second reader trying to refute it: 23 of 32 survived. The refuted ones were right as written, a phrasing preference, or (for the power at the floor) already stated in Appendix B.5, Appendix B.6 and Section 8.
+
+Abstract and conclusion against the body:
+- Abstract: "judge count is usually the wrong place to economise" lost its "usually". Section 5 (S5), the conclusion and Appendix C.2 all say it without condition; the sentence now gives the two reasons S5 gives.
+- Abstract and Section 3: "where each answer is judged in its own call, the number of judging calls" now reads "judged separately, without batching, the number of judge scorings". DRACO scores each rubric criterion independently (DRACO, Section 4.2), so a run makes more calls than the product counts; the product counts scorings.
+- Abstract: "the cheaper setting" is "the cheap setting", the term S1 defines and the paper uses everywhere else.
+- Section 3: "too costly to repeat" is "expensive to repeat". The introduction states only as a premise that cost keeps teams from re-running, and no run is priced in the paper.
+- Conclusion: "its unbatched arithmetic" is "its uncached arithmetic", with a pointer to S4. Batching's saving is always measured against unbatched judging; what shrinks it is caching (Section 4 on Equation 4, Appendix B.4).
+- Conclusion, last sentence: "a benchmark cheap enough to re-run" is "a benchmark that can be re-run for a fraction of the full protocol's cost", since the paper attaches no prices to its call counts.
+- Appendix C.1 (experiment E2): the measured rho is now carried into the batching factor, as Appendix C.2 carries the measured alpha. At C = 5 and rho of 1.4 to 1.7, beta is about 1.4 to 1.5 without caching and 1.04 to 1.08 with it (Equation S4: 12/8 = 1.50 and 13.5/9.5 = 1.42 uncached; 8.4/8 = 1.05 to 10.15/9.5 = 1.07 cached with w of 1 or 1.25), against 3.0 and 1.2 to 1.325 at the illustrative rho = 0.2.
+- Appendix C.2 (experiment E1): the combined reductions at the assumed floor of 60 now say what happens at the floor of 184 the instance's own power inputs give: S6 saves nothing and both ranges fall to a third, 9 to 22x and 4 to 9x (26.8/3, 66.0/3, 13.0/3, 26.9/3).
+- Appendix B.5: the power of 0.79 at the power-derived floor is computed with the judging variance of K = 5; the combined variant runs K = 1, which raises that variance (Section 7), so the sentence now adds "and less once its K = 1 is counted".
+- Section 5 (S4) and Appendix B.1: Google applies prompt caching automatically on Gemini 2.5 and later models (Google's caching page, read 27 October 2026, now cited in a footnote); the paper had named only OpenAI as caching by default.
+
+Units and rounding:
+- Appendix A.2, table "Published DRACO scores", Microsoft row: "+7.0" is "+7.0 points", as Microsoft's post gives it ("+7.0 points (SEM ±1.90)"); the post also gives the same gain as a 13.88% relative figure, so the unit matters.
+- Appendix C.1 (experiment E2): the single-answer verdicts ran 224 to 239 output tokens, so the range is 220 to 270, not 230 to 270, and rho on cost is about 1.4 to 1.7, not 1.5 to 1.7 (from experiments/results/e2-judge-cache-2026-09-11T07-41-29.json).
+- Appendix C.5, caption of the table "Experiment E3": the pooled alpha is a ratio of output tokens; the caption now also gives it by cost, 1.46 for gpt-5.6-sol and 2.53 for claude-opus-5 (summed costUsd, low against high, from experiments/results/e3-aime-2026-09-11T08-35-02.json).
+- Appendix C.5, Interpretation: "the pooled ratio" is "the pooled ratio of high to low", because the prose family it is compared with has three pooled ratios.
+- Appendix A.3: the tracker's top score of 0.772 is on a 0 to 1 scale; the sentence now says 77.2%, the form of the other tracker's 88.6% beside it.
+- Section 2.2: AllChat's "60% fewer factual errors" and "depth score twice as high" now say "without naming a baseline"; its home page and the linked benchmark page name none.
+
+Parameters stated consistently:
+- Section 5 (S1), Section 6, Appendix B.2 and Appendix C.2: E1's "highest setting" is its high setting. Both models offer xhigh and max above it (experiments/e1-alpha.mjs runs none, low and high only), while the published GPT-5 comparison did run that model's highest setting. Each place now names high.
+- Appendix C.3, the table comparing the published 23x with E1, Settings row: the published column now says minimal and high are the lowest and highest of GPT-5's four settings, and the E1 column that xhigh and max were not run.
+
+Rebuilt with latexmk: no errors, no undefined references.
