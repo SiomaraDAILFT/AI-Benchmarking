@@ -392,7 +392,7 @@ Claims against evidence:
 - Section 5, S5: "reducing J saves little in absolute terms" now holds where generation dominates, as the two sentences before it already say.
 - Section 8, Phase 2: rank agreement is one criterion the compression literature uses, not the criterion (tinyBenchmarks measures estimation accuracy).
 - Appendix C.4: a setting that behaves this way "is unlikely to", not "cannot", produce a 23x ratio; the documentation quoted puts no bound on it.
-- Section 4: a rubric with its task and question "can fall on either side of" the minimum prefix lengths, not "will usually exceed" them (about 85% of DRACO's tasks clear OpenAI's 1,024 tokens and none clears 4,096).
+- Section 4: a rubric with its task and question "can fall on either side of" the minimum prefix lengths, not "will usually exceed" them (by a rough count of DRACO's 100 tasks, characters divided by four, about 85% clear OpenAI's 1,024 tokens and none clears the 4,096 some Anthropic models need).
 - Section 3: "no sample-size or statistical-power methodology has been published for DRACO" is now "we found no ...", as Section 2.1 already words it.
 - Section 5, S4: G-Eval is described as its authors report it, well ahead of earlier methods, not as "the best-known judge protocol".
 
