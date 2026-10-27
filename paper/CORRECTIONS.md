@@ -548,3 +548,27 @@ Assumptions stated where used:
 Also, in the reference implementation (no paper change): src/effect-size.mjs said d_z is "routinely confused with" d_av and pointed to a note the paper removed on 26 October (Lakens 2013 does not support it); src/permutation-test.mjs justified the test by the two-stage procedure's inflated Type I error, which Section 7.1 calls mixed evidence, and stated the null differently from Section 7.1; two test names in tests/simplifications.test.mjs quoted the old "reaches 0.3" and "0.4". All three now follow the paper. 92 of 92 tests pass.
 
 Rebuilt with latexmk: no errors, no undefined references.
+
+## 27 October 2026, 18:16 pass
+
+Two angles: the sentences changed earlier today, read in their paragraphs, and every statement tied to a date or to "now". Each finding was checked by a second reader who tried to refute it.
+
+Today's edits in context:
+- Section 4, definition of j: the clause added at 10:14 said the judging-call counts below "are multiplied by the number of criteria", which none of them is. It now says j counts one scoring as one call, and the number of calls actually sent is each count times the number of criteria; "unbatched" is back beside the cost it qualifies.
+- Section 5, S1: the sentence after the new caveat still said S1 saves "only the factor E on judging" when the expensive setting is kept; it now adds "or less where the expensive setting's answers are longer", as the caveat says.
+- Conclusion, last sentence: re-running the reduced protocol after the systems change now also needs what the reference check measured to hold for the new systems, as Section 9's last sentence now says.
+- Section 7.1, the confidence interval: it rests on the same independence and symmetry assumptions as the test, not only on symmetry.
+- Section 9, generalisability: the 10:14 insertion made one 108-word sentence; the caveat about DRACO's tasks now stands in its own sentence, and the conditionality on judges in another, directly before "That is the sense of the argument in S5".
+- Section 9, first sentence on g: a colon and a comma, so "Equations 1 and 6, one average over every system and setting" reads as a sentence.
+- Appendix B.3, call counts: the list for the full protocol now names each number (5,400 generation calls, 81,000 unbatched and 16,200 batched judging calls); the sentence before ends on a different 5,400.
+- Appendix C.1 (E2), order sensitivity: "that is the reason" Section 7.3 varies the order treated this run's movement as an order effect, which the previous sentence says this run cannot separate from test-retest noise. It now says the scores moved as they would under position bias.
+
+Dates and "now":
+- Appendix B.1, first sentence: the terms were read on 11 September and again on 26 October 2026 (27 October where stated), as the same paragraph's last sentences say; the opening said "September 2026, and 26 or 27 October 2026 where stated below".
+- Appendix B.1, Google's caching: the minimum prefix Google's page gives, 2,048 to 4,096 tokens depending on model, is added beside the other two providers' minimums (ai.google.dev/gemini-api/docs/caching, read 27 October 2026).
+- Appendix A.3: the 88.6% figure is the one read on 10 September; the paragraph says both trackers were read on 10 and 11 September and the other figure is from the 11th.
+- References, Artificial Analysis methodology page: the note now records the re-reads of 26 and 27 October 2026, in the form the other re-read entries use.
+
+Left as they are: two findings asked to date the Artificial Analysis GPT-5 run in the text; the citation already prints the year.
+
+Rebuilt with latexmk: no errors, no undefined references, no overfull or underfull boxes. 92 of 92 tests pass.
