@@ -54,22 +54,34 @@ export function loadDracoTasks(file = DRACO_DATASET_PATH) {
 }
 
 /**
- * A pre-registered stratified sample (S6): `n` tasks drawn across domains in proportion to
- * their share of the set, with a fixed seed so the selection is reproducible and fixed before
- * any system runs. Domains with a rounded share of zero still contribute one task while n allows.
+ * A pre-registered stratified sample (S6): exactly `n` tasks, with a fixed seed so the
+ * selection is reproducible and fixed before any system runs. When n is at least the number of
+ * domains, the tasks are drawn across domains in proportion to their share of the set, and a
+ * domain with a rounded share of zero still contributes one task. When n is smaller, one task
+ * comes from each of n domains chosen with the same seed.
  */
 export function stratifiedSample(tasks, n, seed = 1) {
-  if (!(n > 0) || n >= tasks.length) return tasks
+  const want = Math.floor(n)
+  if (!(want >= 1) || want >= tasks.length) return tasks
   let s = (seed * 9301 + 49297) % 233280
   const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280 }
   const byDomain = new Map()
   for (const t of tasks) { const d = t.domain || 'other'; if (!byDomain.has(d)) byDomain.set(d, []); byDomain.get(d).push(t) }
   const domains = [...byDomain.entries()].sort((a, b) => b[1].length - a[1].length)
-  const quota = new Map(domains.map(([d, list]) => [d, Math.max(1, Math.round((n * list.length) / tasks.length))]))
-  let total = [...quota.values()].reduce((a, b) => a + b, 0)
-  // trim or top up to exactly n, largest domains first
-  for (const [d] of domains) { while (total > n && quota.get(d) > 1) { quota.set(d, quota.get(d) - 1); total-- } }
-  for (const [d, list] of domains) { while (total < n && quota.get(d) < list.length) { quota.set(d, quota.get(d) + 1); total++ } }
+  let quota
+  if (want >= domains.length) {
+    quota = new Map(domains.map(([d, list]) => [d, Math.max(1, Math.round((want * list.length) / tasks.length))]))
+    let total = [...quota.values()].reduce((a, b) => a + b, 0)
+    // trim or top up to exactly n, largest domains first
+    for (const [d] of domains) { while (total > want && quota.get(d) > 1) { quota.set(d, quota.get(d) - 1); total-- } }
+    for (const [d, list] of domains) { while (total < want && quota.get(d) < list.length) { quota.set(d, quota.get(d) + 1); total++ } }
+  } else {
+    // Fewer tasks than domains: a seeded choice of n domains, one task from each.
+    const pick = domains.map(([d]) => d)
+    for (let i = pick.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [pick[i], pick[j]] = [pick[j], pick[i]] }
+    const chosen = new Set(pick.slice(0, want))
+    quota = new Map(domains.map(([d]) => [d, chosen.has(d) ? 1 : 0]))
+  }
   const picked = []
   for (const [d, list] of domains) {
     const pool = [...list]

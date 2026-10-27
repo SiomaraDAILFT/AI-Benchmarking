@@ -18,7 +18,7 @@
 
 <main class="wrap">
   <section class="hero">
-    <h1>Run the reduced protocol on the systems you choose <span class="hint"><button type="button" class="hint-btn" aria-label="What this tool does">?</button><span class="tip" role="tooltip">Select the systems under test and the judge panel, edit the tasks and rubrics, set regenerations and repeat scorings, and run. Judging is blind and order-rotated; every raw score is kept; the paired permutation tests, Holm correction and effect sizes follow the paper.</span></span></h1>
+    <h1>Run the reduced protocol on the systems you choose <span class="hint"><button type="button" class="hint-btn" aria-label="What this tool does">?</button><span class="tip" role="tooltip">Select the systems under test and the judge panel, edit the tasks and rubrics, set regenerations and repeat scorings, and run. Judging is blind and order-randomised; every verdict and score is kept; the paired permutation tests, Holm correction and effect sizes follow the paper.</span></span></h1>
     <p>Keys stay in this local process and are never written to disk. Hover over a <span class="hint-inline">?</span> for an explanation.</p>  </section>
 
   <section id="connect" class="card">
@@ -43,7 +43,7 @@
   </section>
 
   <section id="systems" class="card">
-    <h2>2. Systems under test <span class="muted">(C)</span> <span class="hint"><button type="button" class="hint-btn" aria-label="About systems">?</button><span class="tip" role="tooltip">Each row is one system. Tick several effort settings for a system and each ticked setting is one condition (E); in DAILFT mode the settings appear once the model list is loaded. A DAILFT panel is one system: enter <code>quick-panel:modelA,modelB,modelC</code> (one challenge round, one synthesised answer) or <code>full-panel:modelA,modelB,modelC</code> (the full deliberation loop) as the model id.</span></span></h2>
+    <h2>2. Systems under test <span class="muted">(C)</span> <span class="hint"><button type="button" class="hint-btn" aria-label="About systems">?</button><span class="tip" role="tooltip">Each row is one system. Tick several effort settings for a system and each ticked setting is one condition (E); with two or more ticked, choose the one its comparisons are made at (the first by default); in DAILFT mode the settings appear once the model list is loaded. A DAILFT panel is one system: enter <code>quick-panel:modelA,modelB,modelC</code> (one challenge round, one synthesised answer) or <code>full-panel:modelA,modelB,modelC</code> (the full deliberation loop) as the model id.</span></span></h2>
     <table class="tbl" id="systems-table"><thead><tr><th>Label</th><th>Provider</th><th>Model id</th><th>Settings</th><th></th></tr></thead><tbody></tbody></table>
     <button class="btn secondary" id="add-system">Add system</button>
   </section>
@@ -55,7 +55,7 @@
   </section>
 
   <section id="tasks" class="card">
-    <h2>4. Tasks and rubrics <span class="muted">(T)</span> <span class="hint"><button type="button" class="hint-btn" aria-label="About tasks">?</button><span class="tip" role="tooltip">Starter tasks are included so the mechanism runs out of the box; replace them with your own. One rubric criterion per line; each is scored MET or UNMET and the score is the percentage MET.</span></span></h2>
+    <h2>4. Tasks and rubrics <span class="muted">(T)</span> <span class="hint"><button type="button" class="hint-btn" aria-label="About tasks">?</button><span class="tip" role="tooltip">Starter tasks are included so the mechanism runs out of the box; replace them with your own. One rubric criterion per line. The judge marks each MET or UNMET and writes a score line, asked to be the percentage MET; on these tasks that line is the score. Weighted tasks from the DRACO set are scored from the verdicts.</span></span></h2>
     <div class="row">
       <button class="btn secondary" id="load-draco">Load the DRACO task set</button>
       <label class="inline">sample <input type="number" id="draco-sample" min="0" max="100" value="0" style="width:5em"> of 100</label>
@@ -79,10 +79,12 @@
     <div class="grid3">
       <label>Regenerations per task, R <input type="number" id="R" min="1" max="10" value="1"></label>
       <label>Repeat scorings per judge, K <input type="number" id="K" min="1" max="10" value="3"></label>
+      <label class="ref-only hidden"><span>Reference R <span class="hint"><button type="button" class="hint-btn" aria-label="About the reference run">?</button><span class="tip" role="tooltip">Validation only. The reference is the complete protocol of Section 8, Phase 1: every ticked setting, each answer judged in its own call, and these regenerations and repeat scorings, with the same median rule as the reduced run.</span></span></span> <input type="number" id="refR" min="1" max="10" value="1"></label>
+      <label class="ref-only hidden">Reference K <input type="number" id="refK" min="1" max="10" value="3"></label>
       <label>Family-wise α <input type="number" id="alpha" min="0.001" max="0.2" step="0.005" value="0.05"></label>
       <label>Concurrent calls <input type="number" id="concurrency" min="1" max="8" value="3"></label>
-      <label class="check"><input type="checkbox" id="batched" checked> <span>Batched judging (S4) <span class="hint"><button type="button" class="hint-btn" aria-label="About batched judging">?</button><span class="tip" role="tooltip">All systems' answers to a task go to the judge in one call, with the answer order rotated across repeats so the repeats double as position calibration.</span></span></span></label>
-      <label><span>Baseline system <span class="hint"><button type="button" class="hint-btn" aria-label="About the baseline">?</button><span class="tip" role="tooltip">Pre-registered comparisons are every other system against the baseline, one-sided (system &gt; baseline), Holm-corrected. All other pairs are reported separately as exploratory, two-sided.</span></span></span> <select id="baseline"></select></label>
+      <label class="check"><input type="checkbox" id="batched" checked> <span>Batched judging (S4) <span class="hint"><button type="button" class="hint-btn" aria-label="About batched judging">?</button><span class="tip" role="tooltip">All systems' answers to a task go to the judge in one call. Each batch is shown in a seeded random order, rotated across repeats so the repeats double as position calibration.</span></span></span></label>
+      <label><span>Baseline system <span class="hint"><button type="button" class="hint-btn" aria-label="About the baseline">?</button><span class="tip" role="tooltip">Pre-registered comparisons are every other system against the baseline, one-sided (system &gt; baseline), Holm-corrected, each at the setting the system is compared at (its first ticked setting unless chosen under Settings). All other pairs are reported separately as exploratory, two-sided.</span></span></span> <select id="baseline"></select></label>
     </div>
     <div class="estimate" id="estimate"></div>
   </section>

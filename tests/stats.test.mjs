@@ -117,9 +117,9 @@ describe('src/permutation-test.mjs: the one-sided paired sign-flip test of Secti
     assert.equal(pairedPermutationTest(d25).pValueOneSided, result.pValueOneSided)
   })
 
-  test('"The published runner adds neither, so its p-value can be zero"; countObserved adds one to both, so the test "stays exact"', () => {
+  test('without countObserved the sampled p-value can be zero; countObserved adds one to both, so the test "stays exact" (the runner turns it on)', () => {
     const allLarge = Array.from({ length: 30 }, (_, i) => 10 + i)
-    // Default (the runner's behaviour): no sampled pattern reaches the observed mean.
+    // This module's default: no sampled pattern reaches the observed mean, so p = 0.
     assert.equal(pairedPermutationTest(allLarge, { iterations: 1000 }).pValueOneSided, 0)
     // Counting the observed pattern with the sample: (0 + 1) / (1000 + 1).
     const counted = pairedPermutationTest(allLarge, { iterations: 1000, countObserved: true })

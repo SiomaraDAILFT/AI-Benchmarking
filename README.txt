@@ -62,7 +62,10 @@ What's here
   whether prompt caching is available) and the other worked figures of
   Sections 4 to 6 and Appendix C; tests/power.test.mjs reproduces the task
   floors of 128 and 184 and the power of 0.79; tests/stats.test.mjs checks the
-  statistics modules against independently computed values. The cited works
+  statistics modules against independently computed values;
+  tests/runner.test.mjs checks the testing app's runner (app/lib/) against
+  what the paper says it does, with a scripted model in place of any provider,
+  so it makes no network call. The cited works
   themselves are not stored here; each entry in paper/references.bib gives its
   address and the date it was read.
 
@@ -161,38 +164,55 @@ What you can do in the interface:
    (the full deliberation loop).
 3. Tasks and rubrics (T): three starter tasks with ten binary criteria each
    are included so the mechanism runs out of the box; edit them, add your own,
-   or import/export as JSON. Scores are the percentage of criteria MET. "Load
-   the DRACO task set" replaces them with the 100 published DRACO tasks and
+   or import/export as JSON. The judge marks each criterion MET or UNMET and
+   writes a score line, which it is asked to make the percentage of criteria
+   MET; on these unweighted tasks the score is the number on that line, which
+   need not equal the share of criteria it marked MET (an unbatched judge that
+   writes no score line but marks every criterion is scored by the percentage
+   it marked MET). "Load the DRACO task set" replaces them with the 100 published DRACO tasks and
    their expert rubrics (four dimensions, integer criterion weights, negative
    weights for errors), from the MIT-licensed dataset at
    https://huggingface.co/datasets/perplexity-ai/draco; a copy and its licence
-   are in app/data/. Weighted tasks are scored by the dataset's own rule
-   (raw weighted sum over the positive weights, clamped to 0–100, per
-   dimension too), and the rubric shown to the judge marks each penalty
-   criterion so that MET means "the error is present". A sample size draws a
-   reproducible stratified sample across the ten domains, fixed before any
-   system runs (S6).
+   are in app/data/. Weighted tasks are scored from the judge's verdicts by
+   the dataset's own rule (raw weighted sum over the positive weights,
+   clamped to 0–100, per dimension too), and the rubric shown to the judge
+   marks each penalty criterion so that MET means "the error is present". A
+   judge answer with no verdict the runner can read, such as a refusal, is a
+   missing scoring, left out of the median, not a 0. A sample size draws
+   exactly that many tasks as a reproducible stratified sample, fixed before
+   any system runs (S6): in proportion to the ten domains with at least one
+   task from each, or, for fewer than ten tasks, one task from each of that
+   many domains chosen with the same fixed seed.
 4. Protocol: a preset first. DRACO as published follows the published
    protocol as the benchmark paper describes it: each answer graded alone
    against the full weighted rubric, five grading runs averaged, four
    dimensions, one setting, one generation per task (the judge prompt is this
    runner's absolute rubric prompt, since DRACO's own prompt text is not
    published). Reduced (this paper) applies the simplifications with the
-   regenerations R, repeat scorings K and batched judging (S4) you set, the
-   answer order rotated across repeats so repeats double as position
-   calibration. Validation: run both runs the published protocol once as
-   the reference and the reduced protocol on the same systems and tasks, then
-   reports rank agreement (Kendall's τ over the systems), whether the leader is
-   the same, whether each pre-registered comparison reaches the same verdict,
-   and the calls and tokens saved (Section 8 of the paper). Family-wise α and
-   the baseline system complete the settings. The plan panel shows the call
-   counts from Equations 1–3 before anything is spent.
+   regenerations R, repeat scorings K and batched judging (S4) you set; each
+   batch is shown in a random order drawn from a fixed seed and rotated one
+   place per repeat, so repeats double as position calibration. Validation:
+   run both runs the complete protocol of Section 8 (Phase 1) once as the
+   reference, with every ticked setting, each answer judged in its own call,
+   the reference R and K you set and the same median rule, then the reduced
+   protocol on the same systems and tasks, and reports rank agreement
+   (Kendall's τ over the systems, each at the setting it is compared at),
+   whether the leader is the same, whether each pre-registered comparison
+   reaches the same verdict, and the calls and tokens saved. DRACO as
+   published stays available as a preset of its own. Family-wise α and the
+   baseline system complete the settings; a system with several settings is
+   compared at its first ticked setting unless you choose another. The plan
+   panel shows the call counts from Equations 1–3 before anything is spent.
 5. Run with live progress, then results: per-condition means, the
-   pre-registered one-sided paired permutation tests with Holm correction and
-   Cohen's d_z, all other pairs as exploratory two-sided tests, judge
+   pre-registered one-sided paired permutation tests (the sampled p-value
+   counts the observed sign pattern, so it is never zero) with Holm
+   correction across every pre-registered comparison, including any that
+   could not be tested, Cohen's d_z and the confidence interval found by
+   inverting the test, all other pairs as exploratory two-sided tests, judge
    test–retest and between-judge spread, usage, and downloads of the complete
-   raw table (JSON) and the scores (CSV) — nothing is averaged away before
-   storage (Section 7.4 of the paper).
+   raw table (JSON) and the scores (CSV), with each judge's verdict on each
+   criterion and the order the answers were shown in; nothing is averaged
+   away before storage (Section 7.4 of the paper).
 
 Judging is blind (systems appear as letters), absolute (rubric criteria
 MET/UNMET), and never told which system produced an answer.

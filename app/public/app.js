@@ -5,7 +5,7 @@
   const state = { defaults: null, systems: [], judges: [], tasks: [], runId: null, poll: null, nextEvent: 0, catalogue: null }
   const uid = () => Math.random().toString(36).slice(2, 8)
 
-  const save = () => localStorage.setItem('draco-runner', JSON.stringify({ systems: state.systems, judges: state.judges, tasks: state.tasks, R: $('#R').value, K: $('#K').value, alpha: $('#alpha').value, concurrency: $('#concurrency').value, batched: $('#batched').checked, baseline: $('#baseline').value, mode: mode(), dailftBaseUrl: $('#dailftBaseUrl').value, dailftBatch: $('#dailftBatch').checked, protocol: protocol() }))
+  const save = () => localStorage.setItem('draco-runner', JSON.stringify({ systems: state.systems, judges: state.judges, tasks: state.tasks, R: $('#R').value, K: $('#K').value, refR: $('#refR').value, refK: $('#refK').value, alpha: $('#alpha').value, concurrency: $('#concurrency').value, batched: $('#batched').checked, baseline: $('#baseline').value, mode: mode(), dailftBaseUrl: $('#dailftBaseUrl').value, dailftBatch: $('#dailftBatch').checked, protocol: protocol() }))
   const mode = () => $('input[name=mode]:checked').value
   const protocol = () => $('#protocol-preset').value || 'reduced'
 
@@ -26,6 +26,9 @@
     if (lock) { $('#R').value = 1; $('#K').value = 5; $('#batched').checked = false }
     else if (wasLocked) { const r = state.reducedSettings || { R: 1, K: 3, batched: true }; $('#R').value = r.R; $('#K').value = r.K; $('#batched').checked = r.batched }
     for (const s of ['#R', '#K', '#batched']) { $(s).disabled = lock; $(s).closest('label').classList.toggle('locked', lock) }
+    /* The reference run of a validation (Section 8, Phase 1) has its own R and K; every ticked
+       setting is run and each answer is judged alone. */
+    $$('.ref-only').forEach((el) => el.classList.toggle('hidden', p !== 'validate'))
     renderSystems()
   }
   async function loadDraco() {
@@ -87,7 +90,7 @@
     const saved = JSON.parse(localStorage.getItem('draco-runner') || 'null')
     if (saved) {
       state.systems = saved.systems || []; state.judges = saved.judges || []; state.tasks = saved.tasks || []
-      $('#R').value = saved.R || 1; $('#K').value = saved.K || 3; $('#alpha').value = saved.alpha || 0.05; $('#concurrency').value = saved.concurrency || 3; $('#batched').checked = saved.batched !== false
+      $('#R').value = saved.R || 1; $('#K').value = saved.K || 3; $('#refR').value = saved.refR || saved.R || 1; $('#refK').value = saved.refK || saved.K || 3; $('#alpha').value = saved.alpha || 0.05; $('#concurrency').value = saved.concurrency || 3; $('#batched').checked = saved.batched !== false
       if (saved.mode) $(`input[name=mode][value=${saved.mode}]`).checked = true
       if (saved.dailftBaseUrl) $('#dailftBaseUrl').value = saved.dailftBaseUrl
       if (saved.dailftBatch === false) $('#dailftBatch').checked = false
@@ -112,7 +115,7 @@
     if (!state.judges.length) state.judges = [{ id: uid(), label: 'Judge 1', provider: 'google', modelId: 'gemini-3.8-flash' }]
     renderProviderKeys(); renderSystems(); renderJudges(); renderTasks(); renderBaseline(); modeChanged(); estimate()
     $$('input[name=mode]').forEach((r) => r.addEventListener('change', () => { modeChanged(); renderSystems(); save(); estimate() }))
-    ;['#R', '#K', '#alpha', '#concurrency', '#batched', '#baseline', '#dailftBaseUrl', '#dailftBatch'].forEach((s) => $(s).addEventListener('change', () => { save(); estimate() }))
+    ;['#R', '#K', '#refR', '#refK', '#alpha', '#concurrency', '#batched', '#baseline', '#dailftBaseUrl', '#dailftBatch'].forEach((s) => $(s).addEventListener('change', () => { save(); estimate() }))
     $('#add-system').onclick = () => { state.systems.push({ id: uid(), label: `System ${String.fromCharCode(65 + state.systems.length)}`, provider: 'openai', modelId: '', settings: [] }); renderSystems(); renderBaseline(); save(); estimate() }
     $('#add-judge').onclick = () => { state.judges.push({ id: uid(), label: `Judge ${state.judges.length + 1}`, provider: 'openai', modelId: '' }); renderJudges(); save(); estimate() }
     $('#add-task').onclick = () => { state.tasks.push({ id: 't' + uid(), title: 'New task', context: '', question: '', criteria: [] }); renderTasks(); save(); estimate() }
@@ -151,7 +154,19 @@
       const efforts = protocol() === 'draco' ? [] : mode() === 'direct' ? (state.defaults.providers[sys.provider]?.efforts || []) : catalogueEfforts(sys.modelId)
       if (protocol() === 'draco') box.innerHTML = '<span class="muted">one setting (DRACO as published)</span>'
       else if (!efforts.length) box.innerHTML = `<span class="muted">${mode() === 'dailft' ? (state.catalogue ? (catalogueEntry(sys.modelId) ? 'model default (no documented effort dial)' : 'model default (id not in the loaded list)') : 'model default; load the model list to choose settings') : 'provider default'}</span>`
-      for (const e of efforts) { const l = document.createElement('label'); const c = Object.assign(document.createElement('input'), { type: 'checkbox', checked: sys.settings.includes(e) }); c.onchange = () => { sys.settings = efforts.filter((x) => x === e ? c.checked : sys.settings.includes(x)); save(); estimate() }; l.append(c, ' ' + e); box.appendChild(l) }
+      for (const e of efforts) { const l = document.createElement('label'); const c = Object.assign(document.createElement('input'), { type: 'checkbox', checked: sys.settings.includes(e) }); c.onchange = () => { sys.settings = efforts.filter((x) => x === e ? c.checked : sys.settings.includes(x)); renderSystems(); save(); estimate() }; l.append(c, ' ' + e); box.appendChild(l) }
+      /* With two or more settings ticked, the setting this system is compared at (Section 7.1):
+         its first ticked setting unless another is chosen. Saved configurations without a
+         choice load with the first. */
+      const ticked = efforts.filter((e) => sys.settings.includes(e))
+      if (ticked.length > 1) {
+        const l = document.createElement('label'); l.className = 'compare-at'
+        const sel = document.createElement('select'); sel.style.width = 'auto'
+        sel.innerHTML = ticked.map((e) => `<option value="${esc(e)}">${esc(e)}</option>`).join('')
+        sel.value = ticked.includes(sys.compareSetting) ? sys.compareSetting : ticked[0]
+        sel.onchange = () => { sys.compareSetting = sel.value; save() }
+        l.append('compared at ', sel); box.appendChild(l)
+      }
       tdS.appendChild(box)
       const tdX = document.createElement('td'); const del = Object.assign(document.createElement('button'), { className: 'btn link', textContent: 'remove' }); del.onclick = () => { state.systems = state.systems.filter((x) => x !== sys); renderSystems(); renderBaseline(); save(); estimate() }; tdX.appendChild(del)
       tr.append(tdL, tdP, tdM, tdS, tdX); tb.appendChild(tr)
@@ -209,13 +224,19 @@
     const shape = cfg.protocol === 'draco'
       ? `C = ${cfg.systems.length} systems, E = 1, T = ${cfg.tasks.length} tasks, R = 1, J = ${cfg.judges.length}, K = 5, unbatched judging (DRACO as published)`
       : cfg.protocol === 'validate'
-        ? `reference (DRACO as published): ${p.reference.total} calls; reduced (R = ${cfg.R}, K = ${cfg.K}, ${cfg.batched ? 'batched' : 'unbatched'}): ${p.reduced.total} calls; together`
+        ? `reference (complete protocol: E = ${E}, R = ${cfg.reference.R}, K = ${cfg.reference.K}, unbatched): ${p.reference.total} calls; reduced (R = ${cfg.R}, K = ${cfg.K}, ${cfg.batched ? 'batched' : 'unbatched'}): ${p.reduced.total} calls; together`
         : `C = ${cfg.systems.length} systems, E = ${E}, T = ${cfg.tasks.length} tasks, R = ${cfg.R}, J = ${cfg.judges.length}, K = ${cfg.K}, ${cfg.batched ? 'batched' : 'unbatched'} judging`
     $('#estimate').innerHTML = `<strong>Plan.</strong> ${shape} → <strong>${p.generation}</strong> generation calls + <strong>${p.judging}</strong> judging calls = <strong>${p.total}</strong> (Equations 1–3). At ~40 s per call and ${cfg.concurrency} in parallel, roughly ${Math.round(secs / 60)} minutes.${rate}`
   }
 
   function config() {
-    return { protocol: protocol(), systems: state.systems.map((s) => ({ ...s, provider: mode() === 'dailft' ? 'dailft' : s.provider, settings: mode() === 'dailft' ? s.settings.filter((e) => catalogueEfforts(s.modelId).includes(e)) : s.settings, baseUrl: s.provider === 'openai-compatible' ? ($('#custom-base')?.value || '') : undefined })), judges: state.judges.map((j) => ({ ...j, provider: mode() === 'dailft' ? 'dailft' : j.provider, baseUrl: j.provider === 'openai-compatible' ? ($('#custom-base')?.value || '') : undefined })), tasks: state.tasks, R: Number($('#R').value), K: Number($('#K').value), batched: $('#batched').checked, alpha: Number($('#alpha').value), concurrency: Number($('#concurrency').value), comparisons: state.systems.filter((s) => s.id !== $('#baseline').value).map((s) => [s.id, $('#baseline').value]) }
+    const systems = state.systems.map((s) => ({ ...s, provider: mode() === 'dailft' ? 'dailft' : s.provider, settings: mode() === 'dailft' ? s.settings.filter((e) => catalogueEfforts(s.modelId).includes(e)) : s.settings, baseUrl: s.provider === 'openai-compatible' ? ($('#custom-base')?.value || '') : undefined }))
+    /* Each side of a comparison names the setting it is made at: the system's chosen
+       compareSetting if it is still ticked, else its first ticked setting (Section 7.1). */
+    const side = (s) => ({ systemId: s.id, setting: s.settings.includes(s.compareSetting) ? s.compareSetting : (s.settings[0] ?? null) })
+    const base = systems.find((s) => s.id === $('#baseline').value)
+    const comparisons = base ? systems.filter((s) => s.id !== base.id).map((s) => [side(s), side(base)]) : []
+    return { protocol: protocol(), systems, judges: state.judges.map((j) => ({ ...j, provider: mode() === 'dailft' ? 'dailft' : j.provider, baseUrl: j.provider === 'openai-compatible' ? ($('#custom-base')?.value || '') : undefined })), tasks: state.tasks, R: Number($('#R').value), K: Number($('#K').value), reference: { R: Number($('#refR').value) || Number($('#R').value), K: Number($('#refK').value) || Number($('#K').value) }, batched: $('#batched').checked, alpha: Number($('#alpha').value), concurrency: Number($('#concurrency').value), comparisons }
   }
   function connection() {
     const keys = {}; $$('[data-key]').forEach((i) => { if (i.value) keys[i.dataset.key] = i.value })
@@ -249,21 +270,25 @@
     const fmt = (x, d = 1) => (x == null || Number.isNaN(x) ? '–' : Number(x).toFixed(d))
     const label = (key) => { const [sid, ei] = key.split('|'); const s = state.systems.find((x) => x.id === sid); return (s?.label || sid) + (s?.settings?.[Number(ei)] ? ` @ ${s.settings[Number(ei)]}` : '') }
     const byId = (id) => state.systems.find((x) => x.id === id)?.label || id
+    const at = (id, setting) => byId(id) + (setting ? ` @ ${setting}` : '')
+    /* The interval from the inverted test; a bound the test can never reach (too few tasks) comes back as null. */
+    const ci = (c) => (Array.isArray(c.ci) ? `${c.ci[0] == null ? '−∞' : fmt(c.ci[0])} to ${c.ci[1] == null ? '∞' : fmt(c.ci[1])}` : '–')
     let h = ''
     if (sm.validation) {
       const v = sm.validation
-      h += `<h3>Validation: the reduced protocol against DRACO as published (Section 8)</h3>`
+      h += `<h3>Validation: the reduced protocol against the complete reference run (Section 8)</h3>`
       h += `<p>Rank agreement over the systems, Kendall's τ: <strong>${fmt(v.kendallTau, 2)}</strong>. ${v.sameLeader ? 'The same system leads under both protocols.' : 'A different system leads under the reduced protocol.'} Pre-registered verdicts agreeing: <strong>${v.verdictsAgree ?? '–'}</strong> of ${v.verdicts.length}. Calls: ${v.cost.referenceCalls} reference vs ${v.cost.reducedCalls} reduced (<strong>${fmt(v.cost.callRatio, 1)}×</strong> fewer)${v.cost.tokenRatio ? `; DAILFT tokens ${Math.round(v.cost.referenceDailftTokens).toLocaleString('en-US')} vs ${Math.round(v.cost.reducedDailftTokens).toLocaleString('en-US')} (<strong>${fmt(v.cost.tokenRatio, 1)}×</strong>)` : ''}.</p>`
       h += `<table class="res-table"><tr><th>System</th><th>Reference mean</th><th>Reduced mean</th><th>Difference</th></tr>`
-      for (const s of v.systems) h += `<tr><td>${esc(byId(s.systemId))}</td><td>${fmt(s.reference)}</td><td>${fmt(s.reduced)}</td><td>${fmt(s.reduced - s.reference)}</td></tr>`
+      for (const s of v.systems) h += `<tr><td>${esc(at(s.systemId, s.setting))}</td><td>${fmt(s.reference)}</td><td>${fmt(s.reduced)}</td><td>${fmt(s.reduced - s.reference)}</td></tr>`
       h += `</table><table class="res-table"><tr><th>Comparison</th><th>Reference</th><th>Reduced</th><th>Agree</th></tr>`
-      for (const c of v.verdicts) h += `<tr><td>${esc(byId(c.a))} vs ${esc(byId(c.b))}</td><td>${c.referenceRejected ? 'significant' : 'not significant'} (${fmt(c.referenceMeanDiff)})</td><td>${c.reducedRejected == null ? '–' : c.reducedRejected ? 'significant' : 'not significant'} (${fmt(c.reducedMeanDiff)})</td><td>${c.agree ? '<span class="pill ok">yes</span>' : '<span class="pill bad">no</span>'}</td></tr>`
+      for (const c of v.verdicts) h += `<tr><td>${esc(at(c.a, c.aSetting))} vs ${esc(at(c.b, c.bSetting))}</td><td>${c.referenceRejected ? 'significant' : 'not significant'} (${fmt(c.referenceMeanDiff)})</td><td>${c.reducedRejected == null ? '–' : c.reducedRejected ? 'significant' : 'not significant'} (${fmt(c.reducedMeanDiff)})</td><td>${c.agree ? '<span class="pill ok">yes</span>' : '<span class="pill bad">no</span>'}</td></tr>`
       h += `</table><h3>Reduced protocol, in detail</h3>`
     }
     h += `<h3>Scores by condition</h3><table class="res-table"><tr><th>Condition</th><th>Tasks</th><th>Mean score</th><th>SD across tasks</th><th>SE</th></tr>`
     for (const c of sm.conditions) h += `<tr><td>${esc(c.label)}${c.setting ? ' @ ' + c.setting : ''}</td><td>${c.n}</td><td>${fmt(c.mean)}</td><td>${fmt(c.sd)}</td><td>${c.sd != null && c.n ? fmt(c.sd / Math.sqrt(c.n)) : '–'}</td></tr>`
-    h += `</table><h3>Pre-registered comparisons (one-sided, paired permutation test, Holm-corrected)</h3><table class="res-table"><tr><th>System</th><th>vs baseline</th><th>n tasks</th><th>Mean difference</th><th>d<sub>z</sub></th><th>p</th><th>Holm threshold</th><th>Verdict</th></tr>`
-    for (const c of sm.comparisons) h += c.error ? `<tr><td>${esc(byId(c.a))}</td><td>${esc(byId(c.b))}</td><td colspan="6" class="muted">${c.error}</td></tr>` : `<tr><td>${esc(byId(c.a))}</td><td>${esc(byId(c.b))}</td><td>${c.n}</td><td>${fmt(c.meanDiff)}</td><td>${fmt(c.dz, 2)}</td><td>${fmt(c.p, 4)}${c.exact ? '' : ' (MC)'}</td><td>${fmt(c.holmAlpha, 4)}</td><td>${c.rejected ? '<span class="pill ok">significant</span>' : '<span class="pill">not significant</span>'}</td></tr>`
+    const level = sm.comparisons.find((c) => c.ciLevel)?.ciLevel
+    h += `</table><h3>Pre-registered comparisons (one-sided, paired permutation test, Holm-corrected)</h3><table class="res-table"><tr><th>System</th><th>vs baseline</th><th>n tasks</th><th>Mean difference</th><th>${level ? Math.round(level * 1000) / 10 + '% ' : ''}interval</th><th>d<sub>z</sub></th><th>p</th><th>Holm threshold</th><th>Verdict</th></tr>`
+    for (const c of sm.comparisons) h += c.error ? `<tr><td>${esc(at(c.a, c.aSetting))}</td><td>${esc(at(c.b, c.bSetting))}</td><td colspan="7" class="muted">${c.error}; counted in Holm's family of ${c.family ?? sm.comparisons.length}</td></tr>` : `<tr><td>${esc(at(c.a, c.aSetting))}</td><td>${esc(at(c.b, c.bSetting))}</td><td>${c.n}</td><td>${fmt(c.meanDiff)}</td><td>${ci(c)}</td><td>${fmt(c.dz, 2)}</td><td>${fmt(c.p, 4)}${c.exact ? '' : ' (MC)'}</td><td>${fmt(c.holmAlpha, 4)}</td><td>${c.rejected ? '<span class="pill ok">significant</span>' : '<span class="pill">not significant</span>'}</td></tr>`
     h += `</table><h3>Exploratory (all pairs, two-sided, not corrected)</h3><table class="res-table"><tr><th>A</th><th>B</th><th>n</th><th>Mean difference</th><th>d<sub>z</sub></th><th>p (two-sided)</th></tr>`
     for (const c of sm.exploratory) h += `<tr><td>${esc(label(c.a))}</td><td>${esc(label(c.b))}</td><td>${c.n}</td><td>${fmt(c.meanDiff)}</td><td>${fmt(c.dz, 2)}</td><td>${fmt(c.pTwoSided, 4)}</td></tr>`
     const ja = sm.judgeAgreement

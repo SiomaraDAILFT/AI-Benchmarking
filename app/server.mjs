@@ -59,6 +59,10 @@ function validateConfig(c) {
   for (const s of [...(c.systems || []), ...(c.judges || [])]) if (!s.modelId) errs.push(`${s.label || s.id} has no model id`)
   const R = Number(c.R), K = Number(c.K)
   if (!(R >= 1 && R <= 10)) errs.push('R must be 1-10'); if (!(K >= 1 && K <= 10)) errs.push('K must be 1-10')
+  if (c.protocol === 'validate' && c.reference) {
+    const rR = Number(c.reference.R), rK = Number(c.reference.K)
+    if (!(rR >= 1 && rR <= 10)) errs.push('reference R must be 1-10'); if (!(rK >= 1 && rK <= 10)) errs.push('reference K must be 1-10')
+  }
   return errs
 }
 
@@ -94,7 +98,7 @@ const server = http.createServer(async (req, res) => {
       }
       if (config.protocol === 'draco') return json(res, 200, plan(applyPreset(config, 'draco')))
       if (config.protocol === 'validate') {
-        const reference = plan(applyPreset(config, 'draco')), reduced = plan(applyPreset(config, 'reduced'))
+        const reference = plan(applyPreset(config, 'reference')), reduced = plan(applyPreset(config, 'reduced'))
         return json(res, 200, { generation: reference.generation + reduced.generation, judging: reference.judging + reduced.judging, total: reference.total + reduced.total, reference, reduced })
       }
       return json(res, 200, plan(config))
@@ -115,8 +119,9 @@ const server = http.createServer(async (req, res) => {
       const onEvent = (evt) => { entry.events.push(evt); if (entry.events.length > 5000) entry.events.splice(0, 1000) }
       const base = { ...config, R: Number(config.R), K: Number(config.K), concurrency }
       /* Protocol presets (docs in lib/protocol.mjs): 'draco' fixes the published protocol's
-         parameters, 'validate' runs the reference and the reduced protocol back to back and
-         reports their agreement, anything else is the reduced protocol as configured. */
+         parameters, 'validate' runs the complete reference protocol of Section 8 (Phase 1) and
+         the reduced protocol back to back and reports their agreement, anything else is the
+         reduced protocol as configured. */
       const job = config.protocol === 'validate'
         ? runValidation(base, connection, onEvent).then(({ reference, reduced, summary }) => ({ raw: { reference: reference.raw, reduced: reduced.raw }, summary }))
         : runProtocol(applyPreset(base, config.protocol === 'draco' ? 'draco' : 'reduced'), connection, onEvent)
