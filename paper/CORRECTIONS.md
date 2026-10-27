@@ -371,3 +371,42 @@ Read this time from three angles not used before: every quotation checked word f
 - Section 8, Phase 2, below-power rule: any variant whose n* exceeds the tasks it runs on is reported as below the stated power, S2 alone among them (184 on the same inputs), not only the combined variant.
 
 The build has the same one float-placement note as before; no warnings otherwise, no undefined references.
+
+## 27 October 2026, 02:14 pass
+
+Read this time from three angles not used before: the experiment scripts themselves (experiments/*.mjs, RUNS.json, MANIFEST.tex) read against what the paper says the experiments did; the strength of each claim against the evidence the paper gives for it, and sections that say incompatible things in words; and typography and consistency at the LaTeX level. Each finding was checked by a second reader trying to refute it; 43 of 49 survived. Two pairs reached the same sentences from two angles (E2's order paragraph and its echo in Section 7.3) and went in once each, which leaves 41 corrections. The 6 set aside were right as written, unproven, or a style choice.
+
+The experiment code against the method (E2 and E3):
+- Appendix C.1, E2: rho was computed from input tokens only (about 0.1). Equation (s4) defines it on cost, and each scored answer also produced about 230 to 270 output tokens of verdicts at six times the input rate, so on these calls rho is between about 1.5 and 1.7. The 0.2 used in Appendix B stays, as it is labelled illustrative.
+- Appendix C.1, E2 order paragraph, and Section 7.3: "order alone moved an absolute score by up to 17 points" claimed a cause the design cannot isolate. Each ordering was scored once, and five unchanged repeats of one prompt also spanned 17 points; both places now say so.
+- Appendix C.1, E2 test-retest: the scores are the judge's own final score lines, which in three of five calls do not equal the share of criteria it marked met (21 of 40 scored 50, 18 of 40 scored 43); the verdicts themselves span 15 points. Now stated.
+- Appendix C.1, E2 set-up: the rubric was generated in the script from ten generic criteria with four qualifiers each, not written for the task, so "in the DRACO style" overstated it; the candidate answers were generic too, and the strongest assumed a self-reported outcome where the task has account-level data; the judge was told to give only verdicts and a score line, with no reasoning first, unlike DRACO's judges.
+- Appendix C.1, E2 spend: $0.19 prices every input token at the full rate, as the script does; at the cached-read rate on the five calls that read 1,089 cached tokens it is about $0.16.
+- Section 4: "repeated calls were measured reading the cache" now says "with an identical prompt", since only the five identical calls read it.
+- Appendix C.5, E3: on the problem where high used fewer tokens in all (358 against 370), its thinking rose from 9 to 218 tokens; the sentence now says so, as C.4 already counts E3's thinking tokens.
+
+Claims against evidence:
+- Section 6 and the conclusion: DRACO judges one criterion per call, not each answer in one call; both now say each answer is judged separately, without batching.
+- Appendix C.5: the claim that GPT-5's effort levels "behaved as coarse switches" had no source and E3 used later models; now "may have behaved", with that caveat.
+- Section 5, S1: alpha's dependence on the model and the task family is measured, its dependence on how a provider implements effort is one candidate explanation; the sentence now separates the two and points to C.4.
+- Section 5, S5: "reducing J saves little in absolute terms" now holds where generation dominates, as the two sentences before it already say.
+- Section 8, Phase 2: rank agreement is one criterion the compression literature uses, not the criterion (tinyBenchmarks measures estimation accuracy).
+- Appendix C.4: a setting that behaves this way "is unlikely to", not "cannot", produce a 23x ratio; the documentation quoted puts no bound on it.
+- Section 4: a rubric with its task and question "can fall on either side of" the minimum prefix lengths, not "will usually exceed" them (about 85% of DRACO's tasks clear OpenAI's 1,024 tokens and none clears 4,096).
+- Section 3: "no sample-size or statistical-power methodology has been published for DRACO" is now "we found no ...", as Section 2.1 already words it.
+- Section 5, S4: G-Eval is described as its authors report it, well ahead of earlier methods, not as "the best-known judge protocol".
+
+Typography and consistency:
+- Section 3: a sentence ending on "DRACO." gets the end-of-sentence space (\@).
+- Section 5, S3: a reference range broke across a line; now tied as elsewhere.
+- Section 1: "Sections ... to ..." made a range like the two others in the paper.
+- Section 6 and Appendix B: "ten" and "three" written as numerals beside the other figures in the same sentences.
+- Appendix C.3: the two output caps written as code literals beside the other request values.
+- Section 7.2: sigma^2_{A,B}, never defined and easily read as a covariance, is now sigma_A^2 and sigma_B^2 as defined.
+- Section 7.2: "paired-sample size formula" now "sample-size formula for paired samples".
+- Appendix C.3: the two time ranges of the E1 runs written the same way.
+- Appendix C.2: the per-prompt ranges given to two decimals (1.52 to 3.99, 1.48 to 2.00), as in the table and the pooled figures beside them.
+- Appendix C.5: AIME introduced where its full name is given.
+- Bibliography: Chatbot Arena, Arena-Hard, MT-Bench, "Towards" and OpenRouter's Fusion protected from lower-casing; Ballon et al.'s versions written as "v1, ...; v2, ..."; tinyBenchmarks' ICML proceedings given their year, as the other ICML entries are; Zhao et al.'s COLM 2026 named the Third Conference on Language Modeling, as the other COLM entries are.
+
+The build has the same one float-placement note as before; no warnings otherwise, no undefined references.
