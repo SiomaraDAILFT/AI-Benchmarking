@@ -116,7 +116,7 @@ and Prometheus~2, a purpose-built evaluator model, judges against user-defined c
 
 Against that, we found no sample-size or statistical-power methodology published for DRACO\@. Judge choice moves absolute score levels: the benchmark's own authors report that one of their three judges ``consistently assigned lower scores'' \citep[Appendix~A]{draco2026}, and a study of 13 judge models on a short-answer knowledge benchmark finds scores that differ by judge while rankings mostly agree \citep{thakur2025judging}. Third-party trackers of DRACO results already disagree about which system leads and by how much (Appendix~\ref{app:published}); no figure should yet be taken from them.
 
-The weakness that matters most for whether the methodology gets used at all is a third one: run rigorously, DRACO or any protocol with its structure is expensive and slow. The number of judge scorings in a single run, when each answer is judged separately, is the product of how many systems are compared, how many tasks, how many judges, how many times each judge re-scores an answer, how many times each answer is regenerated, and how many configuration variants (temperature, retrieval settings, reasoning-effort levels) are swept per system. Each factor is well motivated on its own, and Section~\ref{sec:model} makes each explicit; together they make a faithful run expensive to repeat, since in such a run four of them (systems, tasks, regenerations and settings) multiply the whole cost and the other two multiply its judging term (Equations~\ref{eq:generation} and~\ref{eq:judging-unbatched}). Even with batched judging, three of them still multiply the whole cost (Equation~\ref{eq:total}).
+The weakness we take to matter most for whether the methodology gets used at all is a third one: run rigorously, DRACO or any protocol with its structure is expensive and slow. The number of judge scorings in a single run, when each answer is judged separately, is the product of how many systems are compared, how many tasks, how many judges, how many times each judge re-scores an answer, how many times each answer is regenerated, and how many configuration variants (temperature, retrieval settings, reasoning-effort levels) are swept per system. Each factor is well motivated on its own, and Section~\ref{sec:model} makes each explicit; together they make a faithful run expensive to repeat, since in such a run four of them (systems, tasks, regenerations and settings) multiply the whole cost and the other two multiply its judging term (Equations~\ref{eq:generation} and~\ref{eq:judging-unbatched}). Even with batched judging, three of them still multiply the whole cost (Equation~\ref{eq:total}).
 
 \sectionbreak
 \section{A General Cost Model}
@@ -223,7 +223,7 @@ setting against a minimal one), reducing to the single cheapest setting saves, w
 \end{equation}
 on generation cost, and a separate factor of $E$ on judging cost (fewer conditions to
 judge), if an answer costs the same to judge at every setting; where the expensive setting's answers are longer, that factor is above $E$ when the cheap setting is kept and below it when the expensive one is. Equation~\ref{eq:s1} assumes the \emph{cheap} setting is the one retained. If
-instead the expensive setting is retained, which for reasons given below is often the appropriate choice, the generation-side factor is $(1+\alpha)/\alpha$, which tends to $1$ as $\alpha$ grows; S1 then saves almost nothing on generation and only the factor $E$ on judging, or less where the expensive setting's answers are longer. If the two settings cost the same ($\alpha = 1$), either choice saves the
+instead the expensive setting is retained, which for reasons given below is often the appropriate choice, the generation-side factor is $(1+\alpha)/\alpha$, which tends to $1$ as $\alpha$ grows; S1 then saves almost nothing on generation once $\alpha$ is large, and only the factor $E$ on judging, or less where the expensive setting's answers are longer. If the two settings cost the same ($\alpha = 1$), either choice saves the
 trivial factor of $2$. The generation-side case for S1 rests on $\alpha$ being large and on the cheap setting being the operating point of interest. Two pieces of evidence bear on $\alpha$. The largest providers bill a reasoning model's internal ``thinking'' tokens as output tokens and expose the amount as a per-request setting, so a call at a high setting pays the same rate on a much larger token count \citep{openai2026reasoning, anthropic2026thinking}. An independent measurement service that runs a fixed suite at each setting reports, for one frontier model, more than an order of magnitude more output tokens at the highest setting than at the lowest, with a substantial difference in measured quality \citep{aagpt5benchmarks2025}; Appendix~\ref{app:worked} gives the figures, and the same service publishes the token counts and cost of running its whole suite for the models and settings it evaluates \citep{aaintelligence}, so $\alpha$ can be looked up. It should also be measured. On open-ended analytic prompts we found $\alpha$ between $1.75$ and $3.18$ by output tokens ($1.74$ to $3.14$ by cost) for two frontier models, comparing the \texttt{high} setting, which is below \texttt{xhigh} and \texttt{max} for both models, with a lower one (Appendix~\ref{app:measurements}), an order of magnitude below that published figure; $\alpha$ differed between the two models and, for one of them, between task families (Section~\ref{app:e3}), and it may also depend on how each provider implements its effort setting (Section~\ref{app:alpha-why}).
 
 \textbf{What is lost.} Questions about the contrast between settings can no longer be answered, since only one setting is measured. A less obvious loss matters more. Measuring every system at its cheapest setting and reporting a ranking of the \emph{systems} assumes that the order at the cheap setting predicts the order at the expensive one, and the evidence runs the other way. \citet{guedesdesouza2026budget} vary the generation budget, the maximum number of output tokens, over seven levels from 64 to 4,096 for four models on three reasoning benchmarks and find that ``model rankings reverse across budgets on all benchmarks'' ($p < 0.01$), with $3$--$19\%$ of items losing accuracy as the budget grows. The effect of extra compute is itself uneven. It can let a smaller model beat one $14\times$ larger at equal compute, on problems the smaller model already solves some of the time \citep{snell2024scaling}, or one $5\times$ larger \citep{wu2025inference}, lift an open code model from $15.9\%$ to $56\%$ of tasks solved with 250 samples \citep{brown2024monkeys}, and at the same time lower accuracy on hard queries while raising it on easy ones \citep{chen2024morecalls}. In one automated-scoring task higher effort helped on average but its benefit ``varied by model family'', and the most accurate configuration ran at low effort \citep{frohn2026effort}. On closed-book knowledge questions, answered without search, extra compute ``does not consistently improve accuracy and often leads to more hallucinations'' across 14 reasoning models, although for GPT-5-mini with a search tool, closer to the conditions of DRACO's tasks, it raised accuracy from $41.2\%$ to $53.0\%$ and cut hallucinations from $16.6\%$ to $8.0\%$ \citep{zhao2026testtime}. \citet{kim2026kjr} accordingly ask that medical studies of language models report the effort setting, its rationale and whether it was left at the vendor default, since differing settings can confound the gap between models when several are benchmarked.
@@ -260,7 +260,7 @@ indistinguishable, at $K = 1$, from a judge whose single score happened to be re
 in a small measurement made for this paper, five scorings of one answer by one frontier
 judge spanned 17 points on a 100-point scale (Appendix~\ref{app:measurements}).
 Because judge repeats are inexpensive relative to generation wherever generation dominates the budget (S5 below gives the condition), and
-because the reliability they measure is a property of the judge and not of the systems under test, the economical course is to estimate it once, in the pilot, with $K > 1$ on a subset, and to set $K$ for the main run from that estimate. One further result bears directly on how many repeats are needed. Where the
+because the reliability they measure is mainly a property of the judge, although it can differ between the answers it scores, the economical course is to estimate it once, in the pilot, with $K > 1$ on a subset, and to set $K$ for the main run from that estimate. One further result bears directly on how many repeats are needed. Where the
 judging interface exposes the probabilities the judge assigns to each candidate score
 token, a single call yields the \emph{expected} score over that distribution, and
 \citet{wang2025judgmentdist} find that ``taking the mean of the judgment distribution
@@ -282,7 +282,7 @@ per-call cost, so batching amortises it across all $C$ answers) and approaches $
 $\rho \to \infty$ (the per-answer reading cost dominates, and there is nothing left to
 amortise). With caching and no write premium ($w = 1$), the corresponding limits are
 $1 + (C-1)\,c$ and $1$: with one cache write per group of $C$ unbatched calls (Equation~\ref{eq:judging-cached}) the batching factor cannot exceed $1 + (C-1)\,c$, which at the
-cached-read fractions currently published (Appendix~\ref{app:worked}) stays well below $C$ and grows by only $c$ for each system added ($1.4$ at $C = 5$ and $c = 0.1$, against $5$ without caching). The cost case for S4 is therefore weak wherever
+cached-read fractions currently published (Appendix~\ref{app:worked}) stays well below $C$ and grows by only $c$ for each system added ($1.4$ at $C = 5$ and $c = 0.1$, against $5$ without caching). The cost case for S4 is therefore weak wherever the judging prefix clears the provider's minimum and
 prompt caching is available, as it now is from the three largest
 providers (Section~\ref{sec:model}), and by default from OpenAI and, on Gemini 2.5 and later models, from Google (Appendix~\ref{app:worked}). \textbf{What is added rather than lost}: a judge shown several systems' answers to the same task side by side has
 calibration context it would lack when scoring one answer in isolation. That this helps has been measured: \citet{yuan2024batcheval} find that scoring one sample at a
@@ -322,7 +322,7 @@ equal to
 \frac{(J-1) \cdot K \cdot j'}{C \cdot g + J \cdot K \cdot j'}.
 \label{eq:s5frac}
 \end{equation}
-Whenever generation cost dominates judging cost, that is, whenever $C \cdot g \gg J \cdot K \cdot j'$, this fraction is small. A cheaper judge is not enough on its own for that: $J \cdot K$ is often larger than $C$ ($15$ against $5$ in the worked instance of Appendix~\ref{app:worked}), so a generation call has to cost several times a batched judging call, which scores all $C$ answers at once. Where generation dominates, reducing $J$ saves little in absolute terms, and in any case it removes the one thing judge count provides, evidence about whether the result depends on which judge was used. A single judge still yields a confidence interval
+Whenever generation cost dominates judging cost, that is, whenever $C \cdot g \gg J \cdot K \cdot j'$, this fraction is small. A cheaper judge is not enough on its own for that: $J \cdot K$ is often larger than $C$ ($15$ against $5$ in the worked instance of Appendix~\ref{app:worked}), so a generation call has to cost several times a batched judging call, which scores all $C$ answers at once. Where generation dominates, reducing $J$ saves little in absolute terms, and in any case it removes the one thing only judge count provides, evidence about whether the result depends on which judge was used. A single judge still yields a confidence interval
 across \emph{tasks}; what it cannot yield is any estimate of judge-to-judge variation, so
 the resulting interval is conditional on that one judge and treats its idiosyncrasies as
 ground truth (Section~\ref{sec:limitations} returns to this in the language of
@@ -412,10 +412,10 @@ a weighted harmonic mean of $F_G$ and $F_J$, which always lies between them. As 
 simplifications S3 and S4 contribute almost nothing to the combined figure, however large
 their own factors. The naive product $F_G \cdot E \cdot K \cdot \beta$ (equivalently, all
 factors applied to the whole budget) exceeds the exact reduction by a factor that grows
-with $E \cdot K \cdot \beta$ and with $\alpha$, since that factor equals $(1-s)\,E \cdot K \cdot \beta + s\,(1+\alpha)$ when S1 keeps the cheap setting (when it keeps the expensive one the second term is $s\,(1+\alpha)/\alpha$, which falls as $\alpha$ grows): with the cheap setting kept, $13$ to $29$ in the worked instance (Appendix~\ref{app:worked} gives the
+with $E \cdot K \cdot \beta$ and, with the cheap setting kept, with $\alpha$, since that factor equals $(1-s)\,E \cdot K \cdot \beta + s\,(1+\alpha)$ when S1 keeps the cheap setting (when it keeps the expensive one the second term is $s\,(1+\alpha)/\alpha$, which falls as $\alpha$ grows): with the cheap setting kept, $13$ to $29$ in the worked instance (Appendix~\ref{app:worked} gives the
 figures), but $7$ to $11$ at the setting-cost ratios we measured between the \texttt{high} setting and a lower one ($1.74$ to $3.14$, or $1.75$ to $3.18$ by output tokens, Appendix~\ref{app:measurements}) under cached-read pricing with no write premium ($w = 1$), falling below $10$ once $s$ passes about $0.22$ to $0.26$, and $8$ to $12$ at a write multiple of $w = 1.25$, falling below $10$ once $s$ passes about $0.31$ to $0.36$. And because $F_G$ and $F_J$ share the factors $R$ and
 $T_{\text{full}}/n^*$, S2 and S6 are the only simplifications whose benefit is
-independent of $s$; they are also the two whose cost to validity the power calculation expresses directly, S2 through the regeneration term of Equation~\ref{eq:variance-decomposition} and S6 through the floor $n^*$ (Sections~\ref{sec:simplifications} and~\ref{sec:power}).
+independent of $s$; they are also two of the three whose cost to validity the power calculation expresses, S2 through the regeneration term of Equation~\ref{eq:variance-decomposition}, S3 through the within-task variances in that term, and S6 through the floor $n^*$ (Sections~\ref{sec:simplifications} and~\ref{sec:power}).
 
 Appendix~\ref{app:worked} evaluates Equation~\ref{eq:cumulative} for an illustrative configuration: roughly two orders of magnitude, with and without prompt caching, across plausible values of $s$, at that instance's setting-cost ratio $\alpha$ and its assumed floor $n^* = 60$, when S1 keeps the cheap setting ($10$--$18\times$ when it keeps the expensive one, since $F_G$ is then $1.05 \cdot 3 \cdot 3 = 9.45$); with the floor of $184$ that its own power inputs give, S6 saves nothing and every figure falls to a third ($46$--$74\times$ with the cheap setting kept). At the values of $\alpha$ we measured on analytic prompts (Appendix~\ref{app:measurements}) the same configuration yields well under a hundredfold, because $\alpha$ enters $F_G$ directly.
 
@@ -483,7 +483,7 @@ permutation test, using pilot data, is therefore part of the protocol.
 \subsection{Blind and calibrated scoring}
 \label{sec:calibration}
 
-S4 (Section~\ref{sec:simplifications}) bears on two properties of the judging protocol: blinding, which it leaves intact, and calibration context, which it trades against scoring each answer independently. \textbf{Blind scoring}, in which the judge is never told which system, setting or configuration produced the answer it is scoring, guards against a judge favouring a system it recognises or has been told is the ``interesting'' one. The concern is documented:
+S4 (Section~\ref{sec:simplifications}) bears on two properties of the judging protocol: blinding, which it leaves intact, and calibration context, which it trades against scoring each answer independently. \textbf{Blind scoring}, in which the judge is never told which system, setting or configuration produced the answer it is scoring, guards against a judge favouring a system because it has been told which system wrote an answer, or that one system is the ``interesting'' one, though not against a judge that recognises a system from the answer itself. The concern is documented:
 \citet{zheng2023judging} report verbosity bias and describe self-enhancement bias, a judge's preference for its own answers, though they say their data cannot determine whether the judges they tested have it; \citet{philipp2026clinical} find evaluators that ``preferentially scored architectural siblings''; and
 \citet{stureborg2024inconsistent} report a preference for lower-perplexity, more familiar
 text. Blinding is compatible with either isolated or batched presentation.
@@ -507,7 +507,7 @@ Section~\ref{sec:simplifications} names the residual risk this does not eliminat
 
 \subsection{Data retention}
 
-Every individual measurement (each judge's verdict on each rubric criterion, for each repeat scoring, each regeneration and each setting) should be retained at its finest grain and never averaged down before storage. Every reported summary statistic is then a view computed from that raw table, and the raw table remains the record. The published runner keeps less than this: for each judging call and answer it stores the score and the numbers of criteria met and unmet (and per-dimension scores for weighted rubrics), not the verdict on each criterion. Retaining every measurement at its finest grain is what makes it possible to
+Every individual measurement (each judge's verdict on each rubric criterion, for each repeat scoring, each regeneration and each setting) should be retained at its finest grain and never averaged down before storage. Every reported summary statistic is then a view computed from that raw table, and the raw table remains the record. The published runner keeps less than this: for each judging call and answer it stores the score and the numbers of criteria met and unmet (and per-dimension scores for weighted rubrics), not the verdict on each criterion. Retaining the measurements, and not only their per-system summaries, is what makes it possible to
 later compute a confidence interval or a $p$-value for any pair of systems not among the
 originally pre-registered comparisons, without re-running a single generation or judging
 call, provided that any such post-hoc comparison is reported as \emph{exploratory} and is not included in the same family-wise error control as the comparisons that were pre-registered
@@ -785,10 +785,10 @@ shared prefix (a rubric of about 920 tokens, then the task and question) was abo
 minimum (Appendix~\ref{app:worked}). Five later calls with an identical full prompt of
 1{,}092 tokens each reported 1{,}089 of them as cached. Equation~\ref{eq:judging-cached}
 therefore holds only once the fixed prefix clears the provider's minimum; a rubric of
-40 short criteria does not do so on its own, and a protocol relying on the cached rate
+40 short criteria, about 920 tokens here, does not do so on its own at this provider's 1{,}024-token minimum, though it would clear the 512-token minimum of some Anthropic models, and a protocol relying on the cached rate
 should measure its prefix length. The same 11 calls give the
 fixed and marginal token counts of Equation~\ref{eq:s4}: about 1{,}005 fixed tokens and about
-90 to 100 marginal input tokens per additional short answer, a ratio of about $0.1$ in input tokens alone. Equation~\ref{eq:s4} defines $\rho$ on cost, however, and scoring each answer also produced about 220 to 270 output tokens of verdicts, priced at six times the input rate (\$30 against \$5 per million), so on these calls $\rho$ is between about $1.4$ and $1.7$. Answers of the
+90 to 100 marginal input tokens per additional short answer, a ratio of about $0.1$ in input tokens alone. Equation~\ref{eq:s4} defines $\rho$ on cost, however, and scoring each answer also produced about 220 to 270 output tokens of verdicts, priced at $6\times$ the input rate (\$30 against \$5 per million), so on these calls $\rho$ is between about $1.4$ and $1.7$. Answers of the
 length deep-research tasks produce would raise $\rho$ considerably. At $C = 5$, a $\rho$ of $1.4$ to $1.7$ gives a batching factor $\beta$ (Equation~\ref{eq:s4}) of about $1.4$ to $1.5$ without caching and $1.04$ to $1.08$ with it, against $3.0$ and $1.2$ to $1.325$ at the illustrative $\rho = 0.2$ of Appendix~\ref{app:worked}.
 
 \textbf{Test--retest (S3).} The same answer was scored five times with no memory between
@@ -816,7 +816,7 @@ cap. The calls for six cells failed with transient provider errors (ten failed c
 \texttt{high} setting consumed $2.83\times$ the output tokens of \texttt{low} (per prompt
 $1.52$--$3.99$) and $3.18\times$ those of \texttt{none}; at \texttt{high} the provider
 reported between $1{,}024$ and $4{,}068$ reasoning tokens per answer, at \texttt{none}
-zero, and \texttt{low} added only $12\%$ over \texttt{none}. For the second model
+zero, and \texttt{low} consumed only $1.12\times$ the output tokens of \texttt{none}. For the second model
 \texttt{high} consumed $1.75\times$ the tokens of \texttt{low} (per prompt $1.48$--$2.00$),
 with mean outputs of $3{,}600$ tokens at \texttt{low} and $6{,}300$ at \texttt{high}, thinking included. Cost ratios are slightly
 lower than the token ratios ($2.80$, $3.14$ and $1.74$ against $2.83$, $3.18$ and $1.75$; both are $1.12$ for \texttt{low} against \texttt{none}), because the same input cost is added at both settings. Mean
@@ -842,8 +842,8 @@ Pooled ratio of summed output tokens over the same five prompts; raw usage recor
 
 \textbf{Interpretation.} The published $23\times$ of Appendix~\ref{app:worked} was
 measured on a reasoning-benchmark suite; on analytic prose tasks the \texttt{high} setting of the two
-models measured here uses $1.75$ to $3.18$ times the output tokens of a lower one ($1.74$ to $3.14$ times the cost). $\alpha$ is therefore not a
-property of a model but of a model on a task family (the first model gave $1.48$ on the competition problems of E3, Section~\ref{app:e3}, against $2.83$ here; the second gave $2.67$ there against $1.75$ here, but only because of one problem, without which its ratio there is $1.68$), and the pilot of
+models measured here uses $1.75$ to $3.18$ times the output tokens of a lower one ($1.74$ to $3.14$ times the cost). $\alpha$ appears to be a
+property not of a model alone but of a model on a task family (the first model gave $1.48$ on the competition problems of E3, Section~\ref{app:e3}, against $2.83$ here; the second gave $2.67$ there against $1.75$ here, but only because of one problem, without which its ratio there is $1.68$), and the pilot of
 Section~\ref{sec:validation} should measure it on the benchmark's own tasks before S1's
 saving is counted. The consequence for the worked instance of Appendix~\ref{app:worked}
 is material: replacing its illustrative $\alpha = 20$ with the measured token ratios of the \texttt{high} setting against a lower one ($1.75$ to $3.18$, Table~\ref{tab:alpha}) gives a
@@ -852,7 +852,7 @@ generation-side factor $F_G$ of $25$ to $38$ instead of $189$, and a combined re
 and caching assumptions instead of $137$--$222\times$, about one and a half orders of magnitude instead of two. If the expensive setting is the one retained
 (Section~\ref{sec:simplifications}, S1), the same configuration yields $13$--$27\times$. Both ranges are at the assumed floor $n^* = 60$; at the floor of $184$ that the instance's own power inputs give, S6 saves nothing and they fall to a third, $9$--$22\times$ and $4$--$9\times$.
 The framework's conclusion that the saving is dominated by the generation side and that
-judge count is the wrong place to cut is unchanged; the size of the overall saving is set by $\alpha$, and $\alpha$ must be measured.
+judge count is the wrong place to cut is unchanged; the size of the overall saving is set by $\alpha$ and by the task floor, and both must come from the pilot's measurements.
 
 \subsection{Full method for experiment E1}
 \label{app:e1-method}
@@ -938,31 +938,31 @@ Result & $23\times$ (3.5M $\to$ 82M) & $2.83\times$ ($3.18\times$ vs \texttt{non
 \toprule
 Model & Effort & Prompt & In & Out & Reasoning & Latency (s) & Stop \\
 \midrule
-claude-opus-5 & high & 1 banking & 191 & 5704 & 1717 & 89 & end\_turn \\
-claude-opus-5 & high & 2 mining & 199 & 6641 & 2967 & 106 & end\_turn \\
-claude-opus-5 & high & 3 automotive & 184 & 6702 & 3093 & 102 & end\_turn \\
-claude-opus-5 & high & 4 retail & 183 & 6071 & 2036 & 91 & end\_turn \\
-claude-opus-5 & high & 5 telecoms & 180 & 6298 & 2395 & 97 & end\_turn \\
-claude-opus-5 & low & 1 banking & 191 & 3370 & 326 & 54 & end\_turn \\
-claude-opus-5 & low & 2 mining & 199 & 3543 & 263 & 57 & end\_turn \\
-claude-opus-5 & low & 3 automotive & 184 & 3358 & 320 & 55 & end\_turn \\
-claude-opus-5 & low & 4 retail & 183 & 3413 & 446 & 54 & end\_turn \\
-claude-opus-5 & low & 5 telecoms & 180 & 4262 & 914 & 68 & end\_turn \\
-gpt-5.6-sol & high & 1 banking & 129 & 2464 & 1536 & 138 & stop (retry 1) \\
-gpt-5.6-sol & high & 2 mining & 133 & 4062 & 3072 & 126 & stop (retry 3) \\
-gpt-5.6-sol & high & 3 automotive & 125 & 2251 & 1024 & 73 & stop \\
-gpt-5.6-sol & high & 4 retail & 128 & 5203 & 4068 & 160 & stop \\
-gpt-5.6-sol & high & 5 telecoms & 125 & 4306 & 2920 & 130 & stop \\
-gpt-5.6-sol & low & 1 banking & 129 & 1343 & 341 & 43 & stop \\
-gpt-5.6-sol & low & 2 mining & 133 & 1166 & 139 & 41 & stop (retry 1) \\
-gpt-5.6-sol & low & 3 automotive & 125 & 1485 & 352 & 48 & stop \\
-gpt-5.6-sol & low & 4 retail & 128 & 1303 & 325 & 43 & stop \\
-gpt-5.6-sol & low & 5 telecoms & 125 & 1164 & 100 & 41 & stop (retry 1) \\
-gpt-5.6-sol & none & 1 banking & 129 & 1105 & 0 & 39 & stop (retry 2) \\
-gpt-5.6-sol & none & 2 mining & 133 & 1080 & 0 & 39 & stop (retry 2) \\
-gpt-5.6-sol & none & 3 automotive & 125 & 1105 & 0 & 34 & stop \\
-gpt-5.6-sol & none & 4 retail & 128 & 1225 & 0 & 37 & stop \\
-gpt-5.6-sol & none & 5 telecoms & 125 & 1234 & 0 & 39 & stop \\
+claude-opus-5 & high & 1 banking & 191 & 5{,}704 & 1{,}717 & 89 & end\_turn \\
+claude-opus-5 & high & 2 mining & 199 & 6{,}641 & 2{,}967 & 106 & end\_turn \\
+claude-opus-5 & high & 3 automotive & 184 & 6{,}702 & 3{,}093 & 102 & end\_turn \\
+claude-opus-5 & high & 4 retail & 183 & 6{,}071 & 2{,}036 & 91 & end\_turn \\
+claude-opus-5 & high & 5 telecoms & 180 & 6{,}298 & 2{,}395 & 97 & end\_turn \\
+claude-opus-5 & low & 1 banking & 191 & 3{,}370 & 326 & 54 & end\_turn \\
+claude-opus-5 & low & 2 mining & 199 & 3{,}543 & 263 & 57 & end\_turn \\
+claude-opus-5 & low & 3 automotive & 184 & 3{,}358 & 320 & 55 & end\_turn \\
+claude-opus-5 & low & 4 retail & 183 & 3{,}413 & 446 & 54 & end\_turn \\
+claude-opus-5 & low & 5 telecoms & 180 & 4{,}262 & 914 & 68 & end\_turn \\
+gpt-5.6-sol & high & 1 banking & 129 & 2{,}464 & 1{,}536 & 138 & stop (retry 1) \\
+gpt-5.6-sol & high & 2 mining & 133 & 4{,}062 & 3{,}072 & 126 & stop (retry 3) \\
+gpt-5.6-sol & high & 3 automotive & 125 & 2{,}251 & 1{,}024 & 73 & stop \\
+gpt-5.6-sol & high & 4 retail & 128 & 5{,}203 & 4{,}068 & 160 & stop \\
+gpt-5.6-sol & high & 5 telecoms & 125 & 4{,}306 & 2{,}920 & 130 & stop \\
+gpt-5.6-sol & low & 1 banking & 129 & 1{,}343 & 341 & 43 & stop \\
+gpt-5.6-sol & low & 2 mining & 133 & 1{,}166 & 139 & 41 & stop (retry 1) \\
+gpt-5.6-sol & low & 3 automotive & 125 & 1{,}485 & 352 & 48 & stop \\
+gpt-5.6-sol & low & 4 retail & 128 & 1{,}303 & 325 & 43 & stop \\
+gpt-5.6-sol & low & 5 telecoms & 125 & 1{,}164 & 100 & 41 & stop (retry 1) \\
+gpt-5.6-sol & none & 1 banking & 129 & 1{,}105 & 0 & 39 & stop (retry 2) \\
+gpt-5.6-sol & none & 2 mining & 133 & 1{,}080 & 0 & 39 & stop (retry 2) \\
+gpt-5.6-sol & none & 3 automotive & 125 & 1{,}105 & 0 & 34 & stop \\
+gpt-5.6-sol & none & 4 retail & 128 & 1{,}225 & 0 & 37 & stop \\
+gpt-5.6-sol & none & 5 telecoms & 125 & 1{,}234 & 0 & 39 & stop \\
 \bottomrule
 \end{tabular}
 \caption{Every successful call of experiment E1 (25 calls, one per cell, 11 September 2026); the ten failed calls are not listed. In/Out/Reasoning are token counts from the providers' own usage fields; ``Reasoning'' is included in ``Out'' for both providers (\texttt{reasoning\_tokens} for \texttt{gpt-5.6-sol}, \texttt{thinking\_tokens} for \texttt{claude-opus-5}). Stop = provider finish reason, and ``retry $n$'' marks a cell whose call succeeded on its $n$th retry, after $n$ failed calls; no call stopped on the output cap.}
@@ -981,7 +981,7 @@ together they make $\alpha$ a quantity that must be measured on the tasks of int
 \& AA-LCR'' \citep{aagpt5benchmarks2025}, most of which are competition-, examination- or
 code-style problems with a short, checkable answer. On such problems most of the
 output at a high setting is reasoning (in E3, Section~\ref{app:e3}, 72\% for the first model and 60\% for the second, against 69\% and 39\% on the E1 prompts), and the literature on reasoning length shows the
-amount of reasoning a model spends varies by problem type and across model generations:
+amount of reasoning a model spends varies by problem type and between models, and suggests that it changes across model generations:
 \citet{ballon2026thinksharder} find that accuracy declines as reasoning chains grow even at fixed difficulty, though less so in more proficient models, which they take to suggest that ``new generations of reasoning models use test-time compute more effectively''; \citet{lee2025critical} show that ``there exists an optimal amount of
 reasoning tokens such that the probability of producing a correct solution is maximized''
 and that it grows with the length of the underlying computation a task requires; and
@@ -1007,7 +1007,7 @@ effort levels, Claude still thinks on sufficiently difficult problems, but think
 and, for the model measured here, that ``effort controls thinking volume, not visible
 response length: on Claude Opus 5, changing effort does not reliably shorten responses''
 \citep{anthropic2026effort}. A setting that behaves this way is unlikely to produce a $23\times$
-spread on prose tasks; the measured $1.75\times$ fits that description: between the two settings the second model's thinking tokens rose $5.4$-fold and its visible output only $1.23$-fold.
+spread on prose tasks; the measured $1.75\times$ fits that description: between the two settings the second model's thinking tokens rose $5.38\times$ and its visible output only $1.23\times$.
 
 \textbf{Model generation and the published suite itself.} The $23\times$ was measured on
 the first model of its series in 2025; the models measured here are a later generation,
@@ -1079,7 +1079,7 @@ second model) \texttt{high} used slightly fewer tokens in all ($358$ against $37
 model, whose effort levels may have behaved as coarse switches (E3 used later models and cannot show this), on a suite that was hard for it at
 the time, and not a constant of the effort setting. A test of task family that survives
 this confound would need problems demonstrably unseen by the models and hard enough that
-\texttt{low} fails on them, which the pilot of Section~\ref{sec:validation} can supply
+\texttt{low} fails on them, which the pilot of Section~\ref{sec:validation} can supply, where the benchmark's tasks have not been published,
 from its own retained data.
 
 \bibliographystyle{plainnat}

@@ -572,3 +572,32 @@ Dates and "now":
 Left as they are: two findings asked to date the Artificial Analysis GPT-5 run in the text; the citation already prints the year.
 
 Rebuilt with latexmk: no errors, no undefined references, no overfull or underfull boxes. 92 of 92 tests pass.
+
+## 27 October 2026, 20:14 pass
+
+Two angles: how numbers are written across the paper, and whether each claim's verb is as strong as its evidence. Each finding was checked by a second reader who tried to refute it.
+
+How numbers are written:
+- Appendix C.3, table "Every successful call of experiment E1": the 35 Out and Reasoning cells of four or more digits now carry thousands separators, as every other such number in the paper does (45 of 47 outside this table; the prose quoting these rows already wrote 1,024 and 4,068). No value changed.
+- Appendix C.4, effort semantics: "rose 5.4-fold and its visible output only 1.23-fold" is now "5.38× ... 1.23×", one precision for the two ratios and the times sign the paper uses elsewhere (12,208 / 2,269 thinking tokens = 5.38, from the E1 table).
+- Appendix C.2 (E1), result: "low added only 12% over none" is now "low consumed only 1.12× the output tokens of none", the figure and form of the ratio table and the next sentences (6,461 / 5,749 = 1.12).
+- Appendix C.1 (E2), prompt caching: "six times the input rate" is now "6× the input rate", as every other price multiple is written.
+- References, Google pricing note: "one tenth of standard input" is now "0.1× standard input", as the same note writes the later rate.
+
+Claim strength:
+- Section 3: the weakness "that matters most" is now the one "we take to matter most"; the introduction states it as a premise, not a measured fact.
+- Section 5, S1: "saves almost nothing on generation" now holds "once alpha is large"; at the measured ratios it saves 24% to 36% of generation cost.
+- Section 5, S3: the reliability a judge's repeats measure is "mainly" a property of the judge and can differ between the answers it scores; the categorical "not of the systems under test" had no support.
+- Section 5, S4: the cost case is weak "wherever the judging prefix clears the provider's minimum", since the cached ceiling rests on Equation 5, which holds only then.
+- Section 5, S5: S5 removes the one thing "only" judge count provides; the paper itself gives judge count other roles.
+- Section 6: the overstatement grows with alpha "with the cheap setting kept"; with the expensive setting kept it falls as alpha grows. The closing sentence of that paragraph now names S3 beside S2 and S6 as the simplifications whose cost the power calculation expresses, as Sections 7.2 and 8 now say.
+- Section 7.3, blind scoring: it guards against a judge told which system wrote an answer, not against one that recognises a system from the answer itself.
+- Section 7.4: what makes post-hoc analysis possible is retaining the measurements and not only their per-system summaries; the finest grain is needed for other uses, not for this one.
+- Appendix C.1 (E2): the 40-criterion rubric (about 920 tokens) does not clear this provider's 1,024-token minimum, though it would clear some Anthropic models' 512.
+- Appendix C.2 (E1), interpretation: alpha "appears to be" a property of a model on a task family (Appendix C.5 does not support task family as the explanation), and the size of the saving is set by alpha and by the task floor, both from the pilot.
+- Appendix C.4: the reasoning-length literature shows variation by problem type and between models, and suggests a change across generations (Ballon et al. infer it).
+- Appendix C.5: the pilot can supply unseen problems only where the benchmark's tasks have not been published; DRACO's are public.
+
+Left as they are: "8--22 points" (most ranges in the prose use the en dash), "a factor of 3" (exactly 3), "per-dimension gains ... in points" (the source could not be checked from here), and "Both providers now document adaptive behaviour that narrows the gap" (it follows from the quoted documentation).
+
+Rebuilt with latexmk: no errors, no undefined references, no overfull or underfull boxes. 92 of 92 tests pass.
