@@ -448,16 +448,19 @@ describe('Appendix B, Table tab:cumulative and the component factors', () => {
 // ---------------------------------------------------------------------------
 
 describe('Section 6: the overstatement of the naive product', () => {
-  test('"S3 and S4 contribute little to the combined figure, provided s is also small against E/(1+alpha) ... (alpha = 20, so that ratio is about 0.1) they still roughly double it at s = 0.1, from about 97 to 176-195x"', () => {
+  test('"S3 and S4 contribute little to the combined figure, provided s is also small against E/(1+alpha) ... (alpha = 20, so that ratio is about 0.1) they still roughly double it at s = 0.1, from about 97 to 175-195x"', () => {
     // F_J without S3 (K = 1) and S4 (beta = 1), over F_G with the cheap setting kept: E / (1 + alpha).
     const FJ0 = factorFJ({ E: 2, R: 3, K: 1, beta: 1, Tfull: 180, nStar: 60 })
     near(FJ0 / FG_WORKED, 2 / 21, 1e-12)
     assert.equal(decimals(FJ0 / FG_WORKED, 1), 0.1)
     const without = combinedReduction({ s: 0.1, FG: FG_WORKED, FJ: FJ0 })
     assert.equal(whole(without), 97)
-    // The table's two rows, uncached and cached at w = 1.
-    const withThem = [BETA_UNCACHED, BETA_CACHED_W1].map((beta) => combinedReduction({ s: 0.1, FG: FG_WORKED, FJ: fj(beta) }))
-    assert.deepEqual(rangeOf(withThem).map(whole), [176, 195])
+    // "in the worked instance": every caching case Appendix B.5 evaluates, OpenAI's
+    // included (194.8 uncached, 175.8 at w = 1, 178.6 on Anthropic's terms, 175.3 on
+    // OpenAI's), not only the table's two rows (which alone would give 176-195x).
+    const withThem = EVERY_BETA.map((beta) => combinedReduction({ s: 0.1, FG: FG_WORKED, FJ: fj(beta) }))
+    assert.deepEqual(rangeOf(withThem).map(whole), [175, 195])
+    near(Math.min(...withThem), combinedReduction({ s: 0.1, FG: FG_WORKED, FJ: fj(BETA_CACHED_W125_OPENAI) }), 1e-12)
     // "roughly double": 1.81 to 2.01 times.
     for (const r of withThem) assert.ok(r / without > 1.8 && r / without < 2.05)
   })
@@ -487,6 +490,17 @@ describe('Section 6: the overstatement of the naive product', () => {
     // The same range from the table: 2,268 / 176 and 5,670 / 195.
     near(low, 2268 / combinedReduction({ s: 0.1, FG: 189, FJ: 108 }), 1e-9)
     near(high, 5670 / combinedReduction({ s: 0.1, FG: 189, FJ: 270 }), 1e-9)
+  })
+
+  test('"(when it keeps the expensive one the second term is s (1+alpha)/alpha, which falls as alpha grows, and that factor is then 6 to 27 in the worked instance)"', () => {
+    // alpha = 20, expensive setting kept, s = 0.1, 0.3, 0.5, every caching case of Appendix B.5.
+    const values = SHARES.flatMap((s) => EVERY_BETA.map((beta) => naiveOverstatement({ s, E: 2, K: 5, beta, alpha: 20, kept: 'expensive' })))
+    const [low, high] = rangeOf(values)
+    // Low end 6.414 (OpenAI's beta, s = 0.5), the abstract's "six"; high end 27.105 (uncached, s = 0.1).
+    assert.equal(decimals(low, 3), 6.414)
+    near(high, 0.9 * 10 * 3 + 0.1 * 21 / 20, 1e-9)
+    assert.equal(whole(low), 6)
+    assert.equal(whole(high), 27)
   })
 
   test('"7 to 11 at the setting-cost ratios we measured ... under cached-read pricing with no write premium (w = 1)"', () => {
