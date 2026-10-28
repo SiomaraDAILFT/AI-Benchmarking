@@ -71,6 +71,8 @@ const BETA_CACHED_W125 = s4Beta({ C: W.C, rho: W.rho, c: 0.1, w: 1.25 })
 // the batched call writes its prefix too.
 const BETA_CACHED_W125_OPENAI = s4Beta({ C: W.C, rho: W.rho, c: 0.1, w: 1.25, batchedWrite: true })
 const ALL_BETAS = [BETA_UNCACHED, BETA_CACHED_W1, BETA_CACHED_W125]
+// Every caching case Appendix B.5 evaluates, OpenAI's included.
+const EVERY_BETA = [...ALL_BETAS, BETA_CACHED_W125_OPENAI]
 
 const FG_WORKED = factorFG({ alpha: W.alpha, kept: 'cheap', R: W.R, Tfull: W.Tfull, nStar: W.nStar })
 const fj = (beta, nStar = W.nStar) => factorFJ({ E: W.E, R: W.R, K: W.K, beta, Tfull: W.Tfull, nStar })
@@ -446,6 +448,20 @@ describe('Appendix B, Table tab:cumulative and the component factors', () => {
 // ---------------------------------------------------------------------------
 
 describe('Section 6: the overstatement of the naive product', () => {
+  test('"S3 and S4 contribute little to the combined figure, provided s is also small against E/(1+alpha) ... (alpha = 20, so that ratio is about 0.1) they still roughly double it at s = 0.1, from about 97 to 176-195x"', () => {
+    // F_J without S3 (K = 1) and S4 (beta = 1), over F_G with the cheap setting kept: E / (1 + alpha).
+    const FJ0 = factorFJ({ E: 2, R: 3, K: 1, beta: 1, Tfull: 180, nStar: 60 })
+    near(FJ0 / FG_WORKED, 2 / 21, 1e-12)
+    assert.equal(decimals(FJ0 / FG_WORKED, 1), 0.1)
+    const without = combinedReduction({ s: 0.1, FG: FG_WORKED, FJ: FJ0 })
+    assert.equal(whole(without), 97)
+    // The table's two rows, uncached and cached at w = 1.
+    const withThem = [BETA_UNCACHED, BETA_CACHED_W1].map((beta) => combinedReduction({ s: 0.1, FG: FG_WORKED, FJ: fj(beta) }))
+    assert.deepEqual(rangeOf(withThem).map(whole), [176, 195])
+    // "roughly double": 1.81 to 2.01 times.
+    for (const r of withThem) assert.ok(r / without > 1.8 && r / without < 2.05)
+  })
+
   test('"that factor equals (1-s) E K beta + s (1+alpha) when S1 keeps the cheap setting" (and s (1+alpha)/alpha for the expensive one)', () => {
     for (const kept of ['cheap', 'expensive']) {
       for (const alpha of [1.75, 3.18, 20]) {
@@ -520,19 +536,42 @@ describe('Section 6: the overstatement of the naive product', () => {
     assert.deepEqual(rangeOf(stars).map((x) => decimals(x, 2)), [0.31, 0.36])
   })
 
-  test('Abstract: the naive product "overstates the saving, by a factor of about seven to thirty in the configurations evaluated here"', () => {
+  test('"and 7 to 11 on OpenAI\'s terms, where the batched call pays the write too"', () => {
+    for (const alphas of [ALPHA_BY_COST, ALPHA_BY_TOKENS]) {
+      const values = alphas.flatMap((alpha) => SHARES.map((s) => naiveOverstatement({ s, E: 2, K: 5, beta: BETA_CACHED_W125_OPENAI, alpha })))
+      const [low, high] = rangeOf(values)
+      assert.equal(whole(low), 7)
+      assert.equal(whole(high), 11)
+    }
+  })
+
+  test('"falling below 10 once s passes about 0.20 to 0.23" (OpenAI\'s terms): the exact crossing lies in 0.19 to 0.24 for every measured ratio', () => {
+    const stars = MEASURED_ALPHAS.map((alpha) => {
+      const sStar = overstatementCrossing(BETA_CACHED_W125_OPENAI, alpha)
+      near(naiveOverstatement({ s: sStar, E: 2, K: 5, beta: BETA_CACHED_W125_OPENAI, alpha }), 10, 1e-9)
+      assert.ok(2 * 5 * BETA_CACHED_W125_OPENAI > 1 + alpha)
+      assert.ok(naiveOverstatement({ s: 0.3, E: 2, K: 5, beta: BETA_CACHED_W125_OPENAI, alpha }) < 10)
+      return sStar
+    })
+    assert.deepEqual(rangeOf(stars).map((x) => decimals(x, 2)), [0.2, 0.23])
+  })
+
+  test('Abstract: the naive product "overstates the saving, by a factor of about six to thirty in the configurations evaluated here"', () => {
     // Every configuration Section 6 and Appendices B and C.2 evaluate: alpha = 20 and
-    // the measured ratios, either setting kept, beta uncached and cached at w = 1 and
-    // 1.25, s = 0.1, 0.3, 0.5. (T_full / n* cancels from the overstatement.)
+    // the measured ratios, either setting kept, beta uncached, cached at w = 1 and
+    // 1.25, and OpenAI's (the batched call pays the write), s = 0.1, 0.3, 0.5.
+    // (T_full / n* cancels from the overstatement.)
     const values = [20, ...MEASURED_ALPHAS].flatMap((alpha) =>
       ['cheap', 'expensive'].flatMap((kept) =>
-        SHARES.flatMap((s) => ALL_BETAS.map((beta) => naiveOverstatement({ s, E: 2, K: 5, beta, alpha, kept }))),
+        SHARES.flatMap((s) => EVERY_BETA.map((beta) => naiveOverstatement({ s, E: 2, K: 5, beta, alpha, kept }))),
       ),
     )
     const [low, high] = rangeOf(values)
-    // Low end 6.525: alpha = 20, expensive setting kept, beta = 1.2, s = 0.5 (6 + 0.5 * 1.05).
-    near(low, 6.525, 1e-9)
-    assert.equal(whole(low), 7)
+    // Low end 6.414: alpha = 20, expensive setting kept, beta = 2.65/2.25, s = 0.5
+    // (0.5 * 10 * 1.1778 + 0.5 * 1.05); without OpenAI's case it was 6.525 (beta = 1.2).
+    near(low, 0.5 * 10 * (2.65 / 2.25) + 0.5 * 1.05, 1e-9)
+    assert.equal(decimals(low, 3), 6.414)
+    assert.equal(whole(low), 6)
     // High end 29.1: alpha = 20, cheap setting kept, beta = 3, s = 0.1 (27 + 0.1 * 21).
     near(high, 29.1, 1e-9)
     // Section 6 prints it as 29; the abstract's "about thirty" is that figure to the nearest ten.
@@ -555,7 +594,7 @@ describe('Section 6: the expensive setting kept, and the floor its own power inp
     assert.equal(whole(high), 18)
   })
 
-  test('"with the floor of 184 that its own power inputs give, S6 saves nothing and every figure falls to a third (46-74x with the cheap setting kept)"', () => {
+  test('"with the floor of 184 that its own power inputs give, S6 saves nothing and every figure falls to a third (45-74x with the cheap setting kept)"', () => {
     const FG184 = factorFG({ alpha: 20, kept: 'cheap', R: 3, Tfull: 180, nStar: 184 })
     assert.equal(FG184, 63)
     // Every entry of the table falls to exactly a third.
@@ -568,14 +607,19 @@ describe('Section 6: the expensive setting kept, and the floor its own power inp
         )
       }
     }
-    // The table's rows (uncached and cached at w = 1) at n* = 184.
+    // The table's rows (uncached and cached at w = 1) at n* = 184: Appendix B.5's
+    // "every reduction in the table falls to a third, 46-74x".
     const values = SHARES.flatMap((s) => [BETA_UNCACHED, BETA_CACHED_W1].map((beta) => combinedReduction({ s, FG: FG184, FJ: fj(beta, 184) })))
     const [low, high] = rangeOf(values)
     assert.equal(whole(low), 46)
     assert.equal(whole(high), 74)
-    // Adding the w = 1.25 row leaves the range unchanged.
+    // Adding the w = 1.25 row leaves that range unchanged.
     const withW125 = [...values, ...SHARES.map((s) => combinedReduction({ s, FG: FG184, FJ: fj(BETA_CACHED_W125, 184) }))]
     assert.deepEqual(rangeOf(withW125).map(whole), [46, 74])
+    // Every figure of Appendix B.5, OpenAI's case included (a third of 175, 153 and 136x): 45-74x.
+    const every = SHARES.flatMap((s) => EVERY_BETA.map((beta) => combinedReduction({ s, FG: FG184, FJ: fj(beta, 184) })))
+    near(combinedReduction({ s: 0.5, FG: FG184, FJ: fj(BETA_CACHED_W125_OPENAI, 184) }) * 3, combinedReduction({ s: 0.5, FG: FG_WORKED, FJ: fj(BETA_CACHED_W125_OPENAI) }), 1e-9)
+    assert.deepEqual(rangeOf(every).map(whole), [45, 74])
   })
 })
 
@@ -584,7 +628,7 @@ describe('Section 6: the expensive setting kept, and the floor its own power inp
 // ---------------------------------------------------------------------------
 
 describe('Section 4: the cache write paid once per task and judge', () => {
-  test('"the cached judging-side factor F_J ... falls from 108 to about 69, and the cached reductions of Table tab:cumulative from 137-176x to about 101-161x"', () => {
+  test('"the cached judging-side factor F_J of Section 6 at w = 1 falls from 108 to about 69, and the cached reductions of Table tab:cumulative from 137-176x to about 101-161x"', () => {
     const jFixed = 1
     const jMarginal = 0.2
     const Jfull = judgingCostCachedOncePerTaskAndJudge({ C: 5, E: 2, R: 3, T: 180, J: 3, K: 5, jFixed, jMarginal, c: 0.1, w: 1 })
@@ -651,10 +695,10 @@ describe('Appendix C (E1): Table tab:alpha and the measured setting-cost ratios,
 
 describe('Appendix C.2: the worked instance at the measured setting-cost ratios', () => {
   // "across the same range of s and caching assumptions": s = 0.1, 0.3, 0.5;
-  // beta uncached, cached at w = 1 and at w = 1.25.
+  // beta uncached, cached at w = 1, at w = 1.25, and OpenAI's (the batched call pays the write).
   const combined = (alpha, kept, nStar = 60) =>
     SHARES.flatMap((s) =>
-      ALL_BETAS.map((beta) =>
+      EVERY_BETA.map((beta) =>
         combinedReduction({ s, FG: factorFG({ alpha, kept, R: 3, Tfull: 180, nStar }), FJ: fj(beta, nStar) }),
       ),
     )
@@ -665,13 +709,17 @@ describe('Appendix C.2: the worked instance at the measured setting-cost ratios'
     assert.equal(whole(high), 38)
   })
 
-  test('"a combined reduction of roughly 27-66x across the same range of s and caching assumptions instead of 137-222x"', () => {
+  test('"a combined reduction of roughly 27-66x across the same range of s and caching assumptions instead of 136-222x"', () => {
     const [low, high] = rangeOf(ALPHA_BY_TOKENS.flatMap((alpha) => combined(alpha, 'cheap')))
     assert.equal(whole(low), 27)
     assert.equal(whole(high), 66)
-    const [lowWorked, highWorked] = rangeOf(SHARES.flatMap((s) => [BETA_UNCACHED, BETA_CACHED_W1].map((beta) => combinedReduction({ s, FG: FG_WORKED, FJ: fj(beta) }))))
-    assert.equal(whole(lowWorked), 137)
+    // The worked instance over the same caching cases: OpenAI's s = 0.5 figure (135.8) sets the low end.
+    const [lowWorked, highWorked] = rangeOf(SHARES.flatMap((s) => EVERY_BETA.map((beta) => combinedReduction({ s, FG: FG_WORKED, FJ: fj(beta) }))))
+    assert.equal(whole(lowWorked), 136)
     assert.equal(whole(highWorked), 222)
+    // The table's two rows alone give 137-222x.
+    const tableRows = SHARES.flatMap((s) => [BETA_UNCACHED, BETA_CACHED_W1].map((beta) => combinedReduction({ s, FG: FG_WORKED, FJ: fj(beta) })))
+    assert.deepEqual(rangeOf(tableRows).map(whole), [137, 222])
   })
 
   test('"If the expensive setting is the one retained ... the same configuration yields 13-27x"', () => {
