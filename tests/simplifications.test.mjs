@@ -67,6 +67,9 @@ const SHARES = [0.1, 0.3, 0.5]
 const BETA_UNCACHED = s4Beta({ C: W.C, rho: W.rho })
 const BETA_CACHED_W1 = s4Beta({ C: W.C, rho: W.rho, c: 0.1, w: 1 })
 const BETA_CACHED_W125 = s4Beta({ C: W.C, rho: W.rho, c: 0.1, w: 1.25 })
+// Appendix B, "The batching factor beta": at OpenAI, where caching is automatic,
+// the batched call writes its prefix too.
+const BETA_CACHED_W125_OPENAI = s4Beta({ C: W.C, rho: W.rho, c: 0.1, w: 1.25, batchedWrite: true })
 const ALL_BETAS = [BETA_UNCACHED, BETA_CACHED_W1, BETA_CACHED_W125]
 
 const FG_WORKED = factorFG({ alpha: W.alpha, kept: 'cheap', R: W.R, Tfull: W.Tfull, nStar: W.nStar })
@@ -249,10 +252,6 @@ describe('Section 5, S4 and Appendix B: the batching factor beta', () => {
     }
   })
 
-  test('Appendix B: "a factor of 1.2 to 1.325, about a sixth to a quarter of the judging cost"', () => {
-    near(1 - 1 / BETA_CACHED_W1, 1 / 6, 1e-12)
-    assert.equal(decimals(1 - 1 / BETA_CACHED_W125, 2), 0.25)
-  })
 
   test('Appendix C.1 (E2): "rho is between about 1.4 and 1.7" from 1,005 fixed tokens, 90 to 100 marginal input tokens and 220 to 270 output tokens at six times the input rate', () => {
     // "about 1,005 fixed tokens and about 90 to 100 marginal input tokens per
@@ -268,11 +267,21 @@ describe('Section 5, S4 and Appendix B: the batching factor beta', () => {
     const [uLow, uHigh] = rangeOf([1.4, 1.7].map((r) => s4Beta({ C: 5, rho: r })))
     assert.equal(decimals(uLow, 1), 1.4)
     assert.equal(decimals(uHigh, 1), 1.5)
-    // "with it": c = 0.1 at either write multiple of Appendix B (w = 1 or 1.25).
-    const cached = [1.4, 1.7].flatMap((r) => [1, 1.25].map((w) => s4Beta({ C: 5, rho: r, c: 0.1, w })))
+    // "with it": c = 0.1 at either write multiple of Appendix B (w = 1 or 1.25),
+    // and with the batched call paying the write too, as at OpenAI.
+    const cached = [1.4, 1.7].flatMap((r) => [
+      ...[1, 1.25].map((w) => s4Beta({ C: 5, rho: r, c: 0.1, w })),
+      s4Beta({ C: 5, rho: r, c: 0.1, w: 1.25, batchedWrite: true }),
+    ])
     const [cLow, cHigh] = rangeOf(cached)
     assert.equal(decimals(cLow, 2), 1.04)
     assert.equal(decimals(cHigh, 2), 1.08)
+  })
+
+  test('Appendix C.1 (E2): "against 3.0 and 1.18 to 1.325 at the illustrative rho = 0.2"', () => {
+    assert.equal(decimals(BETA_UNCACHED, 1), 3)
+    assert.equal(decimals(BETA_CACHED_W125_OPENAI, 2), 1.18)
+    assert.equal(decimals(BETA_CACHED_W125, 3), 1.325)
   })
 })
 
@@ -332,8 +341,34 @@ describe('Appendix B, Table tab:cumulative and the component factors', () => {
     near(fj(BETA_CACHED_W1), 108, 1e-9)
   })
 
-  test('"at OpenAI\'s and Anthropic\'s w = 1.25 it is about 119"', () => {
+  test('"at Anthropic\'s w = 1.25, where the batched call pays no write, it is about 119"', () => {
     assert.equal(whole(fj(BETA_CACHED_W125)), 119)
+  })
+
+  test('Appendix B: "Where the batched call writes its prefix too, the denominator 1 + C rho of Equation s4 becomes w + C rho, and at OpenAI\'s w = 1.25, beta = 2.65/2.25, about 1.18"', () => {
+    near(BETA_CACHED_W125_OPENAI, 2.65 / 2.25, 1e-12)
+    assert.equal(decimals(BETA_CACHED_W125_OPENAI, 2), 1.18)
+    // batchedWrite changes nothing where there is no write premium.
+    near(s4Beta({ C: W.C, rho: W.rho, c: 0.1, w: 1, batchedWrite: true }), BETA_CACHED_W1, 1e-12)
+  })
+
+  test('"at OpenAI\'s, where the batched call pays the write too, it is 106, and that row becomes about 175, 153 and 136x, within two of Google\'s"', () => {
+    const FJ = fj(BETA_CACHED_W125_OPENAI)
+    near(FJ, 106, 1e-9)
+    const row = SHARES.map((s) => whole(combinedReduction({ s, FG: FG_WORKED, FJ })))
+    assert.deepEqual(row, [175, 153, 136])
+    const google = SHARES.map((s) => whole(combinedReduction({ s, FG: FG_WORKED, FJ: fj(BETA_CACHED_W1) })))
+    row.forEach((r, i) => assert.ok(Math.abs(r - google[i]) <= 2))
+  })
+
+  test('Appendix B: "a factor of 1.18 to 1.325, about a seventh to a quarter of the judging cost"', () => {
+    const saved = (beta) => 1 - 1 / beta
+    assert.equal(decimals(BETA_CACHED_W125_OPENAI, 2), 1.18)
+    assert.equal(decimals(BETA_CACHED_W125, 3), 1.325)
+    // The range spans every cached case: OpenAI's (lowest), Google's w = 1, Anthropic's (highest).
+    assert.ok(BETA_CACHED_W125_OPENAI < BETA_CACHED_W1 && BETA_CACHED_W1 < BETA_CACHED_W125)
+    assert.ok(Math.abs(saved(BETA_CACHED_W125_OPENAI) - 1 / 7) < 0.01)
+    assert.equal(decimals(saved(BETA_CACHED_W125), 2), 0.25)
   })
 
   test('Table row "Reduction, no prompt caching (F_J = 270)": 195x, 208x, 222x at s = 0.1, 0.3, 0.5', () => {
@@ -396,10 +431,11 @@ describe('Appendix B, Table tab:cumulative and the component factors', () => {
     }
   })
 
-  test('Table caption: the naive product is "5,670x for the same inputs without caching and 2,268x with it at w = 1 (2,504x at w = 1.25)"', () => {
+  test('Table caption: the naive product is "5,670x for the same inputs without caching and 2,268x with it at w = 1 (2,504x at Anthropic\'s w = 1.25, 2,226x at OpenAI\'s)"', () => {
     assert.equal(whole(naiveProduct({ FG: FG_WORKED, E: 2, K: 5, beta: BETA_UNCACHED })), 5670)
     assert.equal(whole(naiveProduct({ FG: FG_WORKED, E: 2, K: 5, beta: BETA_CACHED_W1 })), 2268)
     assert.equal(whole(naiveProduct({ FG: FG_WORKED, E: 2, K: 5, beta: BETA_CACHED_W125 })), 2504)
+    assert.equal(whole(naiveProduct({ FG: FG_WORKED, E: 2, K: 5, beta: BETA_CACHED_W125_OPENAI })), 2226)
     // The caption's own form, (1 + alpha) E R K beta T_full / n*.
     assert.equal(whole((1 + 20) * 2 * 3 * 5 * BETA_UNCACHED * (180 / 60)), 5670)
   })

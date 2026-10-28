@@ -751,3 +751,15 @@ Every assumption, checked where the paper relies on it:
 Nothing skipped: each old passage was found exactly once and no two corrections touched the same words; the two corrections each to Zhao et al., Cemri et al., Li et al. (2025) and the LLMs-as-Judges survey touch different fields. Left for a later pass: Appendix B.5 (The combined reduction) still says "at OpenAI's and Anthropic's w = 1.25 it is about 119", which rests on the assumption Appendix B.4 now states and which that appendix says does not hold at OpenAI.
 
 Rebuilt with latexmk: no errors, no undefined references or citations, no BibTeX warnings, no overfull or underfull boxes; the one float-placement note as before. 135 of 135 tests pass.
+
+## 28 October 2026, 01:33: the item left by the 00:14 pass
+
+The 00:14 pass left one item open: Appendix B.5 still applied Anthropic's batching factor to OpenAI. Five corrections, and the runner now prices the OpenAI case.
+
+- Appendix B.4 (The batching factor beta): after "but not where it is automatic, as at OpenAI (above)." a new sentence: "Where the batched call writes its prefix too, the denominator 1 + C rho of Equation s4 becomes w + C rho, and at OpenAI's w = 1.25, beta = 2.65/2.25, about 1.18." The closing sentence's "a factor of 1.2 to 1.325, about a sixth to a quarter" is now "a factor of 1.18 to 1.325, about a seventh to a quarter". At 1.18 batching saves 15% of the judging cost (1 - 1/1.178), about a seventh.
+- Appendix B.5 (The combined reduction): "at OpenAI's and Anthropic's w = 1.25 it is about 119, and the cached row ... becomes about 179, 161 and 146x" is now "at Anthropic's w = 1.25, where the batched call pays no write, it is about 119, and the cached row ... becomes about 179, 161 and 146x; at OpenAI's, where the batched call pays the write too (beta about 1.18, above), it is 106, and that row becomes about 175, 153 and 136x, within two of Google's." F_J = 90 x 2.65/2.25 = 106 exactly; the reductions at s = 0.1, 0.3 and 0.5 are 175.3, 153.0 and 135.8, against Google's 176, 154 and 137.
+- Table tab:cumulative, caption: "(2,504x at w = 1.25)" is now "(2,504x at Anthropic's w = 1.25, 2,226x at OpenAI's)". 1,890 x 1.1778 = 2,226.
+- Section 6 (the overstatement of the naive product): "8 to 12 at a write multiple of w = 1.25" now says "where the batched call pays no write (Anthropic's terms)", since those figures use beta = 1.325.
+- Appendix C.1 (experiment E2): "against 3.0 and 1.2 to 1.325 at the illustrative rho = 0.2" is now "1.18 to 1.325". The sentence's measured range, beta of 1.04 to 1.08 with caching at rho of 1.4 to 1.7, holds unchanged with OpenAI's case included (8.65/8.25 = 1.048 and 10.15/9.75 = 1.041).
+
+Runner: s4Beta in src/cost-model.mjs takes batchedWrite (default false, so every existing figure is unchanged); with it the denominator is w + C rho. Five tests in tests/simplifications.test.mjs quote the new sentences, and the test of "1.04 to 1.08" now includes the OpenAI case. 138 of 138 tests pass.

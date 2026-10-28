@@ -413,7 +413,7 @@ simplifications S3 and S4 contribute almost nothing to the combined figure, howe
 their own factors. The naive product $F_G \cdot E \cdot K \cdot \beta$ (equivalently, all
 factors applied to the whole budget) exceeds the exact reduction by a factor that grows
 with $E \cdot K \cdot \beta$ and, with the cheap setting kept, with $\alpha$, since that factor equals $(1-s)\,E \cdot K \cdot \beta + s\,(1+\alpha)$ when S1 keeps the cheap setting (when it keeps the expensive one the second term is $s\,(1+\alpha)/\alpha$, which falls as $\alpha$ grows): with the cheap setting kept, $13$ to $29$ in the worked instance (Appendix~\ref{app:worked} gives the
-figures), but $7$ to $11$ at the setting-cost ratios we measured between the \texttt{high} setting and a lower one ($1.74$ to $3.14$, or $1.75$ to $3.18$ by output tokens, Appendix~\ref{app:measurements}) under cached-read pricing with no write premium ($w = 1$), falling below $10$ once $s$ passes about $0.22$ to $0.26$, and $8$ to $12$ at a write multiple of $w = 1.25$, falling below $10$ once $s$ passes about $0.31$ to $0.36$. And because $F_G$ and $F_J$ share the factors $R$ and
+figures), but $7$ to $11$ at the setting-cost ratios we measured between the \texttt{high} setting and a lower one ($1.74$ to $3.14$, or $1.75$ to $3.18$ by output tokens, Appendix~\ref{app:measurements}) under cached-read pricing with no write premium ($w = 1$), falling below $10$ once $s$ passes about $0.22$ to $0.26$, and $8$ to $12$ at a write multiple of $w = 1.25$ where the batched call pays no write (Anthropic's terms), falling below $10$ once $s$ passes about $0.31$ to $0.36$. And because $F_G$ and $F_J$ share the factors $R$ and
 $T_{\text{full}}/n^*$, S2 and S6 are the only simplifications whose benefit is
 independent of $s$; they are also two of the three whose cost to validity the power calculation expresses, S2 through the regeneration term of Equation~\ref{eq:variance-decomposition}, S3 through the within-task variances in that term, and S6 through the floor $n^*$ (Sections~\ref{sec:simplifications} and~\ref{sec:power}).
 
@@ -718,8 +718,8 @@ judging calls, before any per-call price is attached. The full protocol of the w
 
 With $C = 5$ and $\rho = 0.2$, Equation~\ref{eq:s4} gives $\beta = 3.0$ without caching
 ($c = w = 1$). With $c = 0.1$ and $w = 1$ it gives $\beta = 1.2$, and the ceiling
-$1 + (C-1)\,c$ is $1.4$; with $w = 1.25$, $\beta = 1.325$, on the assumption that the batched call itself pays no cache write, which holds where caching is requested call by call, as at Anthropic, but not where it is automatic, as at OpenAI (above). Batching therefore saves a
-factor of $3$ on judging cost without caching and, with it, a factor of $1.2$ to $1.325$, about a sixth to a quarter of the judging cost.
+$1 + (C-1)\,c$ is $1.4$; with $w = 1.25$, $\beta = 1.325$, on the assumption that the batched call itself pays no cache write, which holds where caching is requested call by call, as at Anthropic, but not where it is automatic, as at OpenAI (above). Where the batched call writes its prefix too, the denominator $1 + C\rho$ of Equation~\ref{eq:s4} becomes $w + C\rho$, and at OpenAI's $w = 1.25$, $\beta = 2.65/2.25 \approx 1.18$. Batching therefore saves a
+factor of $3$ on judging cost without caching and, with it, a factor of $1.18$ to $1.325$, about a seventh to a quarter of the judging cost.
 
 \subsection{The combined reduction}
 
@@ -727,7 +727,7 @@ Take $\alpha = 20$ with the cheap setting kept (S1), $R = 3$, $K = 5$, $E = 2$, 
 count $T_{\text{full}} = 180$ reduced to an assumed floor $n^* = 60$. Then
 Equation~\ref{eq:component-factors} gives $F_G = 21 \cdot 3 \cdot 3 = 189$ and $F_J = 2
 \cdot 3 \cdot 5 \cdot 3 \cdot \beta = 90\beta$, that is $270$ with uncached batching and
-$108$ under cached-read pricing with no write premium ($w = 1$, Google's terms); at OpenAI's and Anthropic's $w = 1.25$ it is about $119$, and the cached row of Table~\ref{tab:cumulative} becomes about $179$, $161$ and $146\times$. Table~\ref{tab:cumulative} evaluates
+$108$ under cached-read pricing with no write premium ($w = 1$, Google's terms); at Anthropic's $w = 1.25$, where the batched call pays no write, it is about $119$, and the cached row of Table~\ref{tab:cumulative} becomes about $179$, $161$ and $146\times$; at OpenAI's, where the batched call pays the write too ($\beta \approx 1.18$, above), it is $106$, and that row becomes about $175$, $153$ and $136\times$, within two of Google's. Table~\ref{tab:cumulative} evaluates
 Equation~\ref{eq:cumulative} across plausible values of the judging share $s$. The floor of $60$ is assumed for illustration and does not follow from the power calculation below, whose inputs give $n^* = 128$ at $R = 3$ and $n^* = 184$ once S2 reduces $R$ to $1$, as it does here. On those inputs the floor exceeds $T_{\text{full}} = 180$, S6 saves nothing (the reduced protocol keeps all $180$ tasks, a factor of $1$, not $3$, and even so reaches a power of only $0.79$ at $R = 1$, and less once its $K = 1$ is counted), and because $F_G$ and $F_J$ both carry that factor, every reduction in the table falls to a third, $46$--$74\times$.
 
 \begin{table}[h]
@@ -743,7 +743,7 @@ Reduction, cached-read pricing, $w = 1$ ($F_J = 108$) & $176\times$ & $154\times
 \caption{Combined reduction from S1--S4 and S6 (Equation~\ref{eq:cumulative}) for the
 worked instance, with $F_G = 189$. Multiplying every factor against the total cost
 would give $(1+\alpha) \cdot E \cdot R \cdot K \cdot \beta \cdot T_{\text{full}}/n^* = 5{,}670\times$
-for the same inputs without caching and $2{,}268\times$ with it at $w = 1$ ($2{,}504\times$ at $w = 1.25$), the overstatement
+for the same inputs without caching and $2{,}268\times$ with it at $w = 1$ ($2{,}504\times$ at Anthropic's $w = 1.25$, $2{,}226\times$ at OpenAI's), the overstatement
 Section~\ref{sec:cumulative} describes. The reference implementation reproduces every entry of this table
 (\texttt{tests/simplifications.test.mjs}).}
 \label{tab:cumulative}
@@ -789,7 +789,7 @@ therefore holds only once the fixed prefix clears the provider's minimum; a rubr
 should measure its prefix length. The same 11 calls give the
 fixed and marginal token counts of Equation~\ref{eq:s4}: about 1{,}005 fixed tokens and about
 90 to 100 marginal input tokens per additional short answer, a ratio of about $0.1$ in input tokens alone. Equation~\ref{eq:s4} defines $\rho$ on cost, however, and scoring each answer also produced about 220 to 270 output tokens of verdicts, priced at $6\times$ the input rate (\$30 against \$5 per million), so on these calls $\rho$ is between about $1.4$ and $1.7$. Answers of the
-length deep-research tasks produce would raise $\rho$ considerably. At $C = 5$, a $\rho$ of $1.4$ to $1.7$ gives a batching factor $\beta$ (Equation~\ref{eq:s4}) of about $1.4$ to $1.5$ without caching and $1.04$ to $1.08$ with it, against $3.0$ and $1.2$ to $1.325$ at the illustrative $\rho = 0.2$ of Appendix~\ref{app:worked}.
+length deep-research tasks produce would raise $\rho$ considerably. At $C = 5$, a $\rho$ of $1.4$ to $1.7$ gives a batching factor $\beta$ (Equation~\ref{eq:s4}) of about $1.4$ to $1.5$ without caching and $1.04$ to $1.08$ with it, against $3.0$ and $1.18$ to $1.325$ at the illustrative $\rho = 0.2$ of Appendix~\ref{app:worked}.
 
 \textbf{Test--retest (S3).} The same answer was scored five times with no memory between
 calls. The scores were 50, 50, 60, 50 and 43 on the 100-point scale: mean $50.6$, standard

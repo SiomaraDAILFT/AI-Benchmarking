@@ -269,14 +269,17 @@ export function rho({ jFixed, jMarginal }) {
  * S4's batching factor,
  * beta = J_u^cached / J_b = (w + (C - 1) c + C rho) / (1 + C rho).
  * Without caching (c = w = 1) this is C (1 + rho) / (1 + C rho).
- * Equation \label{eq:s4}.
+ * Equation \label{eq:s4}, which assumes the batched call pays no cache write.
+ * Where caching is automatic, as at OpenAI, the batched call writes its prefix
+ * too (batchedWrite: true) and the denominator becomes w + C rho
+ * (Appendix B, "The batching factor beta").
  */
-export function s4Beta({ C, rho, c = 1, w = 1 }) {
+export function s4Beta({ C, rho, c = 1, w = 1, batchedWrite = false }) {
   count('C', C)
   nonNegative('rho', rho)
   cachedReadFraction(c)
   writeMultiple(w)
-  return (w + (C - 1) * c + C * rho) / (1 + C * rho)
+  return (w + (C - 1) * c + C * rho) / ((batchedWrite ? w : 1) + C * rho)
 }
 
 /**
