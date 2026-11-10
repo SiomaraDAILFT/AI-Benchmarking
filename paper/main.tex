@@ -292,7 +292,9 @@ amortise). With caching and no write premium ($w = 1$), the corresponding limits
 $1 + (C-1)\,c$ and $1$: with one cache write per group of $C$ unbatched calls (Equation~\ref{eq:judging-cached}) the batching factor cannot exceed $1 + (C-1)\,c$, which at the
 cached-read fractions currently published (Appendix~\ref{app:worked}) stays well below $C$ and grows by only $c$ for each system added ($1.4$ at $C = 5$ and $c = 0.1$, against $5$ without caching). The cost case for S4 is therefore weak wherever the judging prefix clears the provider's minimum and
 prompt caching is available, as it now is from the three largest
-providers (Section~\ref{sec:model}), and by default from OpenAI and, on Gemini 2.5 and later models, from Google (Appendix~\ref{app:worked}). \textbf{What is added rather than lost}: a judge shown several systems' answers to the same task side by side has
+providers (Section~\ref{sec:model}), and by default from OpenAI and, on Gemini 2.5 and later models, from Google (Appendix~\ref{app:worked}).
+
+\textbf{What is added rather than lost}: a judge shown several systems' answers to the same task side by side has
 calibration context it would lack when scoring one answer in isolation. A method built on this, run iteratively in two stages over heterogeneous batches, has been measured to help: \citet{yuan2024batcheval} find that scoring one sample at a
 time is ``sensitive to prompt design'' and shows ``poor resistance to noise'', and that
 their method, which presents a batch of samples in one prompt so that in-batch comparison serves as a
@@ -355,7 +357,9 @@ move even when the candidate responses stay fixed, simply because the evaluator 
 changed''. On the aggregation side, methods that model the judges' shared confounder
 explicitly recover part of what correlation costs \citep{zhao2026care}; they presuppose
 that the per-judge scores were retained, which Section~\ref{sec:stats} requires in any
-case. More judges need not cost more, either. \citet{verga2024juries} find that a panel of several smaller models from different
+case.
+
+More judges need not cost more, either. \citet{verga2024juries} find that a panel of several smaller models from different
 families correlates better with human judgement than a single large judge, exhibits less
 intra-model bias, and costs over seven times less. Under Equation~\ref{eq:judging-batched}
 the relevant quantity is the product $J \cdot j'$: a panel of three inexpensive judges
@@ -367,6 +371,7 @@ Before any dimension is reduced, find the term of Equation~\ref{eq:total} it con
 \subsection{S6: Reducing task count, bounded by statistical power}
 
 Reducing $T$ saves linearly on both generation and judging cost, and it has an explicit consequence: below a computable floor $n^*$ (Section~\ref{sec:power}), the benchmark no longer has the stated power to detect, at the stated significance level, the difference in mean score it was designed to detect. Fewer regenerations (S2) and fewer repeat scorings (S3) also cost power, since they raise $\sigma$, the standard deviation of the task-level paired differences, and with it $n^*$ (Equation~\ref{eq:variance-decomposition}); S6 is the dimension that floor bounds directly, and the floor can be computed once a pilot has produced a variance estimate.
+
 \textbf{What is lost}: statistical power alone, provided the reduced task set
 is representative of the full one. That proviso is where the evidence from the
 benchmark-compression literature is relevant. \citet{polo2024tinybenchmarks} show that

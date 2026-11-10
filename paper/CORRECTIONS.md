@@ -852,3 +852,13 @@ One angle not taken before: Section 5's first three simplifications (S1 to S3) r
 - S3, last paragraph: "One further result bears directly on how many repeats are needed" opened the judgment-distribution result in the middle of the paragraph recommending a pilot estimate of K. It now starts its own paragraph.
 
 Nothing skipped: each old passage was found exactly once.
+
+## 11 November 2026, 00:4x pass
+
+The 22:4x pass's reading carried on through S4 to S6: whether each paragraph does one thing and whether the same element is laid out the same way in each simplification. Three findings, all applied; no words changed.
+
+- S6: "\textbf{What is lost}" began on a new source line with no blank line before it, so it was printed inside the paragraph on the task floor. It now starts its own paragraph. This also corrects the 22:4x entry above, which said S6 already gave it one.
+- S4: "\textbf{What is added rather than lost}" ran on inside the paragraph that works out the batching factor's limits; it now starts its own paragraph, as the losses of S1 to S3 and S6 do.
+- S5, second paragraph: it first treats whether the judges' errors are independent and then, from "More judges need not cost more, either", what a panel costs. A paragraph break now comes before that sentence.
+
+Nothing skipped: each old passage was found exactly once.
