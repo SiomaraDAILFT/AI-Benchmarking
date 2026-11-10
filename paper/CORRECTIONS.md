@@ -841,3 +841,14 @@ One angle: Section 3 (Merits and Costs of the DRACO Protocol), Section 9 (Limita
 - Section 3, second paragraph: "we found no sample-size or statistical-power methodology published for DRACO" is now "no sample-size or statistical-power methodology has been published for DRACO, as Section~\ref{sec:draco} noted". Section 2.1 already says so with its evidence; the sentence repeated it as if new.
 
 Nothing skipped: each old passage was found exactly once.
+
+## 10 November 2026, 22:4x pass
+
+One angle not taken before: Section 5's first three simplifications (S1 to S3) read paragraph by paragraph, for whether each paragraph does one thing and whether the same element is laid out the same way in each simplification. Four findings, all applied; no words changed except one capital.
+
+- S1, "What is lost": it was written "\textbf{What is lost.} Questions about ...", while S2, S3 and S6 write "\textbf{What is lost}: ..." with a lower-case continuation. It now reads "\textbf{What is lost}: questions about ...".
+- S2 and S3: the "What is lost" part ran on inside the paragraph that states the saving, while S1 and S6 give it a paragraph of its own. Both now start a new paragraph there.
+- S1, first paragraph: it worked out both choices of retained setting and then, in the same paragraph, turned to the evidence on how large the setting-cost ratio is (provider billing, the independent measurement service, our own measurement). A paragraph break now comes before "The generation-side case for S1 rests on".
+- S3, last paragraph: "One further result bears directly on how many repeats are needed" opened the judgment-distribution result in the middle of the paragraph recommending a pilot estimate of K. It now starts its own paragraph.
+
+Nothing skipped: each old passage was found exactly once.
