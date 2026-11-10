@@ -114,9 +114,9 @@ Drawing tasks from real usage rather than composing them for the benchmark addre
 a holistic view of model performance and increasing the reliability of the evaluation'',
 and Prometheus~2, a purpose-built evaluator model, judges against user-defined criteria, which its authors report existing open evaluators often could not do \citep{kim2024prometheus2}. Repeated judge scoring separates judge noise from signal; S3 in Section~\ref{sec:simplifications} gives the evidence that the noise is real.
 
-Against that, we found no sample-size or statistical-power methodology published for DRACO\@. Judge choice moves absolute score levels: the benchmark's own authors report that one of their three judges ``consistently assigned lower scores'' \citep[Appendix~A]{draco2026}, and a study of 13 judge models on a short-answer knowledge benchmark finds scores that differ by judge while rankings mostly agree \citep{thakur2025judging}. Third-party trackers of DRACO results already disagree about which system leads and by how much (Appendix~\ref{app:published}); no figure should yet be taken from them.
+Against that, no sample-size or statistical-power methodology has been published for DRACO, as Section~\ref{sec:draco} noted. Judge choice moves absolute score levels: the benchmark's own authors report that one of their three judges ``consistently assigned lower scores'' \citep[Appendix~A]{draco2026}, and a study of 13 judge models on a short-answer knowledge benchmark finds scores that differ by judge while rankings mostly agree \citep{thakur2025judging}. Third-party trackers of DRACO results already disagree about which system leads and by how much (Appendix~\ref{app:published}); no figure should yet be taken from them.
 
-The weakness we take to matter most for whether the methodology gets used at all is a third one: run rigorously, DRACO or any protocol with its structure is expensive and slow. The number of judge scorings in a single run, when each answer is judged separately, is the product of how many systems are compared, how many tasks, how many judges, how many times each judge re-scores an answer, how many times each answer is regenerated, and how many configuration variants (temperature, retrieval settings, reasoning-effort levels) are swept per system. Each factor is well motivated on its own, and Section~\ref{sec:model} makes each explicit; together they make a faithful run expensive to repeat, since in such a run four of them (systems, tasks, regenerations and settings) multiply the whole cost and the other two multiply its judging term (Equations~\ref{eq:generation} and~\ref{eq:judging-unbatched}). Even with batched judging, three of them still multiply the whole cost (Equation~\ref{eq:total}).
+The weakness we take to matter most for whether the methodology gets used at all is another: run rigorously, DRACO or any protocol with its structure is expensive and slow. The number of judge scorings in a single run, when each answer is judged separately, is the product of how many systems are compared, how many tasks, how many judges, how many times each judge re-scores an answer, how many times each answer is regenerated, and how many configuration variants (temperature, retrieval settings, reasoning-effort levels) are swept per system. Each factor is well motivated on its own, and Section~\ref{sec:model} makes each explicit; together they make a faithful run expensive to repeat, since in such a run four of them (systems, tasks, regenerations and settings) multiply the whole cost and the other two multiply its judging term (Equations~\ref{eq:generation} and~\ref{eq:judging-unbatched}). Even with batched judging, three of them still multiply the whole cost (Equation~\ref{eq:total}).
 
 \sectionbreak
 \section{A General Cost Model}
@@ -559,7 +559,9 @@ significantly influence'' the result, in particular which systems are included a
 
 The generation-cost parameter $g$ is treated as a single external number: in Equations~\ref{eq:generation} and~\ref{eq:total}, one average over every system and
 setting; in practice it may itself have meaningful variance (a system's answer length, and
-therefore its cost, can differ substantially task to task), which the framework absorbs by taking $g$ as an average over tasks (Section~\ref{sec:model}) instead of modelling it separately. Because $g$ enters the generation cost and the total only as a multiplier (Equations~\ref{eq:generation} and~\ref{eq:total}), both are right on average, but the framework does not say how far the actual spend can differ from them; a more complete treatment would model the distribution of $g$. The batching
+therefore its cost, can differ substantially task to task), which the framework absorbs by taking $g$ as an average over tasks (Section~\ref{sec:model}) instead of modelling it separately. Because $g$ enters the generation cost and the total only as a multiplier (Equations~\ref{eq:generation} and~\ref{eq:total}), both are right on average, but the framework does not say how far the actual spend can differ from them; a more complete treatment would model the distribution of $g$.
+
+The batching
 saving in Equation~\ref{eq:s4} assumes a judge can meaningfully score $C$ answers in one
 call without a quality cost from context length or attention dilution as $C$ and the length of the answers grow;
 this should be checked empirically at the $C$ and answer lengths the benchmark uses.
@@ -568,6 +570,7 @@ exhibit large performance drops as the context length increases'', with only hal
 models they test maintaining satisfactory performance at 32K tokens, and
 \citet{liu2024lostmiddle} document the position-dependent degradation to which a
 multi-answer prompt is exposed.
+
 The nested measurement structure ($R$ regenerations $\times$ $J$ judges $\times$ $K$
 repeats, aggregated to one score per system per task) shrinks the regeneration and repeat variance by averaging, and leaves out the variance due to the choice of judges, at the
 aggregation step, before $\sigma^2$ is estimated for Equation~\ref{eq:power}. In the
@@ -584,7 +587,9 @@ it is dropped. A mixed-effects model with crossed random effects for task and ju
 \citep{baayen2008}, with regenerations nested within task and system but crossed with judge, and repeats nested within judge and answer, would propagate all
 components into a single interval, at the price of simplicity; without it, the interval of Section~\ref{sec:stats} stays conditional on the judge
 panel and aggregation rule. The raw table retained under Section~\ref{sec:stats} is what
-makes fitting such a model later possible without re-running anything. The minimum difference $\delta$ worth detecting for a given comparison remains a domain-specific judgement, which the formulas in Section~\ref{sec:power} take as an input. The full reference run of Section~\ref{sec:validation} is made once, on one set of systems, so reusing its $\sigma$, its $\alpha$ and its measured fidelity losses after that set changes assumes they hold for systems it did not include; $\alpha$ already differs between the two models of Appendix~\ref{app:measurements}.
+makes fitting such a model later possible without re-running anything.
+
+The minimum difference $\delta$ worth detecting for a given comparison remains a domain-specific judgement, which the formulas in Section~\ref{sec:power} take as an input. The full reference run of Section~\ref{sec:validation} is made once, on one set of systems, so reusing its $\sigma$, its $\alpha$ and its measured fidelity losses after that set changes assumes they hold for systems it did not include; $\alpha$ already differs between the two models of Appendix~\ref{app:measurements}.
 
 \section{Conclusion}
 

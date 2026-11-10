@@ -831,3 +831,13 @@ The passes stopped after 28 October 04:07 and are resumed here. Two angles first
 - Title page: "revised 27 October 2026" is now "revised 10 November 2026". Three passes changed the text on 28 October after the stated revision date, and this one changes it today.
 
 Nothing skipped: each old passage was found exactly once.
+
+## 10 November 2026, 21:17 pass
+
+One angle: Section 3 (Merits and Costs of the DRACO Protocol), Section 9 (Limitations and Open Questions) and the Conclusion read as a first-time reader would, for structure and for claims the reader cannot place. Three findings, all applied.
+
+- Section 9: the whole section was one paragraph of about 400 words holding five separate limitations (the variance of g, the batching assumption, the nested measurement structure, the minimum difference delta, reusing the reference run). It now has a paragraph break before "The batching saving", "The nested measurement structure" and "The minimum difference"; no words changed.
+- Section 3, third paragraph: "The weakness we take to matter most ... is a third one" is now "... is another". The paragraph before it names three things a reader can count as weaknesses (no power methodology, judge-dependent score levels, trackers that disagree), so "a third" could not be matched to them.
+- Section 3, second paragraph: "we found no sample-size or statistical-power methodology published for DRACO" is now "no sample-size or statistical-power methodology has been published for DRACO, as Section~\ref{sec:draco} noted". Section 2.1 already says so with its evidence; the sentence repeated it as if new.
+
+Nothing skipped: each old passage was found exactly once.
