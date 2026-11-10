@@ -821,3 +821,13 @@ What each cited work actually says:
 Nothing skipped: each old passage was found exactly once and no two corrections touched the same words. The first two touch different sentences of the paragraph after Equation cumulative.
 
 Tests: in tests/simplifications.test.mjs the test of the 97 to 175--195x sentence now takes every caching case of Appendix B.5 and expects [175, 195], and a new test checks the expensive-setting range of the overstatement sentence (6.414 to 27.105, so 6 to 27). Rebuilt with latexmk: no errors, no undefined references or citations, no BibTeX warnings, no overfull or underfull boxes; two float-placement notes, one as before and one new because Appendices A and C.1 grew, so the table of measured setting-cost ratios in Appendix C.2 now goes to the top of the next page. 142 of 142 tests pass.
+
+## 10 November 2026, 18:52 pass
+
+The passes stopped after 28 October 04:07 and are resumed here. Two angles first, both empty: wording that reads as machine-written (the only hits are inside quotations from cited works) and acronyms lower-cased by the bibliography style (every one is braced; the lower-case hits are a domain name and addresses). Then the abstract, the introduction and Section 2 read against the appendices gave three findings, all applied.
+
+- Section 2.1 (DRACO), the task pipeline: the requests were "then filtered and augmented into a task set of 100 items spanning 10 domains" is now "then rewritten, augmented and filtered into a pool from which 100 items spanning 10 domains were sampled in proportion to that system's mix of domains and reviewed by its developer's domain experts". The 04:07 pass corrected Appendix A.1 to the source's Stages 4 and 5 (a filtered pool, then 100 sampled by the domain mix and reviewed by in-house experts) and noted that the sampling step bears on Section 2.1's own reading of the set as a curated sample from a filtered stratum, but left this sentence saying that filtering produced the 100 directly. The body still names no company.
+- Introduction, first paragraph: "We are not affiliated with DRACO's authors" is now "\Theauthorisare{} not affiliated ...". The abstract makes the same statement through the macro the preamble defines for how the paper refers to its author ("Change these two lines together when co-authors join"); this sentence bypassed it, so the two statements about the person spoke in two voices. The paper's "we" of reasoning (for example "We are not aware of" in Section 4) is unchanged.
+- Title page: "revised 27 October 2026" is now "revised 10 November 2026". Three passes changed the text on 28 October after the stated revision date, and this one changes it today.
+
+Nothing skipped: each old passage was found exactly once.
