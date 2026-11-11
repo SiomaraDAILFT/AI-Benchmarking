@@ -880,3 +880,12 @@ One angle not taken before: the body read only for names of providers, which the
 - Section 6: "they still roughly double it at $s = 0.1$": "it" could be read as the ratio named just before it. It is now "double the combined reduction".
 
 Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings as before).
+
+## 11 November 2026, 14:4x pass
+
+Same first-time-reader structure angle, on two more single-paragraph blocks. Three topic breaks; no words changed.
+
+- Section 6 (Cumulative Effect): a break before "The naive product $F_G \cdot E \cdot K \cdot \beta$" (the exact combined figure gives way to how far the naive product overstates it) and before "And because $F_G$ and $F_J$ share the factors $R$ and" (which simplifications' benefit is independent of the judging share $s$).
+- Section 7.2 (Power and the S6 floor): a break before "Writing $\omega^2$ for the variance of the true task-level paired" (the power formula and its provenance give way to the variance decomposition).
+
+Nothing skipped: each boundary was found exactly once.
