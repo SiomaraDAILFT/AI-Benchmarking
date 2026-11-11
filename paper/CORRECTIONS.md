@@ -889,3 +889,13 @@ Same first-time-reader structure angle, on two more single-paragraph blocks. Thr
 - Section 7.2 (Power and the S6 floor): a break before "Writing $\omega^2$ for the variance of the true task-level paired" (the power formula and its provenance give way to the variance decomposition).
 
 Nothing skipped: each boundary was found exactly once.
+
+## 11 November 2026, 16:3x pass
+
+One angle not taken before: Section 8 (Empirical Validation of the Reduction Factors) read against the appendices it points to, and for whether each phase's heading matches what the phase does. Three findings, all applied.
+
+- Phase 1: its data give "the setting-cost ratio $\alpha$ on the benchmark's own tasks (Appendix~\ref{app:measurements})". The appendix measured $\alpha$ on analytic prompts, not on a benchmark's tasks, so the parenthesis read as if it held that figure. It is now "... on the benchmark's own tasks, rather than on the analytic prompts measured in Appendix~\ref{app:measurements}".
+- Phase 2 heading: "on the same systems and tasks" is now "on the same systems, and on the same tasks or a sample of them". The paragraph itself runs S6 and the combined variant on a pre-registered sample of $n^*$ tasks, which the heading denied.
+- Phase 2: the paragraph held the procedure (what to run and what to record) and then the literature on rank agreement and benchmark agreement. A paragraph break now comes before "Rank agreement between a reduced and a full protocol"; no words changed there.
+
+Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).

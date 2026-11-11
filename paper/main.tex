@@ -561,15 +561,17 @@ as theirs does, and the inter-judge agreement of S5 should be reported alongside
 
 \textbf{Phase 1: full reference run.} Run the complete, unsimplified protocol
 ($E$ settings swept, $R$ regenerations, $J$ judges, $K$ repeats, $T_{\text{full}}$ tasks)
-on the systems under comparison. This run is performed once and serves as the reference against which every simplified variant is compared. It is also the pilot that the other sections refer to: it contains the two-setting, multi-regeneration and repeat-scoring subsets that S1, S2 and S3 ask for, and its data give the variance estimates from which $n^*$ is set (Section~\ref{sec:power}) and the setting-cost ratio $\alpha$ on the benchmark's own tasks (Appendix~\ref{app:measurements}).
+on the systems under comparison. This run is performed once and serves as the reference against which every simplified variant is compared. It is also the pilot that the other sections refer to: it contains the two-setting, multi-regeneration and repeat-scoring subsets that S1, S2 and S3 ask for, and its data give the variance estimates from which $n^*$ is set (Section~\ref{sec:power}) and the setting-cost ratio $\alpha$ on the benchmark's own tasks, rather than on the analytic prompts measured in Appendix~\ref{app:measurements}.
 
-\textbf{Phase 2: each simplification alone, and all of them combined, on the same systems and tasks.} Run
+\textbf{Phase 2: each simplification alone, and all of them combined, on the same systems, and on the same tasks or a sample of them.} Run
 S1 alone, S2 alone, and so on, and the fully combined simplification from
 Section~\ref{sec:cumulative}, each on the task set used in Phase 1, or, for S6 and the combined variant, on a pre-registered stratified sample of $n^*$ of those tasks, drawn as S6 prescribes, with $n^*$ computed at the variant's own $R$ and $K$, since fewer repeat scorings also raise the within-task variances of Equation~\ref{eq:variance-decomposition}. Where that $n^*$ is above $T_{\text{full}}$, as for the combined variant on the inputs of Appendix~\ref{app:worked} ($184$ against $180$ from its $R = 1$ alone, and more once its $K = 1$ is counted), the variant runs on all $T_{\text{full}}$ tasks and is reported as below the stated power; so is any other variant whose $n^*$ exceeds the number of tasks it runs on, such as S2 alone, at $184$ on the same inputs. For
 each variant, record: whether the same system(s) rank highest; how far the point estimate
 and confidence interval shift relative to the Phase 1 reference; and whether the corrected
 $p$-value for the pre-registered comparisons crosses the significance threshold in the
-reference run but not in the simplified one, or vice versa. Such a crossing can happen by chance alone, more often the lower a variant's power, so one crossing does not by itself show that the simplification changed the result. Rank agreement between a
+reference run but not in the simplified one, or vice versa. Such a crossing can happen by chance alone, more often the lower a variant's power, so one crossing does not by itself show that the simplification changed the result.
+
+Rank agreement between a
 reduced and a full protocol is one criterion the benchmark-compression literature uses to
 certify a subset: \citet{saranathan2025sublime} select subsets of 1--20\% of a benchmark that preserve full-benchmark rankings, reporting evaluation-cost reductions of 80--99\%, and \citet{perlitz2024efficient} score each design choice by its effect on ranking reliability. Kendall's $\tau$ is the statistic \citet{perlitz2024efficient} use, and \citet{saranathan2025sublime} use Spearman's rank correlation. Phase 2 should report rank agreement as Kendall's $\tau$ over the
 systems under comparison, alongside the per-comparison outcomes. Comparing two protocols
