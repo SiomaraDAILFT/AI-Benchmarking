@@ -523,9 +523,9 @@ judgements. Batched presentation brings its own, well-measured hazard: position 
 simply altering their order of appearance'', to the point that a weaker open-weight model
 was preferred over a stronger proprietary assistant on 66 of 80 queries under one
 ordering, and \citet{zheng2023judging} report
-the same effect; in a small measurement made for this paper, three answers graded
+the same effect. In a small measurement made for this paper, three answers graded
 together under an absolute rubric kept their ranking in two of three orderings, with the
-top two swapping places in the third, and an individual score moved by up to 17 points, but five repeated scorings of one answer under a fixed prompt spanned the same 17 points, so with one call per ordering that measurement cannot separate position from test--retest noise (Appendix~\ref{app:measurements}). One of the three remedies \citet{wang2023unfair} propose, balanced position calibration (scoring under several orderings and aggregating), multiplies the number of judging calls and so consumes part of what S4 saved. Batched, anonymised, order-randomised presentation
+top two swapping places in the third, and an individual score moved by up to 17 points, but five repeated scorings of one answer under a fixed prompt also spanned 17 points, so with one call per ordering that measurement cannot separate position from test--retest noise (Appendix~\ref{app:measurements}). One of the three remedies \citet{wang2023unfair} propose, balanced position calibration (scoring under several orderings and aggregating), multiplies the number of judging calls and so consumes part of what S4 saved. Batched, anonymised, order-randomised presentation
 under explicit absolute-scoring instructions, with the order varied across the $K$ repeats
 of S3 so that the repeats double as position calibration, is our recommended way to obtain
 calibration context without fully sacrificing independence; the S4 discussion in
@@ -533,7 +533,7 @@ Section~\ref{sec:simplifications} names the residual risk this does not eliminat
 
 \subsection{Data retention}
 
-Every individual measurement (each judge's verdict on each rubric criterion, for each repeat scoring, each regeneration and each setting) should be retained at its finest grain and never averaged down before storage. Every reported summary statistic is then a view computed from that raw table, and the raw table remains the record. The published runner keeps this: for each judging call and answer it stores the verdict on each criterion, the score, the numbers of criteria met and unmet, the order in which the answers were shown and, for weighted rubrics, the per-dimension scores. Retaining the measurements, and not only their per-system summaries, is what makes it possible to
+Every individual measurement (each judge's verdict on each rubric criterion, for each repeat scoring, each regeneration and each setting) should be retained at its finest grain and never averaged down before storage. Every reported summary statistic is then a view computed from that raw table, and the raw table remains the record. The published runner retains them so: for each judging call and answer it stores the verdict on each criterion, the score, the numbers of criteria met and unmet, the order in which the answers were shown and, for weighted rubrics, the per-dimension scores. Retaining the measurements, and not only their per-system summaries, is what makes it possible to
 later compute a confidence interval or a $p$-value for any pair of systems not among the
 originally pre-registered comparisons, without re-running a single generation or judging
 call, provided that any such post-hoc comparison is reported as \emph{exploratory} and is not included in the same family-wise error control as the comparisons that were pre-registered

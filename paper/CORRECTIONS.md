@@ -921,3 +921,13 @@ One angle not taken before: the abstract and the Conclusion read against the bod
 Checked and left: the abstract's "about six to thirty" for the naive product's overstatement matches Section 6 (13 to 29 and 6 to 27 in the worked instance, 7 to 12 at the measured ratios); the Conclusion's "four of its six design choices" matches Section 3 and Equations 1 to 2.
 
 Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
+
+## 11 November 2026, 22:1x pass
+
+One angle not taken before: Sections 7.3 (Blind and calibrated scoring) and 7.4 (Data retention) read for sentences that join two sources of evidence, and for words whose referent is unclear. Three findings, all applied.
+
+- Section 7.3: the published position-bias results and this paper's own small measurement were one sentence joined by a semicolon ("... report the same effect; in a small measurement made for this paper ..."), so the reader could take the measurement for part of the cited work. They are now two sentences.
+- Section 7.3: "five repeated scorings of one answer under a fixed prompt spanned the same 17 points" read as if the repeats had landed on the same scores as the reordered batch. The point is a range of the same size; it now reads "also spanned 17 points".
+- Section 7.4: "The published runner keeps this:" had no clear antecedent (the measurements, the raw table, or the rule). It now reads "The published runner retains them so:", referring to the individual measurements of the first sentence.
+
+Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
