@@ -122,7 +122,7 @@ The weakness we take to matter most for whether the methodology gets used at all
 \section{A General Cost Model}
 \label{sec:model}
 
-We define the following parameters, the first six of them properties of the benchmark's own design and independent of any particular system under test, and the last two average costs per call:
+We define the following parameters, the first six of them properties of the evaluation's design (the benchmark's, and for $C$ the comparison's) and independent of any particular system under test, and the last two average costs per call:
 
 \begin{itemize}[nosep]
     \item $C$: the number of systems or configurations under comparison.
@@ -168,7 +168,7 @@ j_{\text{marginal}}$, so batching saves
 J_u - J_b = E \cdot R \cdot T \cdot J \cdot K \cdot (C - 1) \cdot j_{\text{fixed}}.
 \label{eq:batch-saving}
 \end{equation}
-The saving is largest when the fixed overhead (rubric, task description, instructions) is large relative to the marginal cost of reading one more answer. That ratio can be checked empirically for a given rubric and task format; the systems compared affect it through the length of their answers, since a longer answer costs more to read.
+The saving is largest when the fixed overhead is large relative to the marginal cost of reading one more answer. That ratio can be checked empirically for a given rubric and task format; the systems compared affect it through the length of their answers, since a longer answer costs more to read.
 
 \textbf{Effect of prompt caching.} Equation~\ref{eq:batch-saving} assumes
 the fixed component is paid in full on every unbatched call. The largest commercial API
@@ -177,7 +177,9 @@ some cases with a premium on the first, cache-writing call, a minimum prefix len
 limited cache lifetime; output tokens are not cached \citep{openai2026caching,
 anthropic2026caching, google2026pricing}. Appendix~\ref{app:worked} records the terms in
 force when the providers' pages were read, on 11 September and on 26 and 27 October 2026. A task description together with a rubric of several tens
-of criteria can fall on either side of the published minimum prefix lengths: a 40-criterion rubric with its task and question came to about 1{,}005 tokens, just below one provider's 1{,}024-token minimum, and drew no cached tokens (Appendix~\ref{app:measurements}), so the prefix length should be checked. The $C$ calls in which one judge, in one repeat, scores the $C$ systems' answers to one (task, setting, regeneration) triple naturally fall within a single cache lifetime, and the formula below charges a fresh cache write for each such group, that is, for every setting, regeneration and repeat. All $C \cdot E \cdot R \cdot K$ calls one judge makes on a task open with the same prefix, and repeated calls with an identical prompt were measured reading the cache (Appendix~\ref{app:measurements}). Where all the calls one judge makes on a task fall within one lifetime, the write is paid once per task and judge, and in the worked instance of Appendix~\ref{app:worked} the cached judging-side factor $F_J$ of Section~\ref{sec:cumulative} at $w = 1$ falls from $108$ to about $69$, and the cached reductions of Table~\ref{tab:cumulative} from $137$--$176\times$ to about $101$--$161\times$. Writing $c$
+of criteria can fall on either side of the published minimum prefix lengths: a 40-criterion rubric with its task and question came to about 1{,}005 tokens, just below one provider's 1{,}024-token minimum, and drew no cached tokens (Appendix~\ref{app:measurements}), so the prefix length should be checked.
+
+The $C$ calls in which one judge, in one repeat, scores the $C$ systems' answers to one (task, setting, regeneration) triple naturally fall within a single cache lifetime, and the formula below charges a fresh cache write for each such group, that is, for every setting, regeneration and repeat. All $C \cdot E \cdot R \cdot K$ calls one judge makes on a task open with the same prefix, and repeated calls with an identical prompt were measured reading the cache (Appendix~\ref{app:measurements}). Where all the calls one judge makes on a task fall within one lifetime, the write is paid once per task and judge, and in the worked instance of Appendix~\ref{app:worked} the cached judging-side factor $F_J$ of Section~\ref{sec:cumulative} at $w = 1$ falls from $108$ to about $69$, and the cached reductions of Table~\ref{tab:cumulative} from $137$--$176\times$ to about $101$--$161\times$. Writing $c$
 for the cached-read price as a fraction of the standard input price and $w$ for the
 price of the first, cache-writing call as a multiple of the standard input price ($w = 1$ where no write premium is charged), the unbatched judging cost with caching is
 \begin{equation}

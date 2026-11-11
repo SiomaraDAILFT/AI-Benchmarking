@@ -899,3 +899,13 @@ One angle not taken before: Section 8 (Empirical Validation of the Reduction Fac
 - Phase 2: the paragraph held the procedure (what to run and what to record) and then the literature on rank agreement and benchmark agreement. A paragraph break now comes before "Rank agreement between a reduced and a full protocol"; no words changed there.
 
 Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
+
+## 11 November 2026, 18:2x pass
+
+One angle not taken before: Section 4 (A General Cost Model) read for whether each defined term is described correctly where it is introduced, and for repetition inside the section. Three findings, all applied.
+
+- The parameter list: "the first six of them properties of the benchmark's own design" is now "properties of the evaluation's design (the benchmark's, and for $C$ the comparison's)". $C$, the number of systems compared, is chosen for a comparison, not fixed by the benchmark; the other five are.
+- "Effect of prompt caching": one paragraph ran from the published prefix minimums and the measured 1,005-token prefix straight into cache lifetimes, the write per group of calls and the worked figures. A paragraph break now comes before "The $C$ calls in which one judge"; no words changed.
+- "The saving is largest when the fixed overhead (rubric, task description, instructions) is large": the parenthesis repeated the list given three lines earlier, where the fixed component is defined. It is dropped.
+
+Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
