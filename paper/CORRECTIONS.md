@@ -870,3 +870,13 @@ One angle: Section 7.1 (Test, aggregation, and multiple comparisons) read as a f
 - A break now comes before each of: "A paired design is used throughout" (why the design is paired), "Where a judging call fails or gives no score" (missing-data handling), "The test is \emph{one-sided}" (the permutation test itself), "A Holm correction" (the multiple-comparison correction), "Cohen's $d_z$" (the effect size reported), and "The confidence interval for the mean paired difference" (the interval). The scoring-computation sentences keep the opening paragraph.
 
 Nothing skipped: each boundary was found exactly once.
+
+## 11 November 2026, 14:1x pass
+
+One angle not taken before: the body read only for names of providers, which the body's rule forbids (the appendices carry them), and Section 6 (Cumulative Effect) read for sentences a reader cannot follow in one pass. Three findings, all applied.
+
+- Sections 5 (S4) and 6: the body named providers in three places. "where caching is automatic, as at OpenAI, it pays the write too" is now "as at some providers"; "and by default from OpenAI and, on Gemini 2.5 and later models, from Google (Appendix ...)" is now "from two of them by default on current models (Appendix ...)"; in Section 6 "(Anthropic's terms)" is dropped and "on OpenAI's terms, where the batched call pays the write too" is now "where caching is automatic and the batched call pays the write too". The appendix still gives which provider is which.
+- Section 6: the sentence on how far the naive product overstates the exact reduction ran to about 200 words, with the expensive-setting case in a parenthesis in the middle and three pricing cases chained by "and". It is now four sentences: the overstatement factor and how it grows; the expensive-setting case; the worked instance (13 to 29, and 6 to 27); and the measured ratios, with the three pricing cases separated by semicolons. No figure changed.
+- Section 6: "they still roughly double it at $s = 0.1$": "it" could be read as the ratio named just before it. It is now "double the combined reduction".
+
+Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings as before).
