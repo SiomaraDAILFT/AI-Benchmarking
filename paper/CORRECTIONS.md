@@ -909,3 +909,15 @@ One angle not taken before: Section 4 (A General Cost Model) read for whether ea
 - "The saving is largest when the fixed overhead (rubric, task description, instructions) is large": the parenthesis repeated the list given three lines earlier, where the fixed component is defined. It is dropped.
 
 Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
+
+## 11 November 2026, 20:1x pass
+
+One angle not taken before: the abstract and the Conclusion read against the body, claim by claim. Three findings, all applied.
+
+- Abstract: the six simplifications each come "with a closed-form reduction factor and a statement of the guarantee it gives up". S4 (batched judging) gives none up; Section 5 states what it adds ("What is added rather than lost"). It now reads "... the guarantee it gives up (for batched judging, of what it adds)".
+- Abstract: "we take the cost of the rigorous end of that range to be the main reason such comparisons are run rarely" is now "a main reason". The paper argues that cost is a reason and cites no evidence ranking it above the others, and the interview study it cites describes practice, not its causes.
+- Conclusion: one paragraph of about 300 words carried where the savings come from and then the size of the combined reduction and what it buys. A paragraph break now comes before "The combined reduction, a weighted harmonic mean"; no words changed.
+
+Checked and left: the abstract's "about six to thirty" for the naive product's overstatement matches Section 6 (13 to 29 and 6 to 27 in the worked instance, 7 to 12 at the measured ratios); the Conclusion's "four of its six design choices" matches Section 3 and Equations 1 to 2.
+
+Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
