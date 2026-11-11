@@ -862,3 +862,11 @@ The 22:4x pass's reading carried on through S4 to S6: whether each paragraph doe
 - S5, second paragraph: it first treats whether the judges' errors are independent and then, from "More judges need not cost more, either", what a panel costs. A paragraph break now comes before that sentence.
 
 Nothing skipped: each old passage was found exactly once.
+
+## 11 November 2026, 12:4x pass
+
+One angle: Section 7.1 (Test, aggregation, and multiple comparisons) read as a first-time reader would, for structure. It was a single paragraph of about 500 words carrying seven separate topics. Split into seven paragraphs at the topic boundaries; no words changed.
+
+- A break now comes before each of: "A paired design is used throughout" (why the design is paired), "Where a judging call fails or gives no score" (missing-data handling), "The test is \emph{one-sided}" (the permutation test itself), "A Holm correction" (the multiple-comparison correction), "Cohen's $d_z$" (the effect size reported), and "The confidence interval for the mean paired difference" (the interval). The scoring-computation sentences keep the opening paragraph.
+
+Nothing skipped: each boundary was found exactly once.
