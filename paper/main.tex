@@ -532,6 +532,7 @@ calibration context without fully sacrificing independence; the S4 discussion in
 Section~\ref{sec:simplifications} names the residual risk this does not eliminate. The published runner draws a random order for each batch from a fixed seed and rotates it one place per repeat, drawing a new order after as many repeats as the batch has answers ($C$ when every system's answer is in it), so that the order is random even at $K = 1$ and each such block of repeats shows every answer once in each position; the order shown is kept with each scoring.
 
 \subsection{Data retention}
+\label{sec:retention}
 
 Every individual measurement (each judge's verdict on each rubric criterion, for each repeat scoring, each regeneration and each setting) should be retained at its finest grain and never averaged down before storage. Every reported summary statistic is then a view computed from that raw table, and the raw table remains the record. The published runner retains them so: for each judging call and answer it stores the verdict on each criterion, the score, the numbers of criteria met and unmet, the order in which the answers were shown and, for weighted rubrics, the per-dimension scores. Retaining the measurements, and not only their per-system summaries, is what makes it possible to
 later compute a confidence interval or a $p$-value for any pair of systems not among the
@@ -649,6 +650,7 @@ Gemini~3~Pro, with GPT-5.2 and Claude Sonnet~4.5 as secondary judges; each answe
 graded in five independent runs and the standard deviation across runs is reported. The
 authors' Appendix~A notes ``systematic differences in absolute score levels'' between
 judges (GPT-5.2 ``consistently assigned lower scores''), and its Table~15 gives each of the seven systems' scores under all three judges: GPT-5.2 scored them 14.8 to 23.9 points below Gemini~3~Pro and 16.4 to 27.4 points below Sonnet~4.5, while those two judges differed by 0.2 to 12.0 points.
+
 The paper's Table~8 reports, for example, the company's own Deep Research product
 (backed by Claude Opus~4.6) at $70.5 \pm 0.3\%$; the company's blog post on the benchmark
 \citep{perplexity2026explainer} is dated 4 February 2026, eight days before the paper. The post could not be retrieved by automated means when this appendix was first written; read on 26 October 2026, it reports four systems, and its figures for the company's product (pass rates of $89.4\%$ on Law and $82.4\%$ on Academic, latency 459.6 seconds) are those of the Opus~4.5 version in the paper's Tables~12 and~10, not of the Opus~4.6 version above. The benchmark paper's own tables are therefore cited for every figure, and the post is cited for completeness only.
@@ -693,7 +695,7 @@ point shifts between judges''. That range is not stated in the DRACO paper, but 
 range should therefore be read as the aggregator's summary of the authors' own figures, not as a separate measurement. The Valyu post \citep{valyu2026} describes
 multi-step retrieval across specialised data sources and does not describe multi-model
 ensembling, states neither its judge model nor its run date, and reports no error bars,
-but does state that its datasets, run scripts, raw outputs and judge evaluations are published, which is the retention practice Section~\ref{sec:stats} requires; it is the only one of the four sources to state this.
+but does state that its datasets, run scripts, raw outputs and judge evaluations are published, which is the retention practice Section~\ref{sec:retention} requires; it is the only one of the four sources in Table~\ref{tab:published} (the OpenRouter post gives two of its rows) to state this.
 
 \subsection{Third-party trackers}
 

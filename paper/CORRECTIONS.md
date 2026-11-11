@@ -931,3 +931,13 @@ One angle not taken before: Sections 7.3 (Blind and calibrated scoring) and 7.4 
 - Section 7.4: "The published runner keeps this:" had no clear antecedent (the measurements, the raw table, or the rule). It now reads "The published runner retains them so:", referring to the individual measurements of the first sentence.
 
 Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
+
+## 12 November 2026, 00:1x pass
+
+One angle not taken before: Appendix A (Published DRACO-Style Runs) checked figure by figure against itself and against the body, and read for references that point at the wrong place. Every figure checked holds: Microsoft's 57.4 minus Perplexity's 50.4 under the same judge is the stated +7.0; the judge gaps of 14.8 to 23.9 and 16.4 to 27.4 points match the "14.8 to 27.4" given later; the blog post of 4 February is eight days before the paper of 12 February; Table 4 is in descending order; Fable 5's 93 tasks agree in the table and the caption; three grading runs against the paper's five agree with Section A.1. Three findings, all applied.
+
+- The Valyu note said its retained datasets and judge evaluations are "the retention practice Section~\ref{sec:stats} requires", pointing at the whole of Section 7. Subsection 7.4 (Data retention) now has the label `sec:retention` and the note points at it.
+- The same note said Valyu is "the only one of the four sources to state this", beside a table with five rows. It now reads "the only one of the four sources in Table~\ref{tab:published} (the OpenRouter post gives two of its rows)".
+- Section A.1: the description of the benchmark (pipeline, rubric, judges, Table 15's judge gaps) ran on into the provenance of the company's blog post and which product version its figures belong to. A paragraph break now comes before "The paper's Table~8 reports"; no words changed.
+
+Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
