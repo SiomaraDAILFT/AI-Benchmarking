@@ -993,3 +993,13 @@ One angle not taken before: Section 3 (Merits and Costs of the DRACO Protocol) r
 - "Third-party trackers ... disagree ... (Appendix A); no figure should yet be taken from them" was unclear about what "taken" means; it now reads "..., so no figure from them should yet be relied on."
 
 Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the usual two float-placement warnings).
+
+## 12 November 2026, 14:5x pass
+
+One angle not taken before: Section 5's S1 and S2 (the configuration sweep and answer regenerations) read for model names in the body and for a sentence that strings findings together. Three findings, all applied.
+
+- "although for GPT-5-mini with a search tool" named a model in the body, which the paper's rule keeps to the appendices. It now reads "although for one small reasoning model with a search tool"; the figures and the citation are unchanged.
+- "An open-weight model (Qwen3-235B), sampled 1,000 times" named a model in the body; the name is dropped and the sentence otherwise unchanged, with the same citation.
+- The last sentence of S1's evidence paragraph ran our own alpha range, its distance from the published figure, its variation between models and prompts, and its dependence on the provider's effort setting into one sentence, so "an order of magnitude below that published figure" sat far from what it measured. It is now three sentences: the measured range, "These ratios are an order of magnitude below the published figure.", and the variation; no figure changed.
+
+Nothing skipped: each old passage was found exactly once.
