@@ -973,3 +973,13 @@ One angle not taken before: Section 7.2 (Power and the S6 floor) read for senten
 - "... and decomposes the variance, a result this paper relies on" was joined to the previous point by a semicolon and left "a result" to be matched to the derivation or to the decomposition. It is now its own sentence ending "and this paper relies on that decomposition".
 
 Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the usual two float-placement warnings).
+
+## 12 November 2026, 08:1x pass
+
+One angle not taken before: Section 2.2 (Related and competing multi-system approaches) read for model names in the body and for paragraphs that turn from evidence to caution without a break. Three findings, all applied.
+
+- "against $57.5\%$ for GPT-4 Omni" named a model in the body, which the paper's rule keeps to the appendices. It now reads "against $57.5\%$ for the strongest single proprietary model it was compared with"; the figure and the citation are unchanged.
+- The paragraph on combining answers ran from the evidence for it (self-consistency, fusion, mixture-of-agents, debate) straight into "The same literature supplies a caution." A paragraph break now comes before that sentence; no words changed.
+- The failure-taxonomy sentence joined its three groups and a separate observation ("they also observe that the gains ... are often minimal") with a semicolon. They are now two sentences.
+
+Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the usual two float-placement warnings).
