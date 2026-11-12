@@ -1003,3 +1003,13 @@ One angle not taken before: Section 5's S1 and S2 (the configuration sweep and a
 - The last sentence of S1's evidence paragraph ran our own alpha range, its distance from the published figure, its variation between models and prompts, and its dependence on the provider's effort setting into one sentence, so "an order of magnitude below that published figure" sat far from what it measured. It is now three sentences: the measured range, "These ratios are an order of magnitude below the published figure.", and the variation; no figure changed.
 
 Nothing skipped: each old passage was found exactly once.
+
+## 12 November 2026, 19:1x pass
+
+One angle not taken before: Section 5's S3 (reducing judge repeat scorings) read for sentences that make the reader hold several claims at once. Three findings, all applied; no figure, citation or claim changed.
+
+- The literature paragraph joined three studies into one sentence with semicolons ("... immaterial; Schroeder and colleagues treat ...; and Thakur and colleagues, across 13 judge models, find ..."). They are now three sentences.
+- "Because judge repeats are inexpensive ... and because the reliability they measure is mainly a property of the judge, although it can differ between the answers it scores, the economical course is ..." carried a hedged claim inside a double "because". The claim now stands first as its own sentence ("The reliability that repeats measure is mainly a property of the judge, though it can differ between the answers it scores."), and the advice follows with one "because".
+- The Monte Carlo sentence said what one call replaces and, after "though not", what it does not. It is now three sentences: the approximation, what one call therefore replaces, and "It does not replace their median, which ...".
+
+Nothing skipped: each old passage was found exactly once.

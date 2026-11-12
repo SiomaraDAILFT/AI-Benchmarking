@@ -257,10 +257,10 @@ $K$ only multiplies the scoring step.
 
 \textbf{What is lost}: test--retest reliability, that is, whether a single judge's score on a given answer is stable when the judge is asked again with no memory of the prior scoring. The concern is documented for language-model judges. \citet{stureborg2024inconsistent} report low agreement between repeated samples of
 the same evaluator on the same item, alongside sensitivity to prompt differences that a
-human reader would consider immaterial; \citet{schroeder2024reliability} treat judge
+human reader would consider immaterial. \citet{schroeder2024reliability} treat judge
 reliability in the classical psychometric sense, estimate it with McDonald's omega over
 repeated ratings, and conclude that ``a single sample from the model's probability
-distribution can still be misleading''; and \citet{thakur2025judging}, across 13 judge
+distribution can still be misleading''. \citet{thakur2025judging}, across 13 judge
 models, find that even the best-aligned judges' scores ``may still differ with up to 5
 points from human-assigned scores'', with a general tendency towards leniency. DRACO's own
 published protocol averages over five grading runs per answer and reports the resulting
@@ -269,15 +269,14 @@ standard deviation \citep{draco2026}; the third-party run also averages over fiv
 indistinguishable, at $K = 1$, from a judge whose single score happened to be reliable;
 in a small measurement made for this paper, five scorings of one answer by one frontier
 judge spanned 17 points on a 100-point scale (Appendix~\ref{app:measurements}).
-Because judge repeats are inexpensive relative to generation wherever generation dominates the budget (S5 below gives the condition), and
-because the reliability they measure is mainly a property of the judge, although it can differ between the answers it scores, the economical course is to estimate it once, in the pilot, with $K > 1$ on a subset, and to set $K$ for the simplified protocol from that estimate.
+The reliability that repeats measure is mainly a property of the judge, though it can differ between the answers it scores. Because judge repeats are inexpensive relative to generation wherever generation dominates the budget (S5 below gives the condition), the economical course is to estimate that reliability once, in the pilot, with $K > 1$ on a subset, and to set $K$ for the simplified protocol from that estimate.
 
 One further result bears directly on how many repeats are needed. Where the
 judging interface exposes the probabilities the judge assigns to each candidate score
 token, a single call yields the \emph{expected} score over that distribution, and
 \citet{wang2025judgmentdist} find that ``taking the mean of the judgment distribution
 consistently outperforms taking the mode (i.e.\ greedy decoding) in all evaluation
-settings'', that is, pointwise, pairwise and listwise. Repeated sampling at temperature one, from a judge that states its score without writing any reasoning first, is a Monte Carlo approximation of that same mean, so for such a judge, where score probabilities are available, one call replaces the mean of the $K$ repeats for the purpose of averaging out sampling noise, though not their median, which Section~\ref{sec:test} takes and which can differ from that mean where the judge's scores are skewed. A judge that writes reasoning or a justification before its score is different, and DRACO's judges write a short justification before each criterion's verdict \citep{draco2026}. After such reasoning, \citet{wang2025judgmentdist} find that the score distribution often sharpens, ``making the mean judgment similar to the mode'', as the model ``commits to one instantiation of a reasoning trace''; one call's mean is then conditional on that one trace and does not average over the traces that repeated calls would sample. $K > 1$ therefore remains useful for position calibration (Section~\ref{sec:calibration}), for a judge that reasons before it scores, and where the interface offers no probabilities.
+settings'', that is, pointwise, pairwise and listwise. Repeated sampling at temperature one, from a judge that states its score without writing any reasoning first, is a Monte Carlo approximation of that same mean. For such a judge, where score probabilities are available, one call therefore replaces the mean of the $K$ repeats for the purpose of averaging out sampling noise. It does not replace their median, which Section~\ref{sec:test} takes and which can differ from that mean where the judge's scores are skewed. A judge that writes reasoning or a justification before its score is different, and DRACO's judges write a short justification before each criterion's verdict \citep{draco2026}. After such reasoning, \citet{wang2025judgmentdist} find that the score distribution often sharpens, ``making the mean judgment similar to the mode'', as the model ``commits to one instantiation of a reasoning trace''; one call's mean is then conditional on that one trace and does not average over the traces that repeated calls would sample. $K > 1$ therefore remains useful for position calibration (Section~\ref{sec:calibration}), for a judge that reasons before it scores, and where the interface offers no probabilities.
 
 \subsection{S4: Batching judging across systems}
 
