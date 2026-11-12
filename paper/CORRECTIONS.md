@@ -983,3 +983,13 @@ One angle not taken before: Section 2.2 (Related and competing multi-system appr
 - The failure-taxonomy sentence joined its three groups and a separate observation ("they also observe that the gains ... are often minimal") with a semicolon. They are now two sentences.
 
 Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the usual two float-placement warnings).
+
+## 12 November 2026, 10:1x pass
+
+One angle not taken before: Section 3 (Merits and Costs of the DRACO Protocol) read for model names in the body and for sentences that chain cited points. Three findings, all applied.
+
+- The opening sentence (about 90 words) chained three cited points with a semicolon: construct validity and annotation reliability, then sourcing from real users. A new sentence now begins "Sourcing from real users is now an established design for that reason".
+- "and Prometheus~2, a purpose-built evaluator model, judges against user-defined criteria" named a model in the body; it now reads "a purpose-built open evaluator model judges against user-defined criteria", with the same citation (the work cited is that model's paper).
+- "Third-party trackers ... disagree ... (Appendix A); no figure should yet be taken from them" was unclear about what "taken" means; it now reads "..., so no figure from them should yet be relied on."
+
+Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the usual two float-placement warnings).
