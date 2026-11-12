@@ -941,3 +941,14 @@ One angle not taken before: Appendix A (Published DRACO-Style Runs) checked figu
 - Section A.1: the description of the benchmark (pipeline, rubric, judges, Table 15's judge gaps) ran on into the provenance of the company's blog post and which product version its figures belong to. A paragraph break now comes before "The paper's Table~8 reports"; no words changed.
 
 Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
+
+## 12 November 2026, 02:2x pass
+
+One angle not taken before: Appendix B (A Worked Cost Instance) checked sum by sum, and read for repetition and for sentences that carry unrelated facts. Every figure holds: 5 x 2 x 3 x 60 = 1,800 generation calls; times J x K = 15 gives 27,000 unbatched judging calls; E x R x T x J x K = 5,400 batched; three times each for 180 tasks; beta = 5 x 1.2 / 2 = 3.0 without caching and 2.4 / 2.0 = 1.2 at c = 0.1, w = 1; 82 / 3.5 million output tokens is the stated 23x. Three findings, all applied.
+
+- B.1: the dates the pages were read were stated in the first sentence ("As read on 11 September and again on 26 October 2026") and again near the end ("All three pages were re-read on 11 September 2026, and all three again on 26 October 2026, which is where ..."). The second now keeps only what it adds: "The 26 October reading is where OpenAI's cache-write charge and 30-minute minimum, and the three rates dated to that day, come from."
+- B.1: one sentence carried three unrelated facts, one per provider ("OpenAI's terms apply to GPT-5.6 and later models, Anthropic bills a one-hour cache write at 2x, and Google's storage charge ranges ..."). They are now three sentences.
+- B.2: a semicolon joined "The same service publishes the token counts and cost of running its whole suite ..." to the advice "alpha should be measured on the benchmark's own tasks". They are two sentences, the second beginning "Even so,".
+
+Nothing skipped: each old passage was found exactly once.
+latexmk: no new warnings (the same two float-placement warnings).

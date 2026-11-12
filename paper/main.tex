@@ -726,9 +726,8 @@ depending on model \citep{anthropic2026caching}. Google applies caching automati
 $0.1\times$ on most models ($0.05\times$ on its flagship, Gemini~4~Argon, as of 26 October 2026) and adds a per-hour storage charge for explicitly created caches
 \citep{google2026pricing}. None of the three caches output tokens. In the notation of
 Equation~\ref{eq:judging-cached}, the representative values are $c = 0.1$ and $w = 1$
-(Google) or $w = 1.25$ (OpenAI, Anthropic). All three pages were re-read on 11 September
-2026, and all three again on 26 October 2026, which is where OpenAI's cache-write charge and 30-minute minimum, and the three rates dated to that day, come from. OpenAI's terms apply to GPT-5.6 and later models, Anthropic bills a one-hour
-cache write at $2\times$, and Google's storage charge ranges from \$0.50 to \$1.80 per million tokens per hour for its Flash and Flash-Lite models and from \$4.50 to \$8.10 for its Pro models,
+(Google) or $w = 1.25$ (OpenAI, Anthropic). The 26 October reading is where OpenAI's cache-write charge and 30-minute minimum, and the three rates dated to that day, come from. OpenAI's terms apply to GPT-5.6 and later models. Anthropic bills a one-hour
+cache write at $2\times$. Google's storage charge ranges from \$0.50 to \$1.80 per million tokens per hour for its Flash and Flash-Lite models and from \$4.50 to \$8.10 for its Pro models,
 depending on model and service tier.
 
 \subsection{The setting-cost ratio \texorpdfstring{$\alpha$}{alpha}}
@@ -739,7 +738,7 @@ tokens at the \texttt{minimal} setting and $82$~million at \texttt{high}, a $23\
 \citep{aagpt5benchmarks2025}. Because reasoning tokens are billed as output tokens at the
 same rate regardless of setting \citep{openai2026reasoning, anthropic2026thinking}, this
 is a ratio of output costs of about $23$ for that model on that suite, and an upper bound on its $\alpha$ there: the suite's inputs, about $100{,}000$ tokens per question in its long-context benchmark, are paid at both settings and pull the cost ratio below the token ratio (Section~\ref{app:e1-method}). The same service publishes
-the token counts and cost of running its whole suite for the models and settings it evaluates \citep{aaintelligence}; $\alpha$ should
+the token counts and cost of running its whole suite for the models and settings it evaluates \citep{aaintelligence}. Even so, $\alpha$ should
 be measured on the benchmark's own tasks for the systems under comparison, since the published figures hold for that suite only. Appendix~\ref{app:measurements}
 reports a measurement on analytic prompts, with $\alpha$ between $1.75$ and $3.18$ by output tokens ($1.74$ to $3.14$ by cost) for the \texttt{high} setting against a lower one, and its consequence for the worked instance below.
 
