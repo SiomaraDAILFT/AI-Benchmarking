@@ -480,16 +480,16 @@ standard sample-size formula for paired samples,
 n^* = \frac{(z_{a'} + z_{\pi})^2 \sigma^2}{\delta^2},
 \label{eq:power}
 \end{equation}
-one-sided and rounded up to a whole number of tasks, with $a'$ the Holm-corrected per-comparison significance level (the smallest threshold the correction procedure can demand across the pre-registered comparisons; using the uncorrected family-wise $a$ here systematically understates the requirement), $z_{a'}$ and $z_{\pi}$ the standard normal quantiles at $1-a'$ and at the intended power $\pi$, $\sigma$
+one-sided and rounded up to a whole number of tasks. Here $a'$ is the Holm-corrected per-comparison significance level (the smallest threshold the correction procedure can demand across the pre-registered comparisons; using the uncorrected family-wise $a$ here systematically understates the requirement), $z_{a'}$ and $z_{\pi}$ the standard normal quantiles at $1-a'$ and at the intended power $\pi$, $\sigma$
 the observed standard deviation of task-level paired differences from a pilot run, and
 $\delta$ the minimum difference in mean score worth detecting, in score points (so $\delta/\sigma$ is the corresponding $d_z$), a decision made before the pilot runs. Statistics texts usually write the significance level as $\alpha$ and the power as $1-\beta$; we use $a$ and $\pi$ because $\alpha$ is already the setting-cost ratio of S1 and $\beta$ the batching factor of S4. Equation~\ref{eq:power} is the one-sided form of the standard
-normal-approximation sample-size formula; \citet{miller2024errorbars} derives the
-two-sided version for language-model evaluations and decomposes the variance, a result this paper relies on.
+normal-approximation sample-size formula. \citet{miller2024errorbars} derives the
+two-sided version for language-model evaluations and decomposes the variance, and this paper relies on that decomposition.
 
 Writing $\omega^2$ for the variance of the \emph{true} task-level paired
 difference across tasks and $\sigma_A^2$, $\sigma_B^2$ for the within-task variance of each
 system's score in a single regeneration, the variance of an observed paired difference
-averaged over $R$ regenerations, if the two systems' scores vary independently within a task (S4, which scores both answers in one call, does not ensure this), is
+averaged over $R$ regenerations, if the two systems' scores vary independently within a task (S4, which scores both systems' answers in one call, does not ensure this), is
 \begin{equation}
 \sigma^2 = \omega^2 + \frac{\sigma_A^2 + \sigma_B^2}{R},
 \label{eq:variance-decomposition}

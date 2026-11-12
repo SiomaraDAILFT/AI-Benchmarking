@@ -963,3 +963,13 @@ One angle not taken before: Appendix C.1 (experiment E2) recomputed from its own
 
 Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
 Correction to the line above, 04:2x: the first build of this pass raised a third float-placement warning (the longer Appendix C.1 text moved the E1 results table); the 04:1x entry said there were none, wrongly. The table's placement is now written as `[ht]`, which is where LaTeX was already putting it, so the layout is unchanged and the count is back to the usual two.
+
+## 12 November 2026, 06:2x pass
+
+One angle not taken before: Section 7.2 (Power and the S6 floor) read for sentence length and for words whose referent a reader must guess. The algebra was checked and holds (the one-sided normal-approximation formula; the variance decomposition and what S2 and S3 each raise). Three findings, all applied.
+
+- The formula's symbols were defined in one sentence of about 150 words running on from "rounded up to a whole number of tasks, with $a'$ ...". A new sentence now begins "Here $a'$ is the Holm-corrected per-comparison significance level".
+- "(S4, which scores both answers in one call, does not ensure this)": the paired difference concerns two systems, and S4 batches their answers, so it now reads "both systems' answers".
+- "... and decomposes the variance, a result this paper relies on" was joined to the previous point by a semicolon and left "a result" to be matched to the derivation or to the decomposition. It is now its own sentence ending "and this paper relies on that decomposition".
+
+Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the usual two float-placement warnings).
