@@ -952,3 +952,13 @@ One angle not taken before: Appendix B (A Worked Cost Instance) checked sum by s
 
 Nothing skipped: each old passage was found exactly once.
 latexmk: no new warnings (the same two float-placement warnings).
+
+## 12 November 2026, 04:1x pass
+
+One angle not taken before: Appendix C.1 (experiment E2) recomputed from its own numbers. Every figure holds: the five scores 50, 50, 60, 50, 43 give mean 50.6, standard deviation 6.1 and range 17; with the sixth scoring of 53, mean 51.0 and standard deviation 5.5; 21 of 40 is 52.5 and 18 of 40 is 45, so three of five final score lines disagree with the verdicts; 11 calls (3 caching, 5 repeats, 3 orderings); rho = (95 + 6 x 220..270) / 1,005 gives 1.4 to 1.7; at C = 5 that gives beta of 1.42 to 1.5 without caching. Three findings, all applied.
+
+- The cached batching factors ("1.04 to 1.08", and "1.18 to 1.325" at rho = 0.2) could only be reproduced by combining three different cache-write terms: no premium (1.04 to 1.05; 1.2), a premium of w = 1.25 on the unbatched calls only (1.08; 1.325), and the premium on the batched call as well (1.05; 1.18). The sentence now says the ranges run across those write terms of Appendix B.
+- Test-retest: "The same answer was scored five times" did not say which answer; the only link was the score of 53 given for it in two other places. It now reads "The middle answer (written to be of middle quality) was scored five times".
+- The appendix's opening chained four separate points with semicolons (the budget; where the scripts are; what MANIFEST.pdf lists; what RUNS.json adds). They are now three sentences, the last two points joined by "and".
+
+Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
