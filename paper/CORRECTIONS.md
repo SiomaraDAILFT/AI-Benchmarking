@@ -962,3 +962,4 @@ One angle not taken before: Appendix C.1 (experiment E2) recomputed from its own
 - The appendix's opening chained four separate points with semicolons (the budget; where the scripts are; what MANIFEST.pdf lists; what RUNS.json adds). They are now three sentences, the last two points joined by "and".
 
 Nothing skipped: each old passage was found exactly once. latexmk: no new warnings (the same two float-placement warnings).
+Correction to the line above, 04:2x: the first build of this pass raised a third float-placement warning (the longer Appendix C.1 text moved the E1 results table); the 04:1x entry said there were none, wrongly. The table's placement is now written as `[ht]`, which is where LaTeX was already putting it, so the layout is unchanged and the count is back to the usual two.
