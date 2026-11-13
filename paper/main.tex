@@ -335,7 +335,7 @@ equal to
 \frac{(J-1) \cdot K \cdot j'}{C \cdot g + J \cdot K \cdot j'}.
 \label{eq:s5frac}
 \end{equation}
-Whenever generation cost dominates judging cost, that is, whenever $C \cdot g \gg J \cdot K \cdot j'$, this fraction is small. A cheaper judge is not enough on its own for that: $J \cdot K$ is often larger than $C$ ($15$ against $5$ in the worked instance of Appendix~\ref{app:worked}), so a generation call has to cost several times a batched judging call, which scores all $C$ answers at once. Where generation dominates, reducing $J$ saves little in absolute terms, and in any case it removes the one thing only judge count provides, evidence about whether the result depends on which judge was used. A single judge still yields a confidence interval
+Whenever generation cost dominates judging cost, that is, whenever $C \cdot g \gg J \cdot K \cdot j'$, this fraction is small. A judge that is cheap per call does not by itself make generation dominate. $J \cdot K$ is often larger than $C$ ($15$ against $5$ in the worked instance of Appendix~\ref{app:worked}), so a generation call has to cost several times a batched judging call, which scores all $C$ answers at once. Where generation does dominate, reducing $J$ saves little in absolute terms. In any case it removes the one thing only judge count provides: evidence about whether the result depends on which judge was used. A single judge still yields a confidence interval
 across \emph{tasks}; what it cannot yield is any estimate of judge-to-judge variation, so
 the resulting interval is conditional on that one judge and treats its idiosyncrasies as
 ground truth (Section~\ref{sec:limitations} returns to this in the language of
@@ -346,14 +346,14 @@ DRACO's own authors found that one of their three judges ``consistently assigned
 scores than the other two'' \citep{draco2026}.
 
 Judge count buys independent evidence only if the judges' errors are independent.
-\citet{kohli2026ninejudges} shows that a panel of nine frontier models from seven
+\citet{kohli2026ninejudges} show that a panel of nine frontier models from seven
 families, tested on three natural-language-inference datasets, delivered only about two effective votes' worth of information, because
 roughly three quarters of the panel's nominal independence was lost to shared errors on
 the same items; the panel's accuracy fell 8--22 points short of what independent voting
 would have achieved, and the best single model matched or exceeded the whole panel.
 Nor is diversity of provider a sufficient remedy. Across more than 350 models,
 \citet{kim2025correlated} find that ``larger and more accurate models have highly
-correlated errors, even with distinct architectures and providers''; on one leaderboard dataset ``models agree 60\% of the time when both models err''; and they trace the consequence directly into evaluation with language-model judges. Judge independence has to be measured: inter-judge agreement, or an effective-sample-size estimate of the
+correlated errors, even with distinct architectures and providers''. On one leaderboard dataset ``models agree 60\% of the time when both models err'', and the authors trace the consequence directly into evaluation with language-model judges. Judge independence therefore has to be measured: inter-judge agreement, or an effective-sample-size estimate of the
 kind \citet{kohli2026ninejudges} uses, should be reported so that a reader can see how much independent evidence the panel contains, a reporting standard
 \citet{yang2026judgechanges} also call for after showing that ``an LLM-as-judge score can
 move even when the candidate responses stay fixed, simply because the evaluator has

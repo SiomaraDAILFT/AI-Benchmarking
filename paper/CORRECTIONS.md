@@ -1023,3 +1023,13 @@ One angle not taken before: Section 5's S4 (batching judging across systems) rea
 - "the corresponding limits are 1 + (C-1)c and 1: with one cache write ... the batching factor cannot exceed 1 + (C-1)c, which at the cached-read fractions currently published stays well below C and grows by only c ..." held the limits, the bound and its size in one sentence. It is now three: the limits; "So with one cache write per group of C unbatched calls, the batching factor cannot exceed 1 + (C-1)c."; and "At the cached-read fractions currently published that bound stays well below C and grows by only c for each system added: 1.4 at C = 5 and c = 0.1, against 5 without caching."
 
 Nothing skipped: each old passage was found exactly once.
+
+## 14 November 2026, 00:1x pass
+
+One angle not taken before: Section 5's S5 (judge count) read for grammatical agreement with a cited author list, and for sentences whose referent the reader must look back for. The cost fraction was checked and holds: dividing the saving $E R T (J-1) K j'$ by the total $E R T (C g + J K j')$ gives Equation~\ref{eq:s5frac}. Three findings, all applied; no figure, citation or claim changed.
+
+- "\citet{kohli2026ninejudges} shows" renders as "Kohli et al. (2026) shows". It now reads "show", as the paper already writes "\citet{yang2026judgechanges} also call".
+- "A cheaper judge is not enough on its own for that:" left "that" pointing several clauses back, and the next sentence ran a second claim behind "and in any case". It now says what is meant: "A judge that is cheap per call does not by itself make generation dominate." The last claim is its own sentence: "In any case it removes the one thing only judge count provides: evidence about whether the result depends on which judge was used."
+- The Kim et al. sentence joined two quoted findings and the authors' own step into judge evaluation with semicolons. It is now two sentences, and the instruction that follows opens with "therefore", which makes its link to the evidence explicit.
+
+Nothing skipped: each old passage was found exactly once.
