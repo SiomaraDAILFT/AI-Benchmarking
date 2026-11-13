@@ -292,8 +292,8 @@ $C(1+\rho)/(1+C\rho)$: it approaches $C$ as $\rho \to 0$ (the fixed overhead dom
 per-call cost, so batching amortises it across all $C$ answers) and approaches $1$ as
 $\rho \to \infty$ (the per-answer reading cost dominates, and there is nothing left to
 amortise). With caching and no write premium ($w = 1$), the corresponding limits are
-$1 + (C-1)\,c$ and $1$: with one cache write per group of $C$ unbatched calls (Equation~\ref{eq:judging-cached}) the batching factor cannot exceed $1 + (C-1)\,c$, which at the
-cached-read fractions currently published (Appendix~\ref{app:worked}) stays well below $C$ and grows by only $c$ for each system added ($1.4$ at $C = 5$ and $c = 0.1$, against $5$ without caching). The cost case for S4 is therefore weak wherever the judging prefix clears the provider's minimum and
+$1 + (C-1)\,c$ and $1$. So with one cache write per group of $C$ unbatched calls (Equation~\ref{eq:judging-cached}), the batching factor cannot exceed $1 + (C-1)\,c$. At the
+cached-read fractions currently published (Appendix~\ref{app:worked}) that bound stays well below $C$ and grows by only $c$ for each system added: $1.4$ at $C = 5$ and $c = 0.1$, against $5$ without caching. The cost case for S4 is therefore weak wherever the judging prefix clears the provider's minimum and
 prompt caching is available, as it now is from the three largest
 providers (Section~\ref{sec:model}), from two of them by default on current models (Appendix~\ref{app:worked}).
 
@@ -304,8 +304,8 @@ their method, which presents a batch of samples in one prompt so that in-batch c
 second reference alongside the rubric, ``outperforms state-of-the-art methods by 10.5\% on
 Pearson correlations with only 64\% API cost on average''. The same direction appears in
 the comparative-assessment literature: pairwise comparison correlates better with human
-judgement than isolated absolute scoring in judging generated text, for moderate-sized open models in one study \citep{liusie2024comparative} and, with a search over the pairwise comparisons, for GPT-3.5-turbo and GPT-4-turbo in another \citep{liu2024pairs}; and
-isolated scoring is the format in which G-Eval, a judge protocol its authors report as well ahead of earlier methods, reaches
+judgement than isolated absolute scoring in judging generated text, for moderate-sized open models in one study \citep{liusie2024comparative} and, with a search over the pairwise comparisons, for two commercial chat models in another \citep{liu2024pairs}.
+Isolated scoring is also the format in which G-Eval, a judge protocol its authors report as well ahead of earlier methods, reaches
 only a Spearman correlation of $0.514$ with human raters on summarisation
 \citep{liu2023geval}. Batching is a candidate methodological improvement (Section~\ref{sec:calibration}) as well as a cost measure.
 

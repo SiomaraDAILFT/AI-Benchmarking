@@ -1013,3 +1013,13 @@ One angle not taken before: Section 5's S3 (reducing judge repeat scorings) read
 - The Monte Carlo sentence said what one call replaces and, after "though not", what it does not. It is now three sentences: the approximation, what one call therefore replaces, and "It does not replace their median, which ...".
 
 Nothing skipped: each old passage was found exactly once.
+
+## 13 November 2026, 15:1x pass
+
+One angle not taken before: Section 5's S4 (batching judging across systems) read for model names in the body and for sentences that carry two claims through a colon or a semicolon. The bound was checked and holds: with $w = 1$ and $\rho \to 0$, $\beta \to 1 + (C-1)c$, which is $1.4$ at $C = 5$ and $c = 0.1$. Three findings, all applied; no figure, citation or claim changed.
+
+- "for GPT-3.5-turbo and GPT-4-turbo in another" named models in the body, which the paper's rule keeps to the appendices. It now reads "for two commercial chat models in another", with the same citation.
+- The comparative-assessment sentence ran the two pairwise studies and the G-Eval figure together with "; and". The G-Eval point is now its own sentence: "Isolated scoring is also the format in which G-Eval ... reaches only a Spearman correlation of 0.514 ...".
+- "the corresponding limits are 1 + (C-1)c and 1: with one cache write ... the batching factor cannot exceed 1 + (C-1)c, which at the cached-read fractions currently published stays well below C and grows by only c ..." held the limits, the bound and its size in one sentence. It is now three: the limits; "So with one cache write per group of C unbatched calls, the batching factor cannot exceed 1 + (C-1)c."; and "At the cached-read fractions currently published that bound stays well below C and grows by only c for each system added: 1.4 at C = 5 and c = 0.1, against 5 without caching."
+
+Nothing skipped: each old passage was found exactly once.
