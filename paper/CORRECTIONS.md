@@ -1053,3 +1053,13 @@ One angle not taken before: Section 6 (Cumulative Effect) read for sentences tha
 - The appendix summary ran the instance's own floor of 184 behind a semicolon after a parenthesis. That result is now its own sentence.
 
 Nothing skipped: each old passage was found exactly once.
+
+## 14 November 2026, 06:4x pass
+
+One angle not taken before: Section 7.1 (Test, aggregation, and multiple comparisons) read for rules joined by semicolons, where each clause is a separate rule a reader has to apply. The five-task limit was checked and holds: the two-sided sign-flip test over $n$ tasks has $2^n$ equally likely patterns, so its smallest $p$-value is $2/2^n$, which is $0.0625$ at $n = 5$, above $0.05$. Three findings, all applied; no claim or citation changed.
+
+- The paragraph on failed calls ran four rules through two semicolons and an "and". There are now five sentences, one rule each: a failed scoring leaves the median; a weighted rubric with an unread verdict gives no score; a failed regeneration leaves the mean; a task without a score leaves the comparison; and a comparison under 3 tasks is not tested but still counts for Holm.
+- The permutation-test sentence put the further assumption needed for a test of the mean ("read as a test of the mean, it also needs the differences to be symmetric about their mean") behind a semicolon at the end of a five-line sentence. It now starts its own sentence.
+- The confidence-interval paragraph stated "with 5 tasks or fewer at a = 0.05 no value can be rejected" behind a semicolon, without the reason. It is now its own sentence, and it gives the reason: the smallest two-sided p-value is $2/2^n$, which is $0.0625$ at $n = 5$. That is the only addition, and it is the arithmetic the claim rests on.
+
+Nothing skipped: each old passage was found exactly once.
