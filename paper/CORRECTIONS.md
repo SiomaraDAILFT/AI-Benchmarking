@@ -1043,3 +1043,13 @@ One angle not taken before: Section 5's S6 (reducing task count) read for senten
 - The stratified-sampling sentence carried a whole rule in a parenthesis ("a sample smaller than the number of domains takes one task from each of that many domains, chosen with a fixed seed"). The rule is now its own sentence after the one it qualifies.
 
 Nothing skipped: each old passage was found exactly once.
+
+## 14 November 2026, 04:4x pass
+
+One angle not taken before: Section 6 (Cumulative Effect) read for sentences that hide a qualification behind a colon or a semicolon. The algebra was checked and holds: the reduction is the weighted harmonic mean of $F_G$ and $F_J$; the naive product exceeds it by $(1-s)EK\beta + s(1+\alpha)$, since $F_G E K \beta / F_J = 1+\alpha$, and by $s(1+\alpha)/\alpha$ in the second term when S1 keeps the expensive setting; $1.05 \cdot 3 \cdot 3 = 9.45$ at $\alpha = 20$. Three findings, all applied; no figure, citation or claim changed.
+
+- "Generation dominates ... made on its answer, and in that case the judging-side simplifications ... contribute little ..., provided ...: in the worked instance ... they still roughly double the combined reduction" held the claim, its condition and the worked instance's counter-evidence in one sentence. It is now three sentences, with "That proviso matters." leading into the counter-evidence.
+- "independent of $s$; they are also two of the three whose cost to validity the power calculation expresses, S2 through ..." put a second claim and its list behind a semicolon. The claim is now its own sentence, and a colon introduces the list.
+- The appendix summary ran the instance's own floor of 184 behind a semicolon after a parenthesis. That result is now its own sentence.
+
+Nothing skipped: each old passage was found exactly once.
