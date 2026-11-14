@@ -1033,3 +1033,13 @@ One angle not taken before: Section 5's S5 (judge count) read for grammatical ag
 - The Kim et al. sentence joined two quoted findings and the authors' own step into judge evaluation with semicolons. It is now two sentences, and the instruction that follows opens with "therefore", which makes its link to the evidence explicit.
 
 Nothing skipped: each old passage was found exactly once.
+
+## 14 November 2026, 02:4x pass
+
+One angle not taken before: Section 5's S6 (reducing task count) read for sentences that carry two or three claims at once. Three findings, all applied; no figure, citation or claim changed.
+
+- The opening paragraph's second sentence ran the cost of S2 and S3, what S6 bounds, and when the floor can be computed into one sentence with a semicolon. It is now three sentences.
+- The compression-literature sentence joined three studies with semicolons and a final "and". Each study is now its own sentence, as in the S3 and S4 passes.
+- The stratified-sampling sentence carried a whole rule in a parenthesis ("a sample smaller than the number of domains takes one task from each of that many domains, chosen with a fixed seed"). The rule is now its own sentence after the one it qualifies.
+
+Nothing skipped: each old passage was found exactly once.

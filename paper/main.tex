@@ -373,16 +373,16 @@ Before any dimension is reduced, find the term of Equation~\ref{eq:total} it con
 
 \subsection{S6: Reducing task count, bounded by statistical power}
 
-Reducing $T$ saves linearly on both generation and judging cost, and it has an explicit consequence: below a computable floor $n^*$ (Section~\ref{sec:power}), the benchmark no longer has the stated power to detect, at the stated significance level, the difference in mean score it was designed to detect. Fewer regenerations (S2) and fewer repeat scorings (S3) also cost power, since they raise $\sigma$, the standard deviation of the task-level paired differences, and with it $n^*$ (Equation~\ref{eq:variance-decomposition}); S6 is the dimension that floor bounds directly, and the floor can be computed once a pilot has produced a variance estimate.
+Reducing $T$ saves linearly on both generation and judging cost, and it has an explicit consequence: below a computable floor $n^*$ (Section~\ref{sec:power}), the benchmark no longer has the stated power to detect, at the stated significance level, the difference in mean score it was designed to detect. Fewer regenerations (S2) and fewer repeat scorings (S3) also cost power, since they raise $\sigma$, the standard deviation of the task-level paired differences, and with it $n^*$ (Equation~\ref{eq:variance-decomposition}). S6 is the dimension that floor bounds directly. The floor can be computed once a pilot has produced a variance estimate.
 
 \textbf{What is lost}: statistical power alone, provided the reduced task set
 is representative of the full one. That proviso is where the evidence from the
 benchmark-compression literature is relevant. \citet{polo2024tinybenchmarks} show that
 ``to accurately estimate the performance of an LLM on MMLU \ldots\ consisting of 14K
-examples, it is sufficient to evaluate this LLM on 100 curated examples'';
+examples, it is sufficient to evaluate this LLM on 100 curated examples''.
 \citet{perlitz2024efficient} report that evaluation compute can often be reduced ``by x100 or more''
 on HELM with ``minimal loss of benchmark reliability'', while warning that ``a benchmark
-leader may change by merely removing a low-ranked model from the benchmark''; and
+leader may change by merely removing a low-ranked model from the benchmark''.
 \citet{vivek2024anchor} find that ``1--30 anchor points outperforms uniform sampling and
 other baselines at accurately ranking models''. Those figures do not transfer directly. The compressed benchmarks in that literature start from hundreds to tens of thousands of items, mostly multiple-choice (the first of those works also compresses AlpacaEval 2.0, 805 open-ended prompts scored by a judge), with a large pool of previously evaluated models from which item
 informativeness can be estimated; a DRACO-style benchmark starts from about a hundred open-ended
@@ -390,8 +390,8 @@ tasks (DRACO has 100) and no such pool, so the curated-subset methods are availa
 rounds of retained raw data (Section~\ref{sec:stats}) exist. And any informed selection
 of tasks must itself be fixed before the systems are run, or task selection becomes one
 more researcher degree of freedom \citep{simmons2011falsepositive}. Until such data exist, S6 reduces
-$T$ by pre-registered stratified sampling from the task domains, in proportion to each domain's share of the tasks and with at least one task from each (a sample smaller than the number of domains takes one task from each of that many domains, chosen with a fixed seed), and Equation~\ref{eq:power}
-sets the floor. The endpoint towards which S6 develops is already described in that literature: adaptive item selection driven by an item
+$T$ by pre-registered stratified sampling from the task domains, in proportion to each domain's share of the tasks and with at least one task from each, and Equation~\ref{eq:power}
+sets the floor. A sample smaller than the number of domains takes one task from each of that many domains, chosen with a fixed seed. The endpoint towards which S6 develops is already described in that literature: adaptive item selection driven by an item
 response model, which \citet{hofmann2025fluid} show attains higher validity and lower
 variance on MMLU ``with fifty times fewer items'', and subset evaluation with
 confidence intervals of valid frequentist coverage, for which \citet{wu2026faq} report
