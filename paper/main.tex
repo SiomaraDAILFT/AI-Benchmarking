@@ -511,13 +511,13 @@ permutation test, using pilot data, is therefore part of the protocol.
 \label{sec:calibration}
 
 S4 (Section~\ref{sec:simplifications}) bears on two properties of the judging protocol: blinding, which it leaves intact, and calibration context, which it trades against scoring each answer independently. \textbf{Blind scoring}, in which the judge is never told which system, setting or configuration produced the answer it is scoring, guards against a judge favouring a system because it has been told which system wrote an answer, or that one system is the ``interesting'' one, though not against a judge that recognises a system from the answer itself. The biases cited here mostly act through the answer itself, which blinding does not hide:
-\citet{zheng2023judging} report verbosity bias and describe self-enhancement bias, a judge's preference for its own answers, though they say their data cannot determine whether the judges they tested have it; \citet{philipp2026clinical} find evaluators that ``preferentially scored architectural siblings''; and
+\citet{zheng2023judging} report verbosity bias and describe self-enhancement bias, a judge's preference for its own answers, though they say their data cannot determine whether the judges they tested have it. \citet{philipp2026clinical} find evaluators that ``preferentially scored architectural siblings''.
 \citet{stureborg2024inconsistent} report a preference for lower-perplexity, more familiar
 text. Blinding is compatible with either isolated or batched presentation.
 \textbf{Calibration context}, showing a judge several systems' answers to the same task together as in S4, addresses a different problem: a judge scoring one answer in
 isolation has no reference for the level of quality attainable on that specific task, which risks
 scale drift, where the same numerical score from two judges denotes different levels of
-quality because each is implicitly calibrated to a different internal reference point;
+quality because each is implicitly calibrated to a different internal reference point.
 \citet{stureborg2024inconsistent} document the related anchoring effect in multi-attribute
 judgements. Batched presentation brings its own, well-measured hazard: position bias.
 \citet{wang2023unfair} show that the ranking of candidate answers ``can be easily hacked by
@@ -526,7 +526,7 @@ was preferred over a stronger proprietary assistant on 66 of 80 queries under on
 ordering, and \citet{zheng2023judging} report
 the same effect. In a small measurement made for this paper, three answers graded
 together under an absolute rubric kept their ranking in two of three orderings, with the
-top two swapping places in the third, and an individual score moved by up to 17 points, but five repeated scorings of one answer under a fixed prompt also spanned 17 points, so with one call per ordering that measurement cannot separate position from test--retest noise (Appendix~\ref{app:measurements}). One of the three remedies \citet{wang2023unfair} propose, balanced position calibration (scoring under several orderings and aggregating), multiplies the number of judging calls and so consumes part of what S4 saved. Batched, anonymised, order-randomised presentation
+top two swapping places in the third, and an individual score moved by up to 17 points. Five repeated scorings of one answer under a fixed prompt also spanned 17 points, however, so with one call per ordering that measurement cannot separate position from test--retest noise (Appendix~\ref{app:measurements}). One of the three remedies \citet{wang2023unfair} propose, balanced position calibration (scoring under several orderings and aggregating), multiplies the number of judging calls and so consumes part of what S4 saved. Batched, anonymised, order-randomised presentation
 under explicit absolute-scoring instructions, with the order varied across the $K$ repeats
 of S3 so that the repeats double as position calibration, is our recommended way to obtain
 calibration context without fully sacrificing independence; the S4 discussion in

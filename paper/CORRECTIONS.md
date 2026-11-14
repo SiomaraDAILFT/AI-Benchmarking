@@ -1063,3 +1063,13 @@ One angle not taken before: Section 7.1 (Test, aggregation, and multiple compari
 - The confidence-interval paragraph stated "with 5 tasks or fewer at a = 0.05 no value can be rejected" behind a semicolon, without the reason. It is now its own sentence, and it gives the reason: the smallest two-sided p-value is $2/2^n$, which is $0.0625$ at $n = 5$. That is the only addition, and it is the arithmetic the claim rests on.
 
 Nothing skipped: each old passage was found exactly once.
+
+## 14 November 2026, 08:4x pass
+
+One angle not taken before: Section 7.3 (Blind and calibrated scoring) read for studies and caveats chained into one sentence. No model or provider is named in the body. Three findings, all applied; no figure, citation or claim changed.
+
+- The biases sentence joined three studies (Zheng et al., Philipp et al., Stureborg et al.) with semicolons and a final "and". Each is now its own sentence, as in the passes on S3, S4 and S6.
+- The calibration sentence ended a definition of scale drift with a semicolon and a further study on anchoring. That study is now its own sentence.
+- The small measurement ran its result ("kept their ranking in two of three orderings ... moved by up to 17 points") and the caveat that undoes it ("but five repeated scorings ... also spanned 17 points, so ...") into one sentence of about sixty words. The caveat is now its own sentence, with "however".
+
+Nothing skipped: each old passage was found exactly once.
