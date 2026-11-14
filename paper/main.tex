@@ -535,15 +535,15 @@ Section~\ref{sec:simplifications} names the residual risk this does not eliminat
 \subsection{Data retention}
 \label{sec:retention}
 
-Every individual measurement (each judge's verdict on each rubric criterion, for each repeat scoring, each regeneration and each setting) should be retained at its finest grain and never averaged down before storage. Every reported summary statistic is then a view computed from that raw table, and the raw table remains the record. The published runner retains them so: for each judging call and answer it stores the verdict on each criterion, the score, the numbers of criteria met and unmet, the order in which the answers were shown and, for weighted rubrics, the per-dimension scores. Retaining the measurements, and not only their per-system summaries, is what makes it possible to
-later compute a confidence interval or a $p$-value for any pair of systems not among the
+Every individual measurement (each judge's verdict on each rubric criterion, for each repeat scoring, each regeneration and each setting) should be retained at its finest grain and never averaged down before storage. Every reported summary statistic is then a view computed from that raw table, and the raw table remains the record. The published runner keeps every such measurement. For each judging call and answer it stores the verdict on each criterion, the score, the numbers of criteria met and unmet, the order in which the answers were shown and, for weighted rubrics, the per-dimension scores. Retaining the measurements, and not only their per-system summaries, is what makes it possible to
+compute a confidence interval or a $p$-value later for any pair of systems not among the
 originally pre-registered comparisons, without re-running a single generation or judging
-call, provided that any such post-hoc comparison is reported as \emph{exploratory} and is not included in the same family-wise error control as the comparisons that were pre-registered
+call. Such a post-hoc comparison has to be reported as \emph{exploratory}, and it stays outside the family-wise error control that covers the comparisons pre-registered
 before data collection. The distinction is the one \citet{nosek2018preregistration} draw
 between prediction and postdiction: pre-registration ``distinguishes analyses and outcomes
-that result from predictions from those that result from postdictions'', and a retained
-raw table is what allows both to be reported, with the distinction intact, from the same
-run.
+that result from predictions from those that result from postdictions''. A retained
+raw table lets a single run report both kinds of analysis, the pre-registered and the
+exploratory, with that distinction intact.
 
 \sectionbreak
 \section{Empirical Validation of the Reduction Factors}

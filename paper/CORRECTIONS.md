@@ -1073,3 +1073,13 @@ One angle not taken before: Section 7.3 (Blind and calibrated scoring) read for 
 - The small measurement ran its result ("kept their ranking in two of three orderings ... moved by up to 17 points") and the caveat that undoes it ("but five repeated scorings ... also spanned 17 points, so ...") into one sentence of about sixty words. The caveat is now its own sentence, with "however".
 
 Nothing skipped: each old passage was found exactly once.
+
+## 14 November 2026, 09:2x pass
+
+One angle not taken before: Section 7.4 (Data retention) read for a pronoun that does not agree with its subject and for a sentence that carries a result, its condition and an error-control rule at once. No model or provider is named in the body. Three findings, all applied; no figure, citation or claim changed.
+
+- "The published runner retains them so:" followed "Every individual measurement ... should be retained", so "them" had no plural to refer to and "so" left the reader to work out what was meant. Now "The published runner keeps every such measurement. For each judging call and answer it stores ...".
+- The retention sentence ran about 75 words: what the raw table makes possible, then "provided that" the post-hoc comparison is reported as exploratory "and is not included in the same family-wise error control as ...". The condition is now its own sentence: "Such a post-hoc comparison has to be reported as exploratory, and it stays outside the family-wise error control that covers the comparisons pre-registered before data collection." The split infinitive "to later compute" became "to compute ... later".
+- The closing sentence said a retained table "allows both to be reported", after a quotation that names analyses, outcomes, predictions and postdictions, so "both" could point at any pair. It now names them: "A retained raw table lets a single run report both kinds of analysis, the pre-registered and the exploratory, with that distinction intact." The quotation from Nosek et al. is unchanged.
+
+Nothing skipped: each old passage was found exactly once. Build: latexmk, 46 pages, the same two float warnings as before.
