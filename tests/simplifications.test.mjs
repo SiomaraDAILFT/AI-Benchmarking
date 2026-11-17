@@ -227,9 +227,16 @@ describe('Section 5, S4 and Appendix B: the batching factor beta', () => {
     assert.equal(decimals(BETA_CACHED_W125, 3), 1.325)
   })
 
-  test('Appendix B: "the ceiling 1 + (C-1) c is 1.4"; Section 5: "1.4 at C = 5 and c = 0.1, against 5 without caching"', () => {
+  test('Appendix B: "the ceiling 1 + (C-1) c is 1.4"; Section 5: "cannot exceed w + (C-1) c", "1.4 with no write premium and 1.65 at w = 1.25, against 5 without caching"', () => {
     near(s4BetaCeiling({ C: 5, c: 0.1 }), 1.4, 1e-12)
+    near(s4BetaCeiling({ C: 5, c: 0.1, w: 1.25 }), 1.65, 1e-12)
     assert.equal(s4BetaCeiling({ C: 5 }), 5)
+    // At w = 1.25 the bound is reached as rho -> 0 when the batched call pays no write, and is
+    // above the 1 + (C-1) c the text gave before 17 November.
+    near(s4Beta({ C: 5, rho: 0, c: 0.1, w: 1.25 }), 1.65, 1e-12)
+    // Where the batched call pays the write too, the limit is 1 + (C-1) c / w, inside the bound.
+    near(s4Beta({ C: 5, rho: 0, c: 0.1, w: 1.25, batchedWrite: true }), 1 + 0.4 / 1.25, 1e-12)
+    assert.ok(s4Beta({ C: 5, rho: 0, c: 0.1, w: 1.25, batchedWrite: true }) <= s4BetaCeiling({ C: 5, c: 0.1, w: 1.25 }))
     // The ceiling is the rho -> 0 limit of Equation s4, and "grows by only c for each system added".
     near(s4Beta({ C: 5, rho: 0, c: 0.1 }), 1.4, 1e-12)
     assert.equal(s4Beta({ C: 5, rho: 0 }), 5)

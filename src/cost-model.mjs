@@ -283,9 +283,9 @@ export function s4Beta({ C, rho, c = 1, w = 1, batchedWrite = false }) {
 }
 
 /**
- * The limit of beta as rho -> 0, w + (C - 1) c: C without caching, and the
- * ceiling 1 + (C - 1) c under caching with no write premium (Section 5, S4,
- * the text after Equation s4).
+ * The limit of beta as rho -> 0, w + (C - 1) c: C without caching, the
+ * ceiling 1 + (C - 1) c under caching with no write premium, and the bound
+ * on beta at any w (Section 5, S4, the text after Equation s4).
  */
 export function s4BetaCeiling({ C, c = 1, w = 1 }) {
   count('C', C)
