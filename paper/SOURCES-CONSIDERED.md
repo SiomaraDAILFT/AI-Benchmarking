@@ -2,6 +2,11 @@
 
 Outside sources opened during the correction passes, whether they were used or rejected. One entry per pass.
 
+## 18 November 2026, 00:4x pass
+
+- None opened. The three findings are internal to the paper: they were checked against the paper's own sections (Sections 4, 6, 7.1, 9 and the Conclusion, Appendix B, Appendix C.1 to C.3, Table tab:alpha, and Table tab:e1-calls for the recomputed cost ratios).
+- Rejected: none.
+
 ## 18 November 2026, 00:2x pass
 
 - None opened. The correction moves the paper's own measured figures from the body to Appendix C; it was checked against the paper's own sections (Sections 4, 5, 6 and 7.3, Appendices B and C.1 to C.2, Table tab:alpha) and tests/simplifications.test.mjs.

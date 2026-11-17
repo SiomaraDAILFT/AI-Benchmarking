@@ -181,7 +181,7 @@ anthropic2026caching, google2026pricing}. Appendix~\ref{app:worked} records the 
 force when the providers' pages were read, on 11 September and on 26 and 27 October 2026. A task description together with a rubric of several tens
 of criteria can fall on either side of the published minimum prefix lengths: in our runs a 40-criterion rubric with its task and question fell just short of one provider's minimum and drew no cached tokens (Section~\ref{app:e2} gives the token counts), so the prefix length should be checked.
 
-The $C$ calls in which one judge, in one repeat, scores the $C$ systems' answers to one (task, setting, regeneration) triple naturally fall within a single cache lifetime, and the formula below charges a fresh cache write for each such group, that is, for every setting, regeneration and repeat. All $C \cdot E \cdot R \cdot K$ calls one judge makes on a task open with the same prefix, and repeated calls with an identical prompt were measured reading the cache (Appendix~\ref{app:measurements}). Where all the calls one judge makes on a task fall within one lifetime, the write is paid once per task and judge, and in the worked instance of Appendix~\ref{app:worked} the cached judging-side factor $F_J$ of Section~\ref{sec:cumulative}, with no premium on the cache-writing call, falls from $108$ to about $69$, and the cached reductions of Table~\ref{tab:cumulative} from $137$--$176\times$ to about $101$--$161\times$. Writing $c$
+The $C$ calls in which one judge, in one repeat, scores the $C$ systems' answers to one (task, setting, regeneration) triple naturally fall within a single cache lifetime, and the formula below charges a fresh cache write for each such group, that is, for every setting, regeneration and repeat. All $C \cdot E \cdot R \cdot K$ calls one judge makes on a task open with the same prefix, and repeated calls with an identical prompt were measured reading the cache (Section~\ref{app:e2}). Where all the calls one judge makes on a task fall within one lifetime, the write is paid once per task and judge, and in the worked instance of Appendix~\ref{app:worked} the cached judging-side factor $F_J$ of Section~\ref{sec:cumulative}, with no premium on the cache-writing call, falls from $108$ to about $69$, and the cached reductions of Table~\ref{tab:cumulative} from $137$--$176\times$ to about $101$--$161\times$. Writing $c$
 for the cached-read price as a fraction of the standard input price and $w$ for the
 price of the first, cache-writing call as a multiple of the standard input price ($w = 1$ where no write premium is charged), the unbatched judging cost with caching is
 \begin{equation}
@@ -430,7 +430,7 @@ And because $F_G$ and $F_J$ share the factors $R$ and
 $T_{\text{full}}/n^*$, S2 and S6 are the only simplifications whose benefit is
 independent of $s$. They are also two of the three whose cost to validity the power calculation expresses: S2 through the regeneration term of Equation~\ref{eq:variance-decomposition}, S3 through the within-task variances in that term, and S6 through the floor $n^*$ (Sections~\ref{sec:simplifications} and~\ref{sec:power}).
 
-Appendix~\ref{app:worked} evaluates Equation~\ref{eq:cumulative} for an illustrative configuration: roughly two orders of magnitude, with and without prompt caching, across plausible values of $s$, at that instance's setting-cost ratio $\alpha$ and its assumed floor $n^* = 60$, when S1 keeps the cheap setting ($10$--$18\times$ when it keeps the expensive one, since $F_G$ is then $1.05 \cdot 3 \cdot 3 = 9.45$). With the floor of $184$ that its own power inputs give, S6 saves nothing and every figure falls to a third ($45$--$74\times$ with the cheap setting kept). At the values of $\alpha$ we measured on analytic prompts (Appendix~\ref{app:measurements}) the same configuration yields well under a hundredfold, because $\alpha$ enters $F_G$ directly.
+Appendix~\ref{app:worked} evaluates Equation~\ref{eq:cumulative} for an illustrative configuration: roughly two orders of magnitude, with and without prompt caching, across plausible values of $s$, at that instance's setting-cost ratio $\alpha$ and its assumed floor $n^* = 60$, when S1 keeps the cheap setting ($10$--$18\times$ when it keeps the expensive one, since $F_G$ is then $1.05 \cdot 3 \cdot 3 = 9.45$). With the floor of $184$ that its own power inputs give, S6 saves nothing and every figure falls to a third ($45$--$74\times$ with the cheap setting kept). At the values of $\alpha$ we measured on analytic prompts (Section~\ref{app:e1-alpha}) the same configuration yields well under a hundredfold, because $\alpha$ enters $F_G$ directly.
 
 \sectionbreak
 \section{Statistical Constraints on the Simplifications}
@@ -440,7 +440,7 @@ Appendix~\ref{app:worked} evaluates Equation~\ref{eq:cumulative} for an illustra
 \label{sec:test}
 
 The quantity of interest for each pre-registered comparison between two systems is the
-task-level paired difference in score, where a system's score on a task at a given setting is the median of each judge's $K$ repeat scorings, then the median over the $J$ judges, then the mean over the $R$ regenerations, as the published runner computes it. Each comparison is made at one setting of each of its two systems: the setting named for that system or, where none is named, its first configured setting. On a rubric with criterion weights, such as DRACO's, the runner computes each scoring from the judge's verdicts: the sum of the weights of the criteria marked met, in which a criterion describing an error carries a negative weight, over the sum of the positive weights, as a percentage clamped to 0 to 100 and rounded to one decimal. On an unweighted rubric it takes the score line the judge writes or, where the judge writes none but gives a verdict on every criterion, the share of criteria marked met; a score line need not equal that share (Appendix~\ref{app:measurements}).
+task-level paired difference in score, where a system's score on a task at a given setting is the median of each judge's $K$ repeat scorings, then the median over the $J$ judges, then the mean over the $R$ regenerations, as the published runner computes it. Each comparison is made at one setting of each of its two systems: the setting named for that system or, where none is named, its first configured setting. On a rubric with criterion weights, such as DRACO's, the runner computes each scoring from the judge's verdicts: the sum of the weights of the criteria marked met, in which a criterion describing an error carries a negative weight, over the sum of the positive weights, as a percentage clamped to 0 to 100 and rounded to one decimal. On an unweighted rubric it takes the score line the judge writes or, where the judge writes none but gives a verdict on every criterion, the share of criteria marked met; a score line need not equal that share (Section~\ref{app:e2}).
 
 A paired design is used throughout because every
 system answers the identical task set, and task difficulty is shared across systems: as
@@ -590,7 +590,7 @@ The generation-cost parameter $g$ is treated as a single external number: in Equ
 setting; in practice it may itself have meaningful variance (a system's answer length, and
 therefore its cost, can differ substantially task to task), which the framework absorbs by taking $g$ as an average over tasks (Section~\ref{sec:model}) instead of modelling it separately. Because $g$ enters the generation cost and the total only as a multiplier (Equations~\ref{eq:generation} and~\ref{eq:total}), both are right on average, but the framework does not say how far the actual spend can differ from them; a more complete treatment would model the distribution of $g$.
 
-The cost model prices calls and does not model how long a run takes, although Sections~\ref{sec:intro} and~\ref{sec:strengths} count running time among the expenses of a rigorous protocol. A run's duration depends on the number of calls, on the latency of each, which E1 found several times longer at the highest setting it ran than at the lowest (Appendix~\ref{app:measurements}, Section~\ref{app:e1-method}), and on how many calls can run at once, which the providers' rate limits bound. A reduction factor is therefore not a factor of time saved: S4, for example, divides the number of judging calls by $C$ but makes each call longer.
+The cost model prices calls and does not model how long a run takes, although Sections~\ref{sec:intro} and~\ref{sec:strengths} count running time among the expenses of a rigorous protocol. A run's duration depends on the number of calls, on the latency of each, which E1 found several times longer at the highest setting it ran than at the lowest (Section~\ref{app:e1-alpha} gives the mean latencies, Table~\ref{tab:e1-calls} the latency of each call), and on how many calls can run at once, which the providers' rate limits bound. A reduction factor is therefore not a factor of time saved: S4, for example, divides the number of judging calls by $C$ but makes each call longer.
 
 The batching
 saving in Equation~\ref{eq:s4} assumes a judge can meaningfully score $C$ answers in one
@@ -623,9 +623,9 @@ The minimum difference $\delta$ worth detecting for a given comparison remains a
 
 \section{Conclusion}
 
-Rigour in a DRACO-style benchmark is expensive by construction, because four of its six design choices multiply the whole cost when each answer is judged separately, as DRACO does, and three still do when judging is batched (Section~\ref{sec:strengths}). Most of that cost can be given back. The sweep over settings and the regenerations carry most of the saving, the sweep only when the cheap setting is the one kept and is the operating point of interest (S1), and the regenerations at some cost in power, since fewer of them raise $n^*$ (S2, S6); the task count adds to it only as far as the power floor of Section~\ref{sec:power} allows. Batched judging carries far less than its uncached arithmetic suggests once prompt caching is priced in (S4), and less still where reading and scoring an answer costs more than the prompt the answers share, as it did on the calls we measured (Appendix~\ref{app:measurements}). The judge count, the dimension intuition reaches for first, is the one to keep.
+Rigour in a DRACO-style benchmark is expensive by construction, because four of its six design choices multiply the whole cost when each answer is judged separately, as DRACO does, and three still do when judging is batched (Section~\ref{sec:strengths}). Most of that cost can be given back. The sweep over settings and the regenerations carry most of the saving, the sweep only when the cheap setting is the one kept and is the operating point of interest (S1), and the regenerations at some cost in power, since fewer of them raise $n^*$ (S2, S6); the task count adds to it only as far as the power floor of Section~\ref{sec:power} allows. Batched judging carries far less than its uncached arithmetic suggests once prompt caching is priced in (S4), and less still where reading and scoring an answer costs more than the prompt the answers share, as it did on the calls we measured (Section~\ref{app:e2}). The judge count, the dimension intuition reaches for first, is the one to keep.
 
-The combined reduction, a weighted harmonic mean of a generation-side and a judging-side factor, is roughly two orders of magnitude in the worked instance of Appendix~\ref{app:worked} with the cheap setting kept and at its assumed task floor, a third of that at the floor its own power inputs give, and less at the setting-cost ratios we measured. What that buys is a benchmark that can be re-run for a fraction of the full protocol's cost whenever the set of systems changes, provided the reduced protocol is checked against the full one at least once (Section~\ref{sec:validation}) and what that check measured still holds for the new systems (Section~\ref{sec:limitations}).
+The combined reduction, a weighted harmonic mean of a generation-side and a judging-side factor, is roughly two orders of magnitude in the worked instance of Appendix~\ref{app:worked} with the cheap setting kept and at its assumed task floor, a third of that at the floor its own power inputs give, and less at the setting-cost ratios we measured. What that buys is a benchmark that can be re-run for a fraction of the full protocol's cost whenever the set of systems changes, provided the reduced protocol is checked against the full one at least once (Section~\ref{sec:validation}). That check is made on one set of systems, so for systems it did not include what it measured is assumed to hold, not shown to (Section~\ref{sec:limitations}).
 
 \appendix
 
@@ -738,7 +738,7 @@ tokens at the \texttt{minimal} setting and $82$~million at \texttt{high}, a $23\
 same rate regardless of setting \citep{openai2026reasoning, anthropic2026thinking}, this
 is a ratio of output costs of about $23$ for that model on that suite, and an upper bound on its $\alpha$ there: the suite's inputs, about $100{,}000$ tokens per question in its long-context benchmark, are paid at both settings and pull the cost ratio below the token ratio (Section~\ref{app:e1-method}). The same service publishes
 the token counts and cost of running its whole suite for the models and settings it evaluates \citep{aaintelligence}. Even so, $\alpha$ should
-be measured on the benchmark's own tasks for the systems under comparison, since the published figures hold for that suite only. Appendix~\ref{app:measurements}
+be measured on the benchmark's own tasks for the systems under comparison, since the published figures hold for that suite only. Section~\ref{app:e1-alpha}
 reports a measurement on analytic prompts, with $\alpha$ between $1.75$ and $3.18$ by output tokens ($1.74$ to $3.14$ by cost) for the \texttt{high} setting against a lower one, and its consequence for the worked instance below.
 
 \subsection{Call counts for a modest configuration}
@@ -861,18 +861,18 @@ latency rose from 38 seconds at \texttt{none} to 126 at \texttt{high} for the fi
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{llrrr}
+\begin{tabular}{llrrrr}
 \toprule
-Provider & Settings compared & Paired prompts & $\alpha$ by tokens & Per-prompt range \\
+Provider & Settings compared & Prompts & $\alpha$ by tokens & $\alpha$ by cost & Per-prompt range \\
 \midrule
-first provider & high / low & 5 & $2.83$ & $1.52$--$3.99$ \\
-first provider & high / none & 5 & $3.18$ & $2.04$--$4.25$ \\
-first provider & low / none & 5 & $1.12$ & $0.94$--$1.34$ \\
-second provider & high / low & 5 & $1.75$ & $1.48$--$2.00$ \\
+first provider & high / low & 5 & $2.83$ & $2.80$ & $1.52$--$3.99$ \\
+first provider & high / none & 5 & $3.18$ & $3.14$ & $2.04$--$4.25$ \\
+first provider & low / none & 5 & $1.12$ & $1.12$ & $0.94$--$1.34$ \\
+second provider & high / low & 5 & $1.75$ & $1.74$ & $1.48$--$2.00$ \\
 \bottomrule
 \end{tabular}
 \caption{Measured setting-cost ratios on five analytic prompts, 11 September 2026.
-Pooled ratio of summed output tokens over the same five prompts; raw usage records in
+Pooled ratio of summed output tokens, and of summed cost at the prices of Section~\ref{app:e1-method}, over the same five prompts; the per-prompt range is by tokens. Raw usage records in
 \texttt{experiments/results/}.}
 \label{tab:alpha}
 \end{table}
