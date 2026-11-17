@@ -581,7 +581,7 @@ on the same systems is formally a benchmark-agreement test, for which
 \citet{perlitz2024benchbench} show that ``overlooked methodological choices can
 significantly influence'' the result, in particular which systems are included and which protocol is treated as the reference, and propose standard practices. The full Phase 1 run is the reference here by construction, and the systems compared should be the full set under study and not a convenient subset.
 
-\textbf{Phase 3: fidelity cost per simplification, reported alongside cost saved.} The useful output of this protocol is a table of cost saved against fidelity lost, per simplification, from which a future user of this framework can choose which simplifications to accept, and that choice may reasonably differ from the combination of Section~\ref{sec:cumulative}; which trade-offs are acceptable is a decision the paper's formulas inform without making. Phase 2 measures each simplification alone and all of them together, not the combinations in between, so a different combination should itself be run against the Phase 1 reference before it is adopted.
+\textbf{Phase 3: fidelity cost per simplification, reported alongside cost saved.} Tabulate, for each Phase 2 variant, the cost it saved against the fidelity it lost on the measures recorded in Phase 2. That table is the useful output of this protocol. From it a future user of this framework can choose which simplifications to accept, and that choice may reasonably differ from the combination of Section~\ref{sec:cumulative}; which trade-offs are acceptable is a decision the paper's formulas inform without making. Phase 2 measures each simplification alone and all of them together, not the combinations in between, so a different combination should itself be run against the Phase 1 reference before it is adopted.
 
 \sectionbreak
 \section{Limitations and Open Questions}
@@ -999,7 +999,7 @@ gpt-5.6-sol & none & 4 retail & 128 & 1{,}225 & 0 & 37 & stop \\
 gpt-5.6-sol & none & 5 telecoms & 125 & 1{,}234 & 0 & 39 & stop \\
 \bottomrule
 \end{tabular}
-\caption{Every successful call of experiment E1 (25 calls, one per cell, 11 September 2026); the ten failed calls are not listed. In/Out/Reasoning are token counts from the providers' own usage fields; ``Reasoning'' is included in ``Out'' for both providers (\texttt{reasoning\_tokens} for \texttt{gpt-5.6-sol}, \texttt{thinking\_tokens} for \texttt{claude-opus-5}). Stop = provider finish reason, and ``retry $n$'' marks a cell whose call succeeded on its $n$th retry, after $n$ failed calls; no call stopped on the output cap.}
+\caption{Every successful call of experiment E1 (25 calls, one per cell, 11 September 2026); the ten failed calls are not listed. In/Out/Reasoning are token counts from the providers' own usage fields; ``Reasoning'' is included in ``Out'' for both providers (\texttt{reasoning\_tokens} for \texttt{gpt-5.6-sol}, \texttt{thinking\_tokens} for \texttt{claude-opus-5}). Latency is rounded to the second here; the means in the text are computed from the unrounded timings in the result files, so the first model's mean at \texttt{high} is $125.5$ seconds (given as $126$), where these rounded values give $125.4$. Stop = provider finish reason, and ``retry $n$'' marks a cell whose call succeeded on its $n$th retry, after $n$ failed calls; no call stopped on the output cap.}
 \label{tab:e1-calls}
 \end{table}
 
@@ -1014,7 +1014,7 @@ together they make $\alpha$ a quantity that must be measured on the tasks of int
 ``MMLU-Pro, GPQA Diamond, Humanity's Last Exam, LiveCodeBench, SciCode, AIME, IFBench
 \& AA-LCR'' \citep{aagpt5benchmarks2025}, most of which are competition-, examination- or
 code-style problems with a short, checkable answer. On such problems most of the
-output at a high setting is reasoning (in E3, Section~\ref{app:e3}, 72\% for the first model and 60\% for the second, against 69\% and 39\% on the E1 prompts), and the literature on reasoning length shows the
+output at a high setting is reasoning (in E3, Section~\ref{app:e3}, 72\% for the first model and 60\% for the second). On the E1 prompts the share was 69\% for the first model, nearly the same, and 39\% for the second, so in our measurements the task family changed the reasoning share of one model only. The literature on reasoning length shows the
 amount of reasoning a model spends varies by problem type and between models, and suggests that it changes across model generations:
 \citet{ballon2026thinksharder} find that accuracy declines as reasoning chains grow even at fixed difficulty, though less so in more proficient models, which they take to suggest that ``new generations of reasoning models use test-time compute more effectively''; \citet{lee2025critical} show that ``there exists an optimal amount of
 reasoning tokens such that the probability of producing a correct solution is maximized''

@@ -2,6 +2,11 @@
 
 Outside sources opened during the correction passes, whether they were used or rejected. One entry per pass.
 
+## 17 November 2026, 17:3x pass
+
+- None opened. The three findings are internal to the paper: they were checked against the paper's own sections (Section 8, Appendix C.2, C.4 and C.5, Table e1-calls and Table e3) and against the raw result files in experiments/results/ (e1-alpha-2026-09-11T07-41-26.json for the latencies and reasoning tokens, e3-aime-2026-09-11T08-35-02.json for the reasoning and thinking shares), which are the repository's own records.
+- Rejected: none.
+
 ## 17 November 2026, 07:4x pass
 
 - None opened. The three findings are internal to the paper: they were checked against the paper's own sections (Sections 2.2, 5, 6, 7.2 and 8, Table 1, Table 2 and Table 4).
