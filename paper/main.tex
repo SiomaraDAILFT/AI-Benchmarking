@@ -181,7 +181,7 @@ anthropic2026caching, google2026pricing}. Appendix~\ref{app:worked} records the 
 force when the providers' pages were read, on 11 September and on 26 and 27 October 2026. A task description together with a rubric of several tens
 of criteria can fall on either side of the published minimum prefix lengths: a 40-criterion rubric with its task and question came to about 1{,}005 tokens, just below one provider's 1{,}024-token minimum, and drew no cached tokens (Appendix~\ref{app:measurements}), so the prefix length should be checked.
 
-The $C$ calls in which one judge, in one repeat, scores the $C$ systems' answers to one (task, setting, regeneration) triple naturally fall within a single cache lifetime, and the formula below charges a fresh cache write for each such group, that is, for every setting, regeneration and repeat. All $C \cdot E \cdot R \cdot K$ calls one judge makes on a task open with the same prefix, and repeated calls with an identical prompt were measured reading the cache (Appendix~\ref{app:measurements}). Where all the calls one judge makes on a task fall within one lifetime, the write is paid once per task and judge, and in the worked instance of Appendix~\ref{app:worked} the cached judging-side factor $F_J$ of Section~\ref{sec:cumulative} at $w = 1$ falls from $108$ to about $69$, and the cached reductions of Table~\ref{tab:cumulative} from $137$--$176\times$ to about $101$--$161\times$. Writing $c$
+The $C$ calls in which one judge, in one repeat, scores the $C$ systems' answers to one (task, setting, regeneration) triple naturally fall within a single cache lifetime, and the formula below charges a fresh cache write for each such group, that is, for every setting, regeneration and repeat. All $C \cdot E \cdot R \cdot K$ calls one judge makes on a task open with the same prefix, and repeated calls with an identical prompt were measured reading the cache (Appendix~\ref{app:measurements}). Where all the calls one judge makes on a task fall within one lifetime, the write is paid once per task and judge, and in the worked instance of Appendix~\ref{app:worked} the cached judging-side factor $F_J$ of Section~\ref{sec:cumulative}, with no premium on the cache-writing call, falls from $108$ to about $69$, and the cached reductions of Table~\ref{tab:cumulative} from $137$--$176\times$ to about $101$--$161\times$. Writing $c$
 for the cached-read price as a fraction of the standard input price and $w$ for the
 price of the first, cache-writing call as a multiple of the standard input price ($w = 1$ where no write premium is charged), the unbatched judging cost with caching is
 \begin{equation}
@@ -393,8 +393,7 @@ $T$ by pre-registered stratified sampling from the task domains, in proportion t
 sets the floor. A sample smaller than the number of domains takes one task from each of that many domains, chosen with a fixed seed. The endpoint towards which S6 develops is already described in that literature: adaptive item selection driven by an item
 response model, which \citet{hofmann2025fluid} show attains higher validity and lower
 variance on MMLU ``with fifty times fewer items'', and subset evaluation with
-confidence intervals of valid frequentist coverage, for which \citet{wu2026faq} report
-effective-sample-size gains of up to five times over uniform sampling.
+confidence intervals whose frequentist coverage holds asymptotically, that is, in large samples, for which \citet{wu2026faq} report intervals as narrow as uniform sampling gives with up to five times fewer queries.
 
 \sectionbreak
 \section{Cumulative Effect}
@@ -603,8 +602,7 @@ models they test maintaining satisfactory performance at 32K tokens, and
 multi-answer prompt is exposed.
 
 The nested measurement structure ($R$ regenerations $\times$ $J$ judges $\times$ $K$
-repeats, aggregated to one score per system per task) shrinks the regeneration and repeat variance by averaging, and leaves out the variance due to the choice of judges, at the
-aggregation step, before $\sigma^2$ is estimated for Equation~\ref{eq:power}. In the
+repeats, reduced to one score per system per task by a median over each judge's repeats, a median over the judges and a mean over the regenerations, Section~\ref{sec:test}) shrinks the regeneration and repeat variance at that step, and leaves out the variance due to the choice of judges, before $\sigma^2$ is estimated for Equation~\ref{eq:power}. In the
 language of generalisability theory \citep{brennan2001}, tasks, judges, judge repeats and
 regenerations are \emph{facets} of the measurement, each contributing a variance component
 that a generalisability study estimates from a pilot in which every facet varies; the paired-difference
