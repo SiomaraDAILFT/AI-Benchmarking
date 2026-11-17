@@ -568,7 +568,7 @@ on the systems under comparison. This run is performed once and serves as the re
 \textbf{Phase 2: each simplification alone, and all of them combined, on the same systems, and on the same tasks or a sample of them.} Run
 S1 alone, S2 alone, and so on, and the fully combined simplification from
 Section~\ref{sec:cumulative}, each on the task set used in Phase 1, or, for S6 and the combined variant, on a pre-registered stratified sample of $n^*$ of those tasks, drawn as S6 prescribes, with $n^*$ computed at the variant's own $R$ and $K$, since fewer repeat scorings also raise the within-task variances of Equation~\ref{eq:variance-decomposition}. That equation assumes the two systems' scores vary independently within a task, which batched judging does not ensure (Section~\ref{sec:power}), and the combined variant batches (S4) where Phase 1 does not. Its $n^*$ computed from the Phase 1 variances is therefore an approximation, and the standard deviation of its own paired differences should be reported beside it. Where that $n^*$ is above $T_{\text{full}}$, as for the combined variant on the inputs of Appendix~\ref{app:worked} ($184$ against $180$ from its $R = 1$ alone, and more once its $K = 1$ is counted), the variant runs on all $T_{\text{full}}$ tasks and is reported as below the stated power; so is any other variant whose $n^*$ exceeds the number of tasks it runs on, such as S2 alone, at $184$ on the same inputs. For
-each variant, record: the calls it made and what they cost, as ratios to the Phase 1 run, beside the saving its reduction factor predicts; whether the same system(s) rank highest; how far the point estimate
+each variant, record: the calls it made and what they cost, as ratios to the Phase 1 run with both runs priced at the same per-token rates, beside the saving its reduction factor predicts; whether the same system(s) rank highest; how far the point estimate
 and confidence interval shift relative to the Phase 1 reference; and whether the corrected
 $p$-value for the pre-registered comparisons crosses the significance threshold in the
 reference run but not in the simplified one, or vice versa. Such a crossing can happen by chance alone, more often the lower a variant's power, so one crossing does not by itself show that the simplification changed the result.
@@ -590,6 +590,8 @@ significantly influence'' the result, in particular which systems are included a
 The generation-cost parameter $g$ is treated as a single external number: in Equations~\ref{eq:generation} and~\ref{eq:total}, one average over every system and
 setting; in practice it may itself have meaningful variance (a system's answer length, and
 therefore its cost, can differ substantially task to task), which the framework absorbs by taking $g$ as an average over tasks (Section~\ref{sec:model}) instead of modelling it separately. Because $g$ enters the generation cost and the total only as a multiplier (Equations~\ref{eq:generation} and~\ref{eq:total}), both are right on average, but the framework does not say how far the actual spend can differ from them; a more complete treatment would model the distribution of $g$.
+
+The cost model prices calls and does not model how long a run takes, although Sections~\ref{sec:intro} and~\ref{sec:strengths} count running time among the expenses of a rigorous protocol. A run's duration depends on the number of calls, on the latency of each, which differs by setting (in E1 the first model's mean rose from 38 seconds at \texttt{none} to 126 at \texttt{high}, Appendix~\ref{app:measurements}), and on how many calls can run at once, which the providers' rate limits bound. A reduction factor is therefore not a factor of time saved: S4, for example, divides the number of judging calls by $C$ but makes each call longer.
 
 The batching
 saving in Equation~\ref{eq:s4} assumes a judge can meaningfully score $C$ answers in one
@@ -1110,8 +1112,7 @@ items. The large additions did not come where \texttt{low} fell short: the three
 ratios (the second model's $72.7$ and $2.12$, the first model's $2.02$) are on problems already
 answered correctly at \texttt{low}. On the only problem answered wrongly at \texttt{low} (problem~3,
 second model) \texttt{high} used slightly fewer tokens in all ($358$ against $370$), though its thinking rose from $9$ to $218$ tokens, and answered it correctly. The published $23\times$ may therefore be a property of a particular 2025
-model, whose effort levels may have behaved as coarse switches (E3 used later models and cannot show this), on a suite that was hard for it at
-the time, and not a constant of the effort setting. A test of task family that survives
+model on a suite that was hard for it at the time, and not a constant of the effort setting. Whether that model's effort levels behaved as coarse switches E3 cannot show, since it used later models. A test of task family that survives
 this confound would need problems demonstrably unseen by the models and hard enough that
 \texttt{low} fails on them, which the pilot of Section~\ref{sec:validation} can supply, where the benchmark's tasks have not been published,
 from its own retained data.

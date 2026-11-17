@@ -2,6 +2,11 @@
 
 Outside sources opened during the correction passes, whether they were used or rejected. One entry per pass.
 
+## 17 November 2026, 22:4x pass
+
+- None opened. The three findings are internal to the paper: they were checked against the paper's own sections (Sections 1, 3, 8 and 9, Appendix B.1 for the dated rate changes, Appendix C.2, C.5 and Table e1-calls for the latencies).
+- Rejected: none.
+
 ## 17 November 2026, 19:4x pass
 
 - None opened. The three findings are internal to the paper: they were checked against the paper's own sections (the abstract, Sections 1, 4, 5 (S1 and S6), 8 and 9) and against the repository's own code (app/lib/protocol.mjs for the validation mode's cost ratios, app/lib/draco-dataset.mjs and app/server.mjs for the sampling seed).
