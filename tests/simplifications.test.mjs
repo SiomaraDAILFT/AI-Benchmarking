@@ -1,7 +1,7 @@
 /**
  * Reproduces, from src/cost-model.mjs, the cost-model figures paper/main.tex
  * prints: Table tab:cumulative and every figure around it (Appendix B), the
- * overstatement ranges of Section 6, Appendix C.2's ranges at the measured
+ * overstatement ranges of Section 6 and Appendix C.2, Appendix C.2's ranges at the measured
  * setting-cost ratios, and the call counts of Appendix B. The measured ratios
  * are not typed in: they are computed from the 25 calls of Table tab:e1-calls
  * and checked against Table tab:alpha first. Each assertion quotes
@@ -510,7 +510,7 @@ describe('Section 6: the overstatement of the naive product', () => {
     assert.equal(whole(high), 27)
   })
 
-  test('"7 to 11 at the setting-cost ratios we measured ... under cached-read pricing with no write premium (w = 1)"', () => {
+  test('Appendix C.2: "7 to 11 at the setting-cost ratios we measured ... under cached-read pricing with no write premium (w = 1)"', () => {
     for (const alphas of [ALPHA_BY_COST, ALPHA_BY_TOKENS]) {
       const values = alphas.flatMap((alpha) => SHARES.map((s) => naiveOverstatement({ s, E: 2, K: 5, beta: BETA_CACHED_W1, alpha })))
       const [low, high] = rangeOf(values)
@@ -519,7 +519,7 @@ describe('Section 6: the overstatement of the naive product', () => {
     }
   })
 
-  test('"falling below 10 once s passes about 0.22 to 0.26" (w = 1): the exact crossing lies above 0.2 and at or below 0.3 for every measured ratio', () => {
+  test('Appendix C.2: "falling below 10 once s passes about 0.22 to 0.26" (w = 1): the exact crossing lies above 0.2 and at or below 0.3 for every measured ratio', () => {
     // The overstatement falls with s (E K beta = 12 exceeds 1 + alpha), so it is below 10
     // for every s above the crossing s* = (E K beta - 10) / (E K beta - (1 + alpha)).
     const stars = MEASURED_ALPHAS.map((alpha) => {
@@ -535,7 +535,7 @@ describe('Section 6: the overstatement of the naive product', () => {
     assert.deepEqual(rangeOf(stars).map((x) => decimals(x, 2)), [0.22, 0.26])
   })
 
-  test('"8 to 12 at a write multiple of w = 1.25"', () => {
+  test('Appendix C.2: "8 to 12 at a write multiple of w = 1.25"', () => {
     for (const alphas of [ALPHA_BY_COST, ALPHA_BY_TOKENS]) {
       const values = alphas.flatMap((alpha) => SHARES.map((s) => naiveOverstatement({ s, E: 2, K: 5, beta: BETA_CACHED_W125, alpha })))
       const [low, high] = rangeOf(values)
@@ -544,7 +544,7 @@ describe('Section 6: the overstatement of the naive product', () => {
     }
   })
 
-  test('"falling below 10 once s passes about 0.31 to 0.36" (w = 1.25): the exact crossing lies above 0.3 and at or below 0.4 for every measured ratio', () => {
+  test('Appendix C.2: "falling below 10 once s passes about 0.31 to 0.36" (w = 1.25): the exact crossing lies above 0.3 and at or below 0.4 for every measured ratio', () => {
     const stars = MEASURED_ALPHAS.map((alpha) => {
       const sStar = overstatementCrossing(BETA_CACHED_W125, alpha)
       near(naiveOverstatement({ s: sStar, E: 2, K: 5, beta: BETA_CACHED_W125, alpha }), 10, 1e-9)
@@ -557,7 +557,7 @@ describe('Section 6: the overstatement of the naive product', () => {
     assert.deepEqual(rangeOf(stars).map((x) => decimals(x, 2)), [0.31, 0.36])
   })
 
-  test('"and 7 to 11 on OpenAI\'s terms, where the batched call pays the write too"', () => {
+  test('Appendix C.2: "and 7 to 11 on OpenAI\'s terms, where the batched call pays the write too"', () => {
     for (const alphas of [ALPHA_BY_COST, ALPHA_BY_TOKENS]) {
       const values = alphas.flatMap((alpha) => SHARES.map((s) => naiveOverstatement({ s, E: 2, K: 5, beta: BETA_CACHED_W125_OPENAI, alpha })))
       const [low, high] = rangeOf(values)
@@ -566,7 +566,7 @@ describe('Section 6: the overstatement of the naive product', () => {
     }
   })
 
-  test('"falling below 10 once s passes about 0.20 to 0.23" (OpenAI\'s terms): the exact crossing lies in 0.19 to 0.24 for every measured ratio', () => {
+  test('Appendix C.2: "falling below 10 once s passes about 0.20 to 0.23" (OpenAI\'s terms): the exact crossing lies in 0.19 to 0.24 for every measured ratio', () => {
     const stars = MEASURED_ALPHAS.map((alpha) => {
       const sStar = overstatementCrossing(BETA_CACHED_W125_OPENAI, alpha)
       near(naiveOverstatement({ s: sStar, E: 2, K: 5, beta: BETA_CACHED_W125_OPENAI, alpha }), 10, 1e-9)
@@ -704,7 +704,7 @@ describe('Appendix C (E1): Table tab:alpha and the measured setting-cost ratios,
     assert.equal(decimals(Math.max(...gaps), 2), 0.04)
   })
 
-  test('Section 6 and Appendix C.2 take alpha from the high setting against a lower one: "1.74 to 3.14, or 1.75 to 3.18 by output tokens"', () => {
+  test('Appendix C.2 takes alpha (Section 6 points to it) from the high setting against a lower one: "1.74 to 3.14, or 1.75 to 3.18 by output tokens"', () => {
     assert.deepEqual(ALPHA_BY_COST.map((x) => decimals(x, 2)), [1.74, 3.14])
     assert.deepEqual(ALPHA_BY_TOKENS.map((x) => decimals(x, 2)), [1.75, 3.18])
   })
