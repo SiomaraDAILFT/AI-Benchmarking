@@ -137,7 +137,7 @@ We define the following parameters, the first six of them properties of the eval
     \item $J$: the number of judges (S5 explains why their errors cannot be assumed independent).
     \item $K$: the number of repeated scorings per (judge, answer) pair, used to separate
     judge test--retest noise from a real difference.
-    \item $g$: the average cost of one generation call, that is, of obtaining one answer from one system, for one task, at one setting. It is treated as an observable, external quantity (a published API price, or a metered cost the system itself reports) and is not decomposed further; the framework is agnostic to how any system produces its answer.
+    \item $g$: the average cost of one generation call, that is, of obtaining one answer from one system, for one task, at one setting, averaged over all the generation calls of a run (every system, setting, task and regeneration). It is treated as an observable, external quantity (a published API price, or a metered cost the system itself reports) and is not decomposed further; the framework is agnostic to how any system produces its answer.
     \item $j$: the average cost of one judge scoring one answer once, counted as one judging call, unbatched. DRACO scores each criterion independently \citep[Section~4.2]{draco2026}, which can take one call per criterion; $j$ then covers all the calls of one scoring, and the number of calls actually sent is each judging-call count below multiplied by the number of criteria.
 \end{itemize}
 
@@ -390,7 +390,7 @@ rounds of retained raw data (Section~\ref{sec:retention}) exist. And any informe
 of tasks must itself be fixed before the systems are run, or task selection becomes one
 more researcher degree of freedom \citep{simmons2011falsepositive}. Until such data exist, S6 reduces
 $T$ by pre-registered stratified sampling from the task domains, in proportion to each domain's share of the tasks and with at least one task from each, and Equation~\ref{eq:power}
-sets the floor. A sample smaller than the number of domains takes one task from each of that many domains, chosen with a fixed seed. The endpoint towards which S6 develops is already described in that literature: adaptive item selection driven by an item
+sets the floor. A sample smaller than the number of domains takes one task from each of that many domains. Which tasks are drawn within each domain, and in that case which domains, is decided by a random seed that whoever runs the comparison fixes and states in the pre-registration, so that another team can draw the same sample; the published runner takes the seed as a setting. The endpoint towards which S6 develops is already described in that literature: adaptive item selection driven by an item
 response model, which \citet{hofmann2025fluid} show attains higher validity and lower
 variance on MMLU ``with fifty times fewer items'', and subset evaluation with
 confidence intervals whose frequentist coverage holds asymptotically, that is, in large samples, for which \citet{wu2026faq} report intervals as narrow as uniform sampling gives with up to five times fewer queries.
@@ -568,7 +568,7 @@ on the systems under comparison. This run is performed once and serves as the re
 \textbf{Phase 2: each simplification alone, and all of them combined, on the same systems, and on the same tasks or a sample of them.} Run
 S1 alone, S2 alone, and so on, and the fully combined simplification from
 Section~\ref{sec:cumulative}, each on the task set used in Phase 1, or, for S6 and the combined variant, on a pre-registered stratified sample of $n^*$ of those tasks, drawn as S6 prescribes, with $n^*$ computed at the variant's own $R$ and $K$, since fewer repeat scorings also raise the within-task variances of Equation~\ref{eq:variance-decomposition}. That equation assumes the two systems' scores vary independently within a task, which batched judging does not ensure (Section~\ref{sec:power}), and the combined variant batches (S4) where Phase 1 does not. Its $n^*$ computed from the Phase 1 variances is therefore an approximation, and the standard deviation of its own paired differences should be reported beside it. Where that $n^*$ is above $T_{\text{full}}$, as for the combined variant on the inputs of Appendix~\ref{app:worked} ($184$ against $180$ from its $R = 1$ alone, and more once its $K = 1$ is counted), the variant runs on all $T_{\text{full}}$ tasks and is reported as below the stated power; so is any other variant whose $n^*$ exceeds the number of tasks it runs on, such as S2 alone, at $184$ on the same inputs. For
-each variant, record: whether the same system(s) rank highest; how far the point estimate
+each variant, record: the calls it made and what they cost, as ratios to the Phase 1 run, beside the saving its reduction factor predicts; whether the same system(s) rank highest; how far the point estimate
 and confidence interval shift relative to the Phase 1 reference; and whether the corrected
 $p$-value for the pre-registered comparisons crosses the significance threshold in the
 reference run but not in the simplified one, or vice versa. Such a crossing can happen by chance alone, more often the lower a variant's power, so one crossing does not by itself show that the simplification changed the result.
