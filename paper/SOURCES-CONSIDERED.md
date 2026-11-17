@@ -2,6 +2,11 @@
 
 Outside sources opened during the correction passes, whether they were used or rejected. One entry per pass.
 
+## 17 November 2026, 07:4x pass
+
+- None opened. The three findings are internal to the paper: they were checked against the paper's own sections (Sections 2.2, 5, 6, 7.2 and 8, Table 1, Table 2 and Table 4).
+- Rejected: none.
+
 ## 17 November 2026, 05:4x pass
 
 - None opened. The three findings are internal to the paper: they were checked against the paper's own sections, against CORRECTIONS.md (the 12 November 00:1x pass that added the sec:retention label) and against the raw result files in experiments/results/ (e2-judge-cache, e3-aime), which are the repository's own records.
