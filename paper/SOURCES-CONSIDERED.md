@@ -2,6 +2,11 @@
 
 Outside sources opened during the correction passes, whether they were used or rejected. One entry per pass.
 
+## 17 November 2026, 05:4x pass
+
+- None opened. The three findings are internal to the paper: they were checked against the paper's own sections, against CORRECTIONS.md (the 12 November 00:1x pass that added the sec:retention label) and against the raw result files in experiments/results/ (e2-judge-cache, e3-aime), which are the repository's own records.
+- Rejected: none.
+
 ## 17 November 2026, 03:4x pass
 
 - Used: Wu et al., "Efficient Evaluation of LLM Performance with Statistical Guarantees", arXiv 2601.20251, abstract page read 17 November 2026. Already cited as wu2026faq. Its abstract gives "asymptotic frequentist coverage", "up to 5x effective sample size gains over strong baselines" and "matches the CI width of uniform sampling while using up to 5x fewer queries"; S6 now reports the coverage as asymptotic and the comparison with uniform sampling as the one the abstract makes.

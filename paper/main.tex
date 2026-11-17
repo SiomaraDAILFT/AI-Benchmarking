@@ -27,7 +27,7 @@
 \title{Benchmarking AI Models Efficiently}
 
 \author{Siomara van Straalen\thanks{Correspondence through the paper's repository, \url{https://github.com/SiomaraDAILFT/AI-Benchmarking}. Text of this paper: \textcopyright{} 2026 Siomara van Straalen, licensed under CC BY-NC 4.0 (free to share and adapt with attribution for non-commercial use; commercial use requires a licence from the author). Accompanying code: PolyForm Noncommercial License 1.0.0.}}
-\date{14 September 2026; revised 10 November 2026}
+\date{14 September 2026; revised 17 November 2026}
 
 % Section break rule: a section starts on a new page unless the previous section only just ran over (at most five lines on the page).
 \newcommand{\sectionbreak}{\par\ifdim\pagetotal<5.5\baselineskip\relax\else\clearpage\fi}
@@ -118,7 +118,7 @@ and a purpose-built open evaluator model judges against user-defined criteria, w
 
 Against that, no sample-size or statistical-power methodology has been published for DRACO, as Section~\ref{sec:draco} noted. Judge choice moves absolute score levels: the benchmark's own authors report that one of their three judges ``consistently assigned lower scores'' \citep[Appendix~A]{draco2026}, and a study of 13 judge models on a short-answer knowledge benchmark finds scores that differ by judge while rankings mostly agree \citep{thakur2025judging}. Third-party trackers of DRACO results already disagree about which system leads and by how much (Appendix~\ref{app:published}), so no figure from them should yet be relied on.
 
-The weakness we take to matter most for whether the methodology gets used at all is another: run rigorously, DRACO or any protocol with its structure is expensive and slow. The number of judge scorings in a single run, when each answer is judged separately, is the product of how many systems are compared, how many tasks, how many judges, how many times each judge re-scores an answer, how many times each answer is regenerated, and how many configuration variants (temperature, retrieval settings, reasoning-effort levels) are swept per system. Each factor is well motivated on its own, and Section~\ref{sec:model} makes each explicit; together they make a faithful run expensive to repeat, since in such a run four of them (systems, tasks, regenerations and settings) multiply the whole cost and the other two multiply its judging term (Equations~\ref{eq:generation} and~\ref{eq:judging-unbatched}). Even with batched judging, three of them still multiply the whole cost (Equation~\ref{eq:total}).
+The weakness we take to matter most for whether the methodology gets used at all is another: run rigorously, DRACO or any protocol with its structure is expensive and slow. The number of judge scorings in a single run, when each answer is judged separately, is the product of how many systems are compared, how many tasks, how many judges, how many times each judge re-scores an answer, how many times each answer is regenerated, and how many configuration variants (for example, reasoning-effort or compute-budget levels) are swept per system. Each factor is well motivated on its own, and Section~\ref{sec:model} makes each explicit; together they make a faithful run expensive to repeat, since in such a run four of them (systems, tasks, regenerations and settings) multiply the whole cost and the other two multiply its judging term (Equations~\ref{eq:generation} and~\ref{eq:judging-unbatched}). Even with batched judging, three of them still multiply the whole cost (Equation~\ref{eq:total}).
 
 \sectionbreak
 \section{A General Cost Model}
@@ -264,7 +264,7 @@ distribution can still be misleading''. \citet{thakur2025judging}, across 13 jud
 models, find that even the best-aligned judges' scores ``may still differ with up to 5
 points from human-assigned scores'', with a general tendency towards leniency. DRACO's own
 published protocol averages over five grading runs per answer and reports the resulting
-standard deviation \citep{draco2026}; the third-party run also averages over five runs per question but reports a standard error of its headline difference instead
+standard deviation \citep{draco2026}; the large software vendor's run of Section~\ref{sec:related} also averages over five runs per question but reports a standard error of its headline difference instead
 \citep{msftdraco2026}. A judge whose repeated scores on the same answer spread widely is
 indistinguishable, at $K = 1$, from a judge whose single score happened to be reliable;
 in a small measurement made for this paper, five scorings of one answer by one frontier
@@ -358,7 +358,7 @@ kind \citet{kohli2026ninejudges} uses, should be reported so that a reader can s
 move even when the candidate responses stay fixed, simply because the evaluator has
 changed''. On the aggregation side, methods that model the judges' shared confounder
 explicitly recover part of what correlation costs \citep{zhao2026care}; they presuppose
-that the per-judge scores were retained, which Section~\ref{sec:stats} requires in any
+that the per-judge scores were retained, which Section~\ref{sec:retention} requires in any
 case.
 
 More judges need not cost more, either. \citet{verga2024juries} find that a panel of several smaller models from different
@@ -386,7 +386,7 @@ leader may change by merely removing a low-ranked model from the benchmark''.
 other baselines at accurately ranking models''. Those figures do not transfer directly. The compressed benchmarks in that literature start from hundreds to tens of thousands of items, mostly multiple-choice (the first of those works also compresses AlpacaEval 2.0, 805 open-ended prompts scored by a judge), with a large pool of previously evaluated models from which item
 informativeness can be estimated; a DRACO-style benchmark starts from about a hundred open-ended
 tasks (DRACO has 100) and no such pool, so the curated-subset methods are available only once several
-rounds of retained raw data (Section~\ref{sec:stats}) exist. And any informed selection
+rounds of retained raw data (Section~\ref{sec:retention}) exist. And any informed selection
 of tasks must itself be fixed before the systems are run, or task selection becomes one
 more researcher degree of freedom \citep{simmons2011falsepositive}. Until such data exist, S6 reduces
 $T$ by pre-registered stratified sampling from the task domains, in proportion to each domain's share of the tasks and with at least one task from each, and Equation~\ref{eq:power}
@@ -615,7 +615,7 @@ Section~\ref{sec:simplifications} argues for keeping several judges (S5) and ask
 it is dropped. A mixed-effects model with crossed random effects for task and judge
 \citep{baayen2008}, with regenerations nested within task and system but crossed with judge, and repeats nested within judge and answer, would propagate all
 components into a single interval, at the price of simplicity; without it, the interval of Section~\ref{sec:stats} stays conditional on the judge
-panel and aggregation rule. The raw table retained under Section~\ref{sec:stats} is what
+panel and aggregation rule. The raw table retained under Section~\ref{sec:retention} is what
 makes fitting such a model later possible without re-running anything.
 
 The minimum difference $\delta$ worth detecting for a given comparison remains a domain-specific judgement, which the formulas in Section~\ref{sec:power} take as an input. The full reference run of Section~\ref{sec:validation} is made once, on one set of systems, so reusing its $\sigma$, its $\alpha$ and its measured fidelity losses after that set changes assumes they hold for systems it did not include; $\alpha$ already differs between the two models of Appendix~\ref{app:measurements}.
