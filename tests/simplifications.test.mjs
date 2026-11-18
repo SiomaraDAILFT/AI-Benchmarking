@@ -331,6 +331,13 @@ describe('Section 5, S6: the task-count factor', () => {
   test('Appendix B: at n* = 184 "S6 saves nothing (the reduced protocol keeps all 180 tasks, a factor of 1, not 3)"', () => {
     assert.equal(s6Factor({ Tfull: 180, nStar: 184 }), 1)
   })
+
+  test('Section 6: "Where the floor n* is above T_full ... T_full/n* is then replaced by 1 in both factors", not 180/184', () => {
+    const atFloor = { alpha: 20, kept: 'cheap', E: 2, R: 3, Tfull: 180, nStar: 184 }
+    assert.equal(factorFG(atFloor), 21 * 3)
+    assert.equal(factorFJ({ E: 2, R: 3, K: 5, beta: 3, Tfull: 180, nStar: 184 }), 2 * 3 * 5 * 3)
+    assert.ok(factorFG(atFloor) > 21 * 3 * (180 / 184))
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -649,7 +656,7 @@ describe('Section 6: the expensive setting kept, and the floor its own power inp
 // ---------------------------------------------------------------------------
 
 describe('Section 4: the cache write paid once per task and judge', () => {
-  test('"the cached judging-side factor F_J of Section 6 at w = 1 falls from 108 to about 69, and the cached reductions of Table tab:cumulative from 137-176x to about 101-161x"', () => {
+  test('"the cached judging-side factor F_J of Section 6, with no premium on the cache-writing call, falls from 108 to about 69, and the cached reductions of Table tab:cumulative from 137-176x to about 101-161x"', () => {
     const jFixed = 1
     const jMarginal = 0.2
     const Jfull = judgingCostCachedOncePerTaskAndJudge({ C: 5, E: 2, R: 3, T: 180, J: 3, K: 5, jFixed, jMarginal, c: 0.1, w: 1 })

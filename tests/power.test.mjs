@@ -169,7 +169,7 @@ describe('Appendix B: the task floor n*', () => {
     assert.ok(powerAtN({ n, aPrime: A_PRIME, sigma2, delta: DELTA }) >= PI)
   })
 
-  test('Section 7.2: "using the uncorrected family-wise a here systematically understates the requirement"', () => {
+  test('Section 7.2: "using the uncorrected family-wise a here understates the requirement whenever more than one comparison is pre-registered"', () => {
     assert.ok(nStar({ aPrime: A, power: PI, sigma: 19, delta: DELTA }) < nStar({ aPrime: A_PRIME, power: PI, sigma: 19, delta: DELTA }))
   })
 })

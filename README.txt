@@ -15,7 +15,9 @@ and configuration sweeps all multiply together. This repository formalizes
 that cost structure, derives six concrete simplifications with closed-form
 reduction factors, and shows their combined effect — an exact ratio of total
 costs, not a product of factors — is roughly two orders of magnitude in the
-worked instance, while being explicit about what each simplification trades
+worked instance at its illustrative setting-cost ratio and assumed task floor,
+a third of that at the floor its own power inputs give, and less at the
+setting-cost ratios measured for the paper, while being explicit about what each simplification trades
 away, and proposing a way to check the theoretical savings against real
 fidelity loss before trusting them.
 
@@ -23,9 +25,12 @@ The body of the paper is deliberately model- and provider-agnostic: every
 quantity is a symbol, and no provider, model or price is named. The concrete,
 dated material lives in three appendices — published DRACO-style runs
 (Appendix A), a worked cost instance at current commercial terms
-(Appendix B), and the measurements made for the paper (Appendix C). Every claim in the paper is sourced to a cited,
-publicly reachable document; every correction made since publication, and
-why, is logged in paper/CORRECTIONS.md.
+(Appendix B), and the measurements made for the paper (Appendix C). Every claim
+the paper takes from other work is sourced to a cited, publicly reachable
+document; its own measurements are recorded in experiments/, and the one
+premise it cannot source (that cost is a main reason such comparisons are run
+rarely) is stated as a premise in Section 1. Every correction made since
+publication, and why, is logged in paper/CORRECTIONS.md.
 
 What's here
 -----------
@@ -108,10 +113,12 @@ integration: for every system you want to compare, you need only know which
 questions to put to it, at which settings, using that system's own public
 interface (a browser chat UI, a consumer app, or a provider's own API
 playground) — record the answer and its cost exactly as that interface
-reports it. The code in this repository is for the *statistical and
+reports it. The reference implementation in src/ is for the *statistical and
 cost-accounting* side of the methodology (how many tasks you need, how to
 combine judge scores, how to test whether one system beat another) — it does
-not call any model or system on your behalf.
+not call any model or system on your behalf. The testing app in app/
+(below) and the measurement scripts in experiments/ do call model APIs, but
+only those you configure with your own keys.
 
 License
 -------

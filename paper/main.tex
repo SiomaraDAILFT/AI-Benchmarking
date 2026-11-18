@@ -27,7 +27,7 @@
 \title{Benchmarking AI Models Efficiently}
 
 \author{Siomara van Straalen\thanks{Correspondence through the paper's repository, \url{https://github.com/SiomaraDAILFT/AI-Benchmarking}. Text of this paper: \textcopyright{} 2026 Siomara van Straalen, licensed under CC BY-NC 4.0 (free to share and adapt with attribution for non-commercial use; commercial use requires a licence from the author). Accompanying code: PolyForm Noncommercial License 1.0.0.}}
-\date{14 September 2026; revised 17 November 2026}
+\date{14 September 2026; revised 18 November 2026}
 
 % Section break rule: a section starts on a new page unless the previous section only just ran over (at most five lines on the page).
 \newcommand{\sectionbreak}{\par\ifdim\pagetotal<5.5\baselineskip\relax\else\clearpage\fi}
@@ -414,7 +414,7 @@ F_J = E \cdot R \cdot K \cdot \beta \cdot \frac{T_{\text{full}}}{n^*},
 \label{eq:component-factors}
 \end{equation}
 with $\beta$ from Equation~\ref{eq:s4} ($\beta = 1$ if S4 is not applied), and with the
-first factor of $F_G$ replaced by $(1+\alpha)/\alpha$ if S1 retains the expensive setting instead of the cheap one. The reduced total is $G_{\text{full}}/F_G +
+first factor of $F_G$ replaced by $(1+\alpha)/\alpha$ if S1 retains the expensive setting instead of the cheap one. Where the floor $n^*$ is above $T_{\text{full}}$, the reduced protocol keeps all $T_{\text{full}}$ tasks (Section~\ref{sec:validation}), so $T_{\text{full}}/n^*$ is then replaced by $1$ in both factors. The reduced total is $G_{\text{full}}/F_G +
 J_{\text{full}}/F_J$, so
 \begin{equation}
 \text{Reduction} = \frac{G_{\text{full}} + J_{\text{full}}}{G_{\text{full}}/F_G +
@@ -747,7 +747,7 @@ For $C = 5$ systems, $T = 60$ tasks, $E = 2$ settings, $R = 3$ regenerations, $J
 judges and $K = 5$ repeats, Equation~\ref{eq:generation} implies $C \cdot E \cdot R \cdot
 T = 1{,}800$ generation calls, Equation~\ref{eq:judging-unbatched} implies $27{,}000$
 unbatched judging calls, and Equation~\ref{eq:judging-batched} implies $5{,}400$ batched
-judging calls, before any per-call price is attached. The full protocol of the worked instance below, with $T_{\text{full}} = 180$ tasks, makes three times as many: $5{,}400$ generation calls, $81{,}000$ unbatched and $16{,}200$ batched judging calls.
+judging calls, before any per-call price is attached. At the $T_{\text{full}} = 180$ tasks of the full protocol in the worked instance below, each count is three times as large: $5{,}400$ generation calls, $81{,}000$ unbatched and $16{,}200$ batched judging calls. The full protocol judges each answer separately (Section~\ref{sec:cumulative}), so it makes the first two of these.
 
 \subsection{The batching factor \texorpdfstring{$\beta$}{beta}}
 
@@ -1067,7 +1067,7 @@ Hugging Face datasets API; system instruction: ``Solve the competition mathemati
 problem. Show your reasoning briefly, then give the final answer as an integer on the
 last line in the form `ANSWER: <integer>'.'' Output cap 16{,}000 tokens, never reached.
 One call per cell; the calls for six cells, all to the first provider, failed with transient HTTP 500 errors during
-an outage (three attempts each) and were retried until they succeeded. Total spend: \$0.38 across 20 successful calls. The
+an outage (three attempts each) and were retried until they succeeded, nineteen failed calls in all, eighteen in the first run and one among the retries. Total spend: \$0.38 across 20 successful calls. The
 scripts (\texttt{e3-aime.mjs}, \texttt{e3-retry.mjs}), the problems and the raw usage
 records are committed alongside E1's.
 
