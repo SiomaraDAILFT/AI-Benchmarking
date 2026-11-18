@@ -23,9 +23,11 @@ export function cohensDz(differences) {
 }
 
 /**
- * The matched-pairs rank-biserial correlation - the natural effect-size
- * companion to the Wilcoxon/permutation test used elsewhere in this
- * package, for when the differences are not well-modelled as normal.
+ * The matched-pairs rank-biserial correlation, the effect size that goes
+ * with the Wilcoxon signed-rank test. The paper does not use it: Section 7.1
+ * reports Cohen's d_z beside a sign-flip test of the mean difference, the
+ * test this package implements (permutation-test.mjs); there is no Wilcoxon
+ * test here. It is kept for a reader who ranks the differences instead.
  *
  * r = (W+ - W-) / (W+ + W-), where W+ and W- are the sums of the positive
  * and negative signed ranks of the absolute differences.

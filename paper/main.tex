@@ -575,7 +575,7 @@ reference run but not in the simplified one, or vice versa. Such a crossing can 
 Rank agreement between a
 reduced and a full protocol is one criterion the benchmark-compression literature uses to
 certify a subset: \citet{saranathan2025sublime} select subsets of 1--20\% of a benchmark that preserve full-benchmark rankings, reporting evaluation-cost reductions of 80--99\%, and \citet{perlitz2024efficient} score each design choice by its effect on ranking reliability. Kendall's $\tau$ is the statistic \citet{perlitz2024efficient} use, and \citet{saranathan2025sublime} use Spearman's rank correlation. Phase 2 should report rank agreement as Kendall's $\tau$ over the
-systems under comparison, alongside the per-comparison outcomes. Comparing two protocols
+systems under comparison, alongside the per-comparison outcomes. The form to use is $\tau_b$, which allows for tied scores and is the one the published runner computes; with few systems, one tie is enough to make it differ from the plain $\tau$. Comparing two protocols
 on the same systems is formally a benchmark-agreement test, for which
 \citet{perlitz2024benchbench} show that ``overlooked methodological choices can
 significantly influence'' the result, in particular which systems are included and which protocol is treated as the reference, and propose standard practices. The full Phase 1 run is the reference here by construction, and the systems compared should be the full set under study and not a convenient subset.
@@ -595,7 +595,7 @@ The cost model prices calls and does not model how long a run takes, although Se
 The batching
 saving in Equation~\ref{eq:s4} assumes a judge can meaningfully score $C$ answers in one
 call without a quality cost from context length or attention dilution as $C$ and the length of the answers grow;
-this should be checked empirically at the $C$ and answer lengths the benchmark uses.
+this should be checked empirically at the $C$ and answer lengths the benchmark uses. Experiment E2 scored three short answers both together and one at a time (Section~\ref{app:e2}), but with one call per ordering and answers far shorter than a deep-research task's, it cannot settle the question.
 The concern has independent support: \citet{hsieh2024ruler} find that ``almost all models
 exhibit large performance drops as the context length increases'', with only half of the
 models they test maintaining satisfactory performance at 32K tokens, and

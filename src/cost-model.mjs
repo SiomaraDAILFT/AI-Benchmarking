@@ -182,7 +182,8 @@ export function judgingCostCached({ C, E, R, T, J, K, jFixed, jMarginal, c, w = 
  * C * E * R * K - 1 pay c on the fixed component:
  * T * J * [ (w + (C*E*R*K - 1) c) jFixed + C*E*R*K * jMarginal ].
  * Derived here from that sentence (Section 4, "Effect of prompt caching");
- * the paper evaluates it only as F_J "about 69".
+ * the paper evaluates it only in that sentence, as F_J "about 69" and the
+ * cached reductions "about 101-161x".
  */
 export function judgingCostCachedOncePerTaskAndJudge({ C, E, R, T, J, K, jFixed, jMarginal, c, w = 1 }) {
   const callsPerTaskAndJudge = count('C', C) * count('E', E) * count('R', R) * count('K', K)

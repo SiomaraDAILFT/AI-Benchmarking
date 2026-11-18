@@ -53,14 +53,14 @@ What's here
     that links regenerations to it, Holm's smallest per-comparison threshold,
     the power reached at a given task count, and the normal quantile and CDF
     they use
-  - effect-size.mjs — Cohen's $d_z$ and the matched-pairs rank-biserial
-    correlation
+  - effect-size.mjs — Cohen's $d_z$ (Section 7.1) and, as an extra the
+    paper does not use, the matched-pairs rank-biserial correlation
   - permutation-test.mjs — a paired permutation (sign-flip) test, exact
     for small task counts and Monte Carlo above that, its two-sided form, and
     the confidence interval for the mean paired difference found by inverting
     the two-sided test (Section 7.1)
   - holm-bonferroni.mjs — the multiple-comparisons step-down correction
-  - rank-agreement.mjs — Kendall's tau between two rankings
+  - rank-agreement.mjs — Kendall's tau-b between two rankings (Section 8)
   - stats-utils.mjs — small shared primitives (inverse normal CDF, mean,
     sample standard deviation)
 - tests/ — tests for every module above. tests/simplifications.test.mjs
