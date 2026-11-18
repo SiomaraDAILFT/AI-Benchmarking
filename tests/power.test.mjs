@@ -113,7 +113,7 @@ describe('Appendix B: the task floor n*', () => {
     assert.equal(Math.min(...thresholds), A_PRIME)
   })
 
-  test('"one-sided, z_{a\'} ~ 2.13"', () => {
+  test('"one-sided, z_{1-a\'} ~ 2.13"', () => {
     assert.equal(decimals(zAPrime(A_PRIME), 2), 2.13)
   })
 
@@ -151,7 +151,7 @@ describe('Appendix B: the task floor n*', () => {
       const n = nStar({ aPrime: A_PRIME, power: PI, sigma2, delta: DELTA })
       assert.ok(powerAtN({ n, aPrime: A_PRIME, sigma2, delta: DELTA }) >= PI)
       assert.ok(powerAtN({ n: n - 1, aPrime: A_PRIME, sigma2, delta: DELTA }) < PI)
-      // At the unrounded floor the power is exactly pi: Phi(sqrt(n*) delta / sigma - z_{a'}) = pi.
+      // At the unrounded floor the power is exactly pi: Phi(sqrt(n*) delta / sigma - z_{1-a'}) = pi.
       const exact = nStarUnrounded({ aPrime: A_PRIME, power: PI, sigma2, delta: DELTA })
       near(normalCdf((Math.sqrt(exact) * DELTA) / Math.sqrt(sigma2) - zAPrime(A_PRIME)), PI, 1e-12)
     }

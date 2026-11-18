@@ -133,7 +133,7 @@ export function holmSmallestThreshold(a, m) {
   return openUnit('a (family-wise significance level)', a) / count('m (pre-registered comparisons)', m)
 }
 
-/** z_{a'}, the standard normal quantile at 1 - a' (one-sided), Section 7.2. */
+/** z_{1-a'}, the standard normal quantile at 1 - a' (one-sided), Section 7.2. */
 export function zAPrime(aPrime) {
   return -normalQuantile(openUnit("a'", aPrime))
 }
@@ -161,7 +161,7 @@ function sigmaSquaredFrom({ sigma, sigma2 }) {
 
 /**
  * Equation \label{eq:power} before rounding:
- * (z_{a'} + z_pi)^2 sigma^2 / delta^2, one-sided.
+ * (z_{1-a'} + z_pi)^2 sigma^2 / delta^2, one-sided.
  */
 export function nStarUnrounded({ aPrime, power, sigma, sigma2, delta }) {
   const variance = sigmaSquaredFrom({ sigma, sigma2 })
@@ -184,7 +184,7 @@ export function nStar(args) {
 
 /**
  * The one-sided power reached with n tasks, the inverse of Equation power:
- * pi(n) = Phi( sqrt(n) * delta / sigma - z_{a'} ).
+ * pi(n) = Phi( sqrt(n) * delta / sigma - z_{1-a'} ).
  * Appendix B: the reduced protocol that keeps all 180 tasks "reaches a power of
  * only 0.79 at R = 1".
  */

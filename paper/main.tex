@@ -476,10 +476,10 @@ The confidence interval for the mean paired difference is obtained by inverting 
 The task-count floor referenced in Section~\ref{sec:simplifications} is computed from the
 standard sample-size formula for paired samples,
 \begin{equation}
-n^* = \frac{(z_{a'} + z_{\pi})^2 \sigma^2}{\delta^2},
+n^* = \frac{(z_{1-a'} + z_{\pi})^2 \sigma^2}{\delta^2},
 \label{eq:power}
 \end{equation}
-one-sided and rounded up to a whole number of tasks. Here $a'$ is the Holm-corrected per-comparison significance level (the smallest threshold the correction procedure can demand across the pre-registered comparisons; using the uncorrected family-wise $a$ here understates the requirement whenever more than one comparison is pre-registered), $z_{a'}$ and $z_{\pi}$ the standard normal quantiles at $1-a'$ and at the intended power $\pi$, $\sigma$
+one-sided and rounded up to a whole number of tasks. Here $a'$ is the Holm-corrected per-comparison significance level (the smallest threshold the correction procedure can demand across the pre-registered comparisons; using the uncorrected family-wise $a$ here understates the requirement whenever more than one comparison is pre-registered), $z_{1-a'}$ and $z_{\pi}$ the standard normal quantiles at $1-a'$ and at the intended power $\pi$ (each subscript is the probability below the quantile), $\sigma$
 the observed standard deviation of task-level paired differences from a pilot run, and
 $\delta$ the minimum difference in mean score worth detecting, in score points (so $\delta/\sigma$ is the corresponding $d_z$), a decision made before the pilot runs. Statistics texts usually write the significance level as $\alpha$ and the power as $1-\beta$; we use $a$ and $\pi$ because $\alpha$ is already the setting-cost ratio of S1 and $\beta$ the batching factor of S4. Equation~\ref{eq:power} is the one-sided form of the standard
 normal-approximation sample-size formula. \citet{miller2024errorbars} derives the
@@ -588,7 +588,7 @@ significantly influence'' the result, in particular which systems are included a
 
 The generation-cost parameter $g$ is treated as a single external number: in Equations~\ref{eq:generation} and~\ref{eq:total}, one average over every system and
 setting; in practice it may itself have meaningful variance (a system's answer length, and
-therefore its cost, can differ substantially task to task), which the framework absorbs by taking $g$ as an average over tasks (Section~\ref{sec:model}) instead of modelling it separately. Because $g$ enters the generation cost and the total only as a multiplier (Equations~\ref{eq:generation} and~\ref{eq:total}), both are right on average, but the framework does not say how far the actual spend can differ from them; a more complete treatment would model the distribution of $g$.
+therefore its cost, can differ substantially task to task), which the framework absorbs by taking $g$ as an average over tasks (Section~\ref{sec:model}) instead of modelling it separately. Since $g$ is the run's own average, Equation~\ref{eq:generation} gives the run's generation cost exactly once the run is over. Before it, $g$ has to be estimated, from published prices and expected answer lengths or from a pilot, and the framework does not say how far the run's average can fall from that estimate; a more complete treatment would model the distribution of $g$.
 
 The cost model prices calls and does not model how long a run takes, although Sections~\ref{sec:intro} and~\ref{sec:strengths} count running time among the expenses of a rigorous protocol. A run's duration depends on the number of calls, on the latency of each, which E1 found several times longer at the highest setting it ran than at the lowest (Section~\ref{app:e1-alpha} gives the mean latencies, Table~\ref{tab:e1-calls} the latency of each call), and on how many calls can run at once, which the providers' rate limits bound. A reduction factor is therefore not a factor of time saved: S4, for example, divides the number of judging calls by $C$ but makes each call longer.
 
@@ -787,7 +787,7 @@ Section~\ref{sec:cumulative} describes. The reference implementation reproduces 
 \subsection{The task floor \texorpdfstring{$n^*$}{n*}}
 
 For three pre-registered comparisons at family-wise $a = 0.05$, Holm's smallest
-per-comparison threshold is $a' = 0.05/3$; one-sided, $z_{a'} \approx 2.13$.
+per-comparison threshold is $a' = 0.05/3$; one-sided, $z_{1-a'} \approx 2.13$.
 At power $\pi = 0.8$, $z_{\pi} \approx 0.84$. With a pilot standard deviation of task-level
 paired differences $\sigma = 19$ points on a $100$-point scale and a minimum difference in mean score
 worth detecting of $\delta = 5$ points, Equation~\ref{eq:power} gives $n^* = 128$ tasks.
@@ -975,34 +975,34 @@ Result & $23\times$ (3.5M $\to$ 82M) & $2.83\times$ ($3.18\times$ vs \texttt{non
 \toprule
 Model & Effort & Prompt & In & Out & Reasoning & Latency (s) & Stop \\
 \midrule
-claude-opus-5 & high & 1 banking & 191 & 5{,}704 & 1{,}717 & 89 & end\_turn \\
-claude-opus-5 & high & 2 mining & 199 & 6{,}641 & 2{,}967 & 106 & end\_turn \\
-claude-opus-5 & high & 3 automotive & 184 & 6{,}702 & 3{,}093 & 102 & end\_turn \\
-claude-opus-5 & high & 4 retail & 183 & 6{,}071 & 2{,}036 & 91 & end\_turn \\
-claude-opus-5 & high & 5 telecoms & 180 & 6{,}298 & 2{,}395 & 97 & end\_turn \\
-claude-opus-5 & low & 1 banking & 191 & 3{,}370 & 326 & 54 & end\_turn \\
-claude-opus-5 & low & 2 mining & 199 & 3{,}543 & 263 & 57 & end\_turn \\
-claude-opus-5 & low & 3 automotive & 184 & 3{,}358 & 320 & 55 & end\_turn \\
-claude-opus-5 & low & 4 retail & 183 & 3{,}413 & 446 & 54 & end\_turn \\
-claude-opus-5 & low & 5 telecoms & 180 & 4{,}262 & 914 & 68 & end\_turn \\
-gpt-5.6-sol & high & 1 banking & 129 & 2{,}464 & 1{,}536 & 138 & stop (retry 1) \\
-gpt-5.6-sol & high & 2 mining & 133 & 4{,}062 & 3{,}072 & 126 & stop (retry 3) \\
-gpt-5.6-sol & high & 3 automotive & 125 & 2{,}251 & 1{,}024 & 73 & stop \\
-gpt-5.6-sol & high & 4 retail & 128 & 5{,}203 & 4{,}068 & 160 & stop \\
-gpt-5.6-sol & high & 5 telecoms & 125 & 4{,}306 & 2{,}920 & 130 & stop \\
-gpt-5.6-sol & low & 1 banking & 129 & 1{,}343 & 341 & 43 & stop \\
-gpt-5.6-sol & low & 2 mining & 133 & 1{,}166 & 139 & 41 & stop (retry 1) \\
-gpt-5.6-sol & low & 3 automotive & 125 & 1{,}485 & 352 & 48 & stop \\
-gpt-5.6-sol & low & 4 retail & 128 & 1{,}303 & 325 & 43 & stop \\
-gpt-5.6-sol & low & 5 telecoms & 125 & 1{,}164 & 100 & 41 & stop (retry 1) \\
 gpt-5.6-sol & none & 1 banking & 129 & 1{,}105 & 0 & 39 & stop (retry 2) \\
 gpt-5.6-sol & none & 2 mining & 133 & 1{,}080 & 0 & 39 & stop (retry 2) \\
 gpt-5.6-sol & none & 3 automotive & 125 & 1{,}105 & 0 & 34 & stop \\
 gpt-5.6-sol & none & 4 retail & 128 & 1{,}225 & 0 & 37 & stop \\
 gpt-5.6-sol & none & 5 telecoms & 125 & 1{,}234 & 0 & 39 & stop \\
+gpt-5.6-sol & low & 1 banking & 129 & 1{,}343 & 341 & 43 & stop \\
+gpt-5.6-sol & low & 2 mining & 133 & 1{,}166 & 139 & 41 & stop (retry 1) \\
+gpt-5.6-sol & low & 3 automotive & 125 & 1{,}485 & 352 & 48 & stop \\
+gpt-5.6-sol & low & 4 retail & 128 & 1{,}303 & 325 & 43 & stop \\
+gpt-5.6-sol & low & 5 telecoms & 125 & 1{,}164 & 100 & 41 & stop (retry 1) \\
+gpt-5.6-sol & high & 1 banking & 129 & 2{,}464 & 1{,}536 & 138 & stop (retry 1) \\
+gpt-5.6-sol & high & 2 mining & 133 & 4{,}062 & 3{,}072 & 126 & stop (retry 3) \\
+gpt-5.6-sol & high & 3 automotive & 125 & 2{,}251 & 1{,}024 & 73 & stop \\
+gpt-5.6-sol & high & 4 retail & 128 & 5{,}203 & 4{,}068 & 160 & stop \\
+gpt-5.6-sol & high & 5 telecoms & 125 & 4{,}306 & 2{,}920 & 130 & stop \\
+claude-opus-5 & low & 1 banking & 191 & 3{,}370 & 326 & 54 & end\_turn \\
+claude-opus-5 & low & 2 mining & 199 & 3{,}543 & 263 & 57 & end\_turn \\
+claude-opus-5 & low & 3 automotive & 184 & 3{,}358 & 320 & 55 & end\_turn \\
+claude-opus-5 & low & 4 retail & 183 & 3{,}413 & 446 & 54 & end\_turn \\
+claude-opus-5 & low & 5 telecoms & 180 & 4{,}262 & 914 & 68 & end\_turn \\
+claude-opus-5 & high & 1 banking & 191 & 5{,}704 & 1{,}717 & 89 & end\_turn \\
+claude-opus-5 & high & 2 mining & 199 & 6{,}641 & 2{,}967 & 106 & end\_turn \\
+claude-opus-5 & high & 3 automotive & 184 & 6{,}702 & 3{,}093 & 102 & end\_turn \\
+claude-opus-5 & high & 4 retail & 183 & 6{,}071 & 2{,}036 & 91 & end\_turn \\
+claude-opus-5 & high & 5 telecoms & 180 & 6{,}298 & 2{,}395 & 97 & end\_turn \\
 \bottomrule
 \end{tabular}
-\caption{Every successful call of experiment E1 (25 calls, one per cell, 11 September 2026); the ten failed calls are not listed. In/Out/Reasoning are token counts from the providers' own usage fields; ``Reasoning'' is included in ``Out'' for both providers (\texttt{reasoning\_tokens} for \texttt{gpt-5.6-sol}, \texttt{thinking\_tokens} for \texttt{claude-opus-5}). Latency is rounded to the second here; the means in the text are computed from the unrounded timings in the result files, so the first model's mean at \texttt{high} is $125.5$ seconds (given as $126$), where these rounded values give $125.4$. Stop = provider finish reason, and ``retry $n$'' marks a cell whose call succeeded on its $n$th retry, after $n$ failed calls; no call stopped on the output cap.}
+\caption{Every successful call of experiment E1 (25 calls, one per cell, 11 September 2026), in the order the cells were run (model, then effort, then prompt); the ten failed calls are not listed. In/Out/Reasoning are token counts from the providers' own usage fields; ``Reasoning'' is included in ``Out'' for both providers (\texttt{reasoning\_tokens} for \texttt{gpt-5.6-sol}, \texttt{thinking\_tokens} for \texttt{claude-opus-5}). Latency is rounded to the second here; the means in the text are computed from the unrounded timings in the result files, so the first model's mean at \texttt{high} is $125.5$ seconds (given as $126$), where these rounded values give $125.4$. Stop = provider finish reason, and ``retry $n$'' marks a cell whose call succeeded on its $n$th retry, after $n$ failed calls; no call stopped on the output cap.}
 \label{tab:e1-calls}
 \end{table}
 
@@ -1076,8 +1076,8 @@ E1, $\alpha$ should be far larger here than on prose. It is not
 (Table~\ref{tab:e3}). For the first model the pooled ratio is $1.48$ (median per problem
 $1.18$; reasoning tokens $105$--$1{,}435$ at \texttt{high} against $114$--$526$ at
 \texttt{low}), \emph{lower} than its $2.83$ on prose; all ten answers were correct. For
-the second model the pooled ratio is $2.67$ but heavy-tailed: the per-problem ratios are
-$0.97$, $1.22$, $1.76$, $2.12$ and $72.7$, the last from a problem answered correctly in
+the second model the pooled ratio is $2.67$ but heavy-tailed: the per-problem ratios, in problem order, are
+$1.76$, $72.7$, $0.97$, $1.22$ and $2.12$, the $72.7$ from problem~2, answered correctly in
 $26$ tokens at \texttt{low} and in $1{,}890$ at \texttt{high}; the median is $1.76$,
 close to its pooled prose value of $1.75$; accuracy was four of five at \texttt{low} and five of five at
 \texttt{high}.

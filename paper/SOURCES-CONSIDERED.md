@@ -2,6 +2,11 @@
 
 Outside sources opened during the correction passes, whether they were used or rejected. One entry per pass.
 
+## 18 November 2026, 05:4x pass
+
+- None opened. The four findings are internal to the repository: they were checked against the paper's own sections (Sections 4, 7.2 and 9, Appendix B.6, Appendix C.2, C.3 and C.5, Tables tab:alpha, tab:e1-calls and tab:e3), the reference implementation (src/power.mjs), the E1 script (experiments/e1-alpha.mjs, its MODELS order and loops), the E3 result file (experiments/results/e3-aime-2026-09-11T08-35-02.json) and the published runner (app/lib/protocol.mjs, runValidation).
+- Rejected: none.
+
 ## 18 November 2026, 03:4x pass
 
 - None opened. The four findings are internal to the repository: they were checked against the paper's own sections (Sections 1, 6 and 8, Appendix B.3 and B.5, Appendix C.2 and C.5), the reference implementation (src/cost-model.mjs, s6Factor, factorFG and factorFJ), the E3 run logs (experiments/results/e3-aime-run.log and e3-retry-run.log), experiments/keys.mjs, and README.txt.
